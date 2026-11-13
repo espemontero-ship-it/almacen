@@ -143,7 +143,7 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - **Otros nombres de cada artículo, generados con IA**: Claude genera solo, sin que nadie escriba nada, nombres alternativos en español y en inglés para cada artículo ("cushion" → cojín, almohadón, pillow), y el buscador los usa. Coste estimado: 1 a 2 € en total por todos los artículos, una sola vez, y menos de un céntimo por cada artículo nuevo. Se cobra en la cuenta de Anthropic que ya usa punteo-trimestral (comprobar antes que sigue activa). Se hará más adelante, sobre los datos definitivos.
 - **Ver todos los artículos**: hace falta en algunos momentos, para acciones futuras. Una lista de 844 artículos no sirve en el móvil; hay que pensar la forma cuando toque.
 - **Fotos**: aparcadas. Existen, pero no vienen en la exportación. La cuenta de Cloudflare R2 se crea cuando se retomen.
-- **Entrada con usuario y contraseña**: se decide más adelante. Mientras no haya entrada, cualquiera con el enlace podría ver el inventario.
+- **Entrada con usuario y contraseña**: quitada el 2026-11-13, porque su contraseña no funcionaba. Ahora cualquiera con el enlace ve el inventario. Se decide más adelante cómo se entra. El código de usuarios e invitaciones sigue en el proyecto, sin usarse.
 
 ## Pendiente de decidir
 
@@ -173,3 +173,4 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Guardar lo que vuelve y hacer inventario necesitan editar: van en la Fase 2.
 - Cada cosa se llama de mil maneras, así que buscar solo por el nombre no basta. Se rechaza que la gente añada sinónimos a mano. Los otros nombres se generarán con IA más adelante (1 a 2 € en total).
 - Fase 1 publicada en Vercel con la hoja cargada en Neon. Cuenta de administración para Espe, que elige su contraseña con un enlace de invitación.
+- Su contraseña no funcionaba al entrar, y pidió quitar la contraseña de momento. La app queda abierta a quien tenga el enlace.
