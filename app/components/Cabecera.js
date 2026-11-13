@@ -9,9 +9,6 @@ export default function Cabecera({ busqueda = '', volver = false }) {
         ) : (
           <span className="titulo-app">Almacén</span>
         )}
-        <form action="/api/logout" method="post">
-          <button type="submit" className="boton-texto">Salir</button>
-        </form>
       </div>
       <form action="/buscar" method="get" className="buscador" role="search">
         <input
