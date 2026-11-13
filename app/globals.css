@@ -686,3 +686,55 @@ th .col-total {
   font-weight: 600;
   font-size: 16px;
 }
+
+.talla-boton {
+  width: 100%;
+  border: none;
+  border-top: 1px solid var(--linea);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.talla-total {
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.talla-cajas {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 4px 1.3em;
+}
+
+.tallas-bloque {
+  padding: 0 0 12px 68px;
+}
+
+.tallas-fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.talla-chip {
+  min-height: 44px;
+  min-width: 56px;
+  padding: 6px 10px;
+  border: 2px solid var(--secundario);
+  border-radius: 8px;
+  background: var(--fondo);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.talla-chip-activa {
+  background: var(--texto);
+  color: var(--fondo);
+  border-color: var(--texto);
+}
+
+.tallas-bloque .talla-cajas {
+  padding: 8px 0 0;
+}

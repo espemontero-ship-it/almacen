@@ -3,6 +3,7 @@ import Foto from './Foto';
 import NombreSitio from './NombreSitio';
 import Etiquetas from './Etiquetas';
 import { textos } from '../../lib/textos';
+import TallasArticulo from './TallasArticulo';
 
 export default function FichaArticulo({ articulo: a, idioma }) {
   const t = textos(idioma);
@@ -14,15 +15,15 @@ export default function FichaArticulo({ articulo: a, idioma }) {
           <span className="nombre-articulo">{a.nombre}</span>
           <Etiquetas lista={a.etiquetas} />
           {a.rotos > 0 && <span className="estado estado-roto">{t.rotos(a.rotos)}</span>}
-          {a.tallas && a.tallas.length > 0 && (
-            <span className="detalle-tallas-ficha">{a.tallas.map(x => x.talla + " " + x.cantidad).join(" · ")}</span>
-          )}
         </span>
         <span className="total">
           <span className="cantidad">{a.total}</span>
           <span className="etiqueta-total">{t.enTotal}</span>
         </span>
       </div>
+      {a.tallas && a.tallas.length > 0 ? (
+        <TallasArticulo tallas={a.tallas} sitios={a.sitios} idioma={idioma} />
+      ) : (
       <ul className="desglose">
         {a.sitios.map((s, i) => (
           <li key={`${s.id}-${i}`}>
@@ -40,6 +41,7 @@ export default function FichaArticulo({ articulo: a, idioma }) {
           </li>
         ))}
       </ul>
+      )}
     </li>
   );
 }
