@@ -305,3 +305,75 @@ input:focus {
 .fila-desglose .fila-texto {
   row-gap: 0;
 }
+
+.filtros {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 0;
+}
+
+select {
+  font: inherit;
+  color: inherit;
+  font-size: 16px;
+  min-height: var(--toque);
+  padding: 8px;
+  border: 2px solid var(--secundario);
+  border-radius: 8px;
+  background: var(--fondo);
+  width: 100%;
+  min-width: 0;
+}
+
+select:focus {
+  outline: 3px solid var(--acento);
+  outline-offset: 1px;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla th {
+  text-align: left;
+  font-size: 14px;
+  color: var(--secundario);
+  padding: 8px 8px 8px 0;
+  border-bottom: 2px solid var(--secundario);
+}
+
+.tabla td {
+  padding: 0 8px 0 0;
+  border-bottom: 1px solid var(--linea);
+  vertical-align: middle;
+}
+
+.tabla .numero {
+  text-align: right;
+  padding-right: 0;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tabla th.numero {
+  font-weight: 400;
+}
+
+.enlace-celda {
+  display: flex;
+  align-items: center;
+  min-height: var(--toque);
+  padding: 8px 0;
+  overflow-wrap: anywhere;
+}
