@@ -341,10 +341,10 @@ select:focus {
 }
 
 
+
 .tabla {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
 }
 
 .tabla th {
@@ -356,28 +356,23 @@ select:focus {
   border-bottom: 2px solid var(--secundario);
 }
 
-.tabla th:nth-child(1) {
-  width: 52%;
-}
-
-.tabla th:nth-child(2) {
-  width: 16%;
-  padding-right: 12px;
-}
-
-.tabla .numero {
-  text-align: right;
-}
-
 .tabla td {
   padding: 0;
   border-bottom: 1px solid var(--linea);
 }
 
-.boton-fila {
+.rejilla {
   display: grid;
   grid-template-columns: 52% 16% 32%;
   align-items: center;
+}
+
+.col-etiquetas,
+.col-estado {
+  display: none;
+}
+
+.boton-fila {
   width: 100%;
   min-height: var(--toque);
   padding: 8px 0;
@@ -390,9 +385,29 @@ select:focus {
 .col-articulo {
   display: flex;
   gap: 4px;
-  font-weight: 600;
   overflow-wrap: anywhere;
   padding-right: 8px;
+}
+
+.nombre-y-extra {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.nombre-tabla {
+  font-weight: 600;
+}
+
+.extra-movil {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  font-size: 15px;
+}
+
+.etiquetas-tabla {
+  color: var(--secundario);
 }
 
 .flecha {
@@ -405,6 +420,10 @@ select:focus {
   text-align: right;
   font-weight: 700;
   padding-right: 12px;
+}
+
+th .col-total {
+  font-weight: 400;
 }
 
 .col-cajas {
@@ -428,4 +447,40 @@ select:focus {
 
 .fila-fija {
   cursor: default;
+}
+
+@media (min-width: 900px) {
+  .contenido,
+  .cabecera > * {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .filtros {
+    max-width: 720px;
+  }
+
+  .rejilla {
+    grid-template-columns: 34% 24% 12% 8% 22%;
+  }
+
+  .col-etiquetas,
+  .col-estado {
+    display: block;
+    padding-right: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  .col-etiquetas {
+    color: var(--secundario);
+  }
+
+  .extra-movil {
+    display: none;
+  }
+
+  .detalle-cajas {
+    max-width: 480px;
+  }
 }

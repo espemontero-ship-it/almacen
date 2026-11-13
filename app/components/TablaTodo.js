@@ -16,6 +16,10 @@ const TIPOS = [
   ['otros', 'Otros sitios'],
 ];
 
+function textoRotos(n) {
+  return n === 1 ? '1 roto' : `${n} rotos`;
+}
+
 export default function TablaTodo({ filas }) {
   const [tipo, setTipo] = useState('');
   const [etiqueta, setEtiqueta] = useState('');
@@ -35,10 +39,11 @@ export default function TablaTodo({ filas }) {
       if (estado && f.estado !== estado) continue;
       let a = porId.get(f.articulo_id);
       if (!a) {
-        a = { id: f.articulo_id, nombre: f.nombre, total: 0, cajas: [] };
+        a = { id: f.articulo_id, nombre: f.nombre, etiquetas: f.etiquetas, total: 0, rotos: 0, cajas: [] };
         porId.set(f.articulo_id, a);
       }
       a.total += f.cantidad;
+      if (f.estado === 'roto') a.rotos += f.cantidad;
       a.cajas.push({ fila: f.id, id: f.sitio_id, texto: f.codigo || f.sitio_nombre, cantidad: f.cantidad, estado: f.estado });
     }
     return [...porId.values()].sort((x, y) => x.nombre.localeCompare(y.nombre, 'es', { sensitivity: 'base', ignorePunctuation: true }));
@@ -87,59 +92,71 @@ export default function TablaTodo({ filas }) {
       <table className="tabla">
         <thead>
           <tr>
-            <th>Artículo</th>
-            <th className="numero">Total</th>
-            <th>Cajas</th>
+            <th>
+              <div className="rejilla">
+                <span className="col-articulo">Artículo</span>
+                <span className="col-etiquetas">Etiquetas</span>
+                <span className="col-estado">Estado</span>
+                <span className="col-total">Total</span>
+                <span className="col-cajas">Cajas</span>
+              </div>
+            </th>
           </tr>
         </thead>
         <tbody>
           {articulos.map(a => {
             const abierto = abiertos.has(a.id);
-            if (a.total === 1) {
-              return (
-                <tr key={a.id}>
-                  <td colSpan={3}>
-                    <div className="boton-fila fila-fija">
-                      <span className="col-articulo">
-                        <span className="flecha" aria-hidden="true" />
-                        {a.nombre}
-                      </span>
-                      <span className="col-total">{a.total}</span>
-                      <span className="col-cajas">{a.cajas.map(c => c.texto).join(', ')}</span>
-                    </div>
-                  </td>
-                </tr>
-              );
-            }
+            const desplegable = a.total !== 1;
+            const contenido = (
+              <>
+                <span className="col-articulo">
+                  <span className="flecha" aria-hidden="true">{desplegable ? (abierto ? '▾' : '▸') : ''}</span>
+                  <span className="nombre-y-extra">
+                    <span className="nombre-tabla">{a.nombre}</span>
+                    <span className="extra-movil">
+                      {a.etiquetas.length > 0 && <span className="etiquetas-tabla">{a.etiquetas.join(' · ')}</span>}
+                      {a.rotos > 0 && <span className="estado-roto">{textoRotos(a.rotos)}</span>}
+                    </span>
+                  </span>
+                </span>
+                <span className="col-etiquetas">{a.etiquetas.join(' · ')}</span>
+                <span className={a.rotos > 0 ? 'col-estado estado-roto' : 'col-estado'}>
+                  {a.rotos > 0 ? textoRotos(a.rotos) : 'Bueno'}
+                </span>
+                <span className="col-total">{a.total}</span>
+                <span className="col-cajas">{a.cajas.map(c => c.texto).join(', ')}</span>
+              </>
+            );
             return (
               <Fragment key={a.id}>
                 <tr className={abierto ? 'fila-abierta' : undefined}>
-                  <td colSpan={3} className="celda-boton">
-                    <button
-                      type="button"
-                      className="boton-fila"
-                      aria-expanded={abierto}
-                      onClick={() => alternar(a.id)}
-                    >
-                      <span className="col-articulo">
-                        <span className="flecha" aria-hidden="true">{abierto ? '▾' : '▸'}</span>
-                        {a.nombre}
-                      </span>
-                      <span className="col-total">{a.total}</span>
-                      <span className="col-cajas">{a.cajas.map(c => c.texto).join(', ')}</span>
-                    </button>
+                  <td>
+                    {desplegable ? (
+                      <button
+                        type="button"
+                        className="rejilla boton-fila"
+                        aria-expanded={abierto}
+                        onClick={() => alternar(a.id)}
+                      >
+                        {contenido}
+                      </button>
+                    ) : (
+                      <div className="rejilla boton-fila fila-fija">{contenido}</div>
+                    )}
                   </td>
                 </tr>
-                {abierto && (
+                {desplegable && abierto && (
                   <tr className="detalle">
-                    <td colSpan={3}>
+                    <td>
                       <ul className="detalle-cajas">
                         {a.cajas.map(c => (
                           <li key={c.fila}>
                             <Link href={`/sitio/${c.id}`} className="fila fila-enlace">
                               <span className="fila-texto">
                                 <span className="codigo">{c.texto}</span>
-                                {c.estado === 'roto' && <span className="estado estado-roto">Roto</span>}
+                                <span className={c.estado === 'roto' ? 'estado estado-roto' : 'estado'}>
+                                  {c.estado === 'roto' ? 'Roto' : 'Bueno'}
+                                </span>
                               </span>
                               <span className="fila-dato">{c.cantidad}</span>
                             </Link>
