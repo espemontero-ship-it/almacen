@@ -2,6 +2,11 @@
 
 Este documento es la fuente de verdad del proyecto: qué es, qué se ha decidido y por qué, y qué queda pendiente. Cada decisión nueva de producto, alcance o diseño se apunta aquí con fecha, en el Registro de decisiones del final.
 
+## Regla de trabajo
+
+- **Antes de subir nada** (commit, push o publicar en Vercel) se le pregunta. Subir a GitHub publica solo en la app.
+- **No se comprueba todo** en cada cambio pequeño: basta con compilar y echar un vistazo. Lo que no se haya comprobado se dice.
+
 ## Qué es y para quién
 
 App para el almacén de la asociación. Hay más de 150 cajas y miles de items.
@@ -175,3 +180,5 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Fase 1 publicada en Vercel con la hoja cargada en Neon. Cuenta de administración para Espe, que elige su contraseña con un enlace de invitación.
 - Su contraseña no funcionaba al entrar, y pidió quitar la contraseña de momento. La app queda abierta a quien tenga el enlace.
 - Echaba de menos ver la lista de todo y filtrarla. En el inicio, debajo del buscador, va una tabla por artículo (Artículo · Total · Cajas), de la A a la Z, con filtros de tipo de caja, etiqueta y estado. Al tocar una fila se despliega cuántos hay en cada caja. Rechazado: una tabla caja por caja, porque busca objetos, no cajas.
+- Regla: preguntar antes de subir cualquier cosa, y no comprobarlo todo en cada cambio pequeño.
+- Tabla del inicio: etiquetas y estado. En el móvil van debajo del nombre; en pantallas anchas, como columnas propias (Artículo · Etiquetas · Estado · Total · Cajas). Los artículos de una sola unidad no tienen desplegable.
