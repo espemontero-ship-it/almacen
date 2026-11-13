@@ -95,6 +95,22 @@ export default function TablaTodo({ filas }) {
         <tbody>
           {articulos.map(a => {
             const abierto = abiertos.has(a.id);
+            if (a.total === 1) {
+              return (
+                <tr key={a.id}>
+                  <td colSpan={3}>
+                    <div className="boton-fila fila-fija">
+                      <span className="col-articulo">
+                        <span className="flecha" aria-hidden="true" />
+                        {a.nombre}
+                      </span>
+                      <span className="col-total">{a.total}</span>
+                      <span className="col-cajas">{a.cajas.map(c => c.texto).join(', ')}</span>
+                    </div>
+                  </td>
+                </tr>
+              );
+            }
             return (
               <Fragment key={a.id}>
                 <tr className={abierto ? 'fila-abierta' : undefined}>

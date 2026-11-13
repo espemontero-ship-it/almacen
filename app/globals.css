@@ -425,3 +425,7 @@ select:focus {
 .detalle-cajas li + li {
   border-top: 1px solid var(--linea);
 }
+
+.fila-fija {
+  cursor: default;
+}
