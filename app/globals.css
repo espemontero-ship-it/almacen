@@ -674,3 +674,15 @@ th .col-total {
 .revision-siguiente {
   width: 100%;
 }
+
+.detalle-tallas {
+  margin: 0;
+  padding: 4px 0 8px 1.3em;
+  font-weight: 600;
+}
+
+.detalle-tallas-ficha {
+  width: 100%;
+  font-weight: 600;
+  font-size: 16px;
+}

@@ -3,6 +3,7 @@
 import { Fragment, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { textos } from '../../lib/textos';
+import { ordenarTallas } from '../../lib/tallas.cjs';
 
 const ORDEN_TIPOS = ['P', 'C', 'O', 'M', 'L', 'D', 'A', 'U', 'R', 'otros'];
 
@@ -26,14 +27,20 @@ export default function TablaTodo({ filas, idioma }) {
       if (estado && f.estado !== estado) continue;
       let a = porId.get(f.articulo_id);
       if (!a) {
-        a = { id: f.articulo_id, nombre: f.nombre, etiquetas: f.etiquetas, total: 0, rotos: 0, cajas: [] };
+        a = { id: f.articulo_id, nombre: f.nombre, etiquetas: f.etiquetas, total: 0, rotos: 0, cajas: [], porTalla: {} };
         porId.set(f.articulo_id, a);
       }
       a.total += f.cantidad;
       if (f.estado === 'roto') a.rotos += f.cantidad;
-      a.cajas.push({ fila: f.id, id: f.sitio_id, texto: f.codigo || f.sitio_nombre, cantidad: f.cantidad, estado: f.estado });
+      a.cajas.push({ fila: f.id, id: f.sitio_id, texto: f.codigo || f.sitio_nombre, cantidad: f.cantidad, estado: f.estado, talla: f.talla });
+      if (f.talla) a.porTalla[f.talla] = (a.porTalla[f.talla] || 0) + f.cantidad;
     }
-    return [...porId.values()].sort((x, y) => x.nombre.localeCompare(y.nombre, 'es', { sensitivity: 'base', ignorePunctuation: true }));
+    return [...porId.values()].map(a => {
+      const tallas = ordenarTallas(Object.keys(a.porTalla));
+      const orden = new Map(tallas.map((x, i) => [x, i]));
+      const cajas = [...a.cajas].sort((x, y) => (orden.get(x.talla) ?? -1) - (orden.get(y.talla) ?? -1));
+      return { ...a, tallas, cajas, textoCajas: [...new Set(a.cajas.map(c => c.texto))].join(', ') };
+    }).sort((x, y) => x.nombre.localeCompare(y.nombre, 'es', { sensitivity: 'base', ignorePunctuation: true }));
   }, [filas, tipo, etiqueta, estado]);
 
   function alternar(id) {
@@ -93,7 +100,7 @@ export default function TablaTodo({ filas, idioma }) {
         <tbody>
           {articulos.map(a => {
             const abierto = abiertos.has(a.id);
-            const desplegable = a.cajas.length > 1;
+            const desplegable = a.cajas.length > 1 || a.tallas.length > 1;
             const contenido = (
               <>
                 <span className="col-articulo">
@@ -113,7 +120,7 @@ export default function TablaTodo({ filas, idioma }) {
                   {a.rotos > 0 ? t.rotos(a.rotos) : t.bueno}
                 </span>
                 <span className="col-total">{a.total}</span>
-                <span className="col-cajas">{a.cajas.map(c => c.texto).join(', ')}</span>
+                <span className="col-cajas">{a.textoCajas}</span>
               </>
             );
             return (
@@ -137,12 +144,16 @@ export default function TablaTodo({ filas, idioma }) {
                 {desplegable && abierto && (
                   <tr className="detalle">
                     <td>
+                      {a.tallas.length > 0 && (
+                        <p className="detalle-tallas">{a.tallas.map(x => `${x} ${a.porTalla[x]}`).join(' · ')}</p>
+                      )}
                       <ul className="detalle-cajas">
                         {a.cajas.map(c => (
                           <li key={c.fila}>
                             <Link href={`/sitio/${c.id}`} className="fila fila-enlace">
                               <span className="fila-texto">
                                 <span className="codigo">{c.texto}</span>
+                                {c.talla && <span className="estado">{t.talla} {c.talla}</span>}
                                 <span className={c.estado === 'roto' ? 'estado estado-roto' : 'estado'}>
                                   {c.estado === 'roto' ? t.roto : t.bueno}
                                 </span>

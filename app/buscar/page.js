@@ -15,7 +15,7 @@ export default async function Buscar({ searchParams }) {
   if (sitioId) redirect(`/sitio/${sitioId}`);
   const idioma = await idiomaActual();
   const t = textos(idioma);
-  const { articulos, aproximado } = await buscar(texto);
+  const { articulos, aproximado } = await buscar(texto, idioma);
   return (
     <>
       <Cabecera busqueda={texto} volver idioma={idioma} />

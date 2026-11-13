@@ -12,10 +12,10 @@ export const dynamic = 'force-dynamic';
 export default async function Sitio({ params }) {
   const { id } = await params;
   if (!/^\d+$/.test(id)) notFound();
-  const sitio = await obtenerSitio(Number(id));
+  const idioma = await idiomaActual();
+  const sitio = await obtenerSitio(Number(id), idioma);
   if (!sitio) notFound();
   const lineas = sitio.contenido.length;
-  const idioma = await idiomaActual();
   const t = textos(idioma);
   return (
     <>
@@ -33,6 +33,7 @@ export default async function Sitio({ params }) {
               <Foto url={c.foto_url} nombre={c.nombre} />
               <span className="fila-texto">
                 <span className="nombre-articulo">{c.nombre}</span>
+                {c.talla && <span className="estado">{t.talla} {c.talla}</span>}
                 <span className={c.estado === 'roto' ? 'estado estado-roto' : 'estado'}>
                   {c.estado === 'roto' ? t.roto : t.bueno}
                 </span>

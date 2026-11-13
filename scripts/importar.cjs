@@ -4,6 +4,7 @@ const ExcelJS = require('exceljs');
 const { getPool } = require('../lib/db.cjs');
 const { normalizar, leerContenedor } = require('../lib/normalizar.cjs');
 const { aplicarNombresIA } = require('../lib/nombresIA.cjs');
+const { unificarTallas } = require('../lib/unificarTallas.cjs');
 
 function texto(valor) {
   if (valor == null) return '';
@@ -97,6 +98,7 @@ async function importar(archivo) {
       );
     }
 
+    await unificarTallas(cliente);
     await aplicarNombresIA(cliente);
     await cliente.query('COMMIT');
     const unidades = filas.reduce((suma, f) => suma + f.cantidad, 0);

@@ -9,9 +9,9 @@ export const dynamic = 'force-dynamic';
 export default async function Articulo({ params }) {
   const { id } = await params;
   if (!/^\d+$/.test(id)) notFound();
-  const articulo = await obtenerArticulo(Number(id));
-  if (!articulo) notFound();
   const idioma = await idiomaActual();
+  const articulo = await obtenerArticulo(Number(id), idioma);
+  if (!articulo) notFound();
   return (
     <>
       <Cabecera volver idioma={idioma} />

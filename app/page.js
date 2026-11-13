@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function Inicio() {
   const idioma = await idiomaActual();
-  const filas = await listarTodo();
+  const filas = await listarTodo(idioma);
   return (
     <>
       <Cabecera idioma={idioma} />
