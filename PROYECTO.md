@@ -136,6 +136,13 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - **Borrar** siempre pide confirmación con una ventana propia de la app.
 - **Una sola forma de cada cosa**: un único tamaño de botón y siempre los mismos espacios de separación.
 
+## Qué falta (para recordárselo cuando pregunte)
+
+- **Otros nombres de cada artículo, generados con IA**: Claude genera solo, sin que nadie escriba nada, nombres alternativos en español y en inglés para cada artículo ("cushion" → cojín, almohadón, pillow), y el buscador los usa. Coste estimado: 1 a 2 € en total por todos los artículos, una sola vez, y menos de un céntimo por cada artículo nuevo. Se cobra en la cuenta de Anthropic que ya usa punteo-trimestral (comprobar antes que sigue activa). Se hará más adelante, sobre los datos definitivos.
+- **Ver todos los artículos**: hace falta en algunos momentos, para acciones futuras. Una lista de 844 artículos no sirve en el móvil; hay que pensar la forma cuando toque.
+- **Fotos**: aparcadas. Existen, pero no vienen en la exportación. La cuenta de Cloudflare R2 se crea cuando se retomen.
+- **Entrada con usuario y contraseña**: se decide más adelante. Mientras no haya entrada, cualquiera con el enlace podría ver el inventario.
+
 ## Pendiente de decidir
 
 - **Cómo se ven las unidades rotas**: dos líneas ("8 bueno" y "2 roto") o una ("8 buenas · 2 rotas"). Se decide viendo las pantallas, no antes.
@@ -160,3 +167,6 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Carga de prueba sin unir ningún artículo: es un entorno de pruebas. Códigos de caja en mayúscula, descripción a comentarios, todo empieza como "bueno" y las 4 líneas sin cantidad pasan con 1.
 - Las fotos se aparcan de momento. Se está reorganizando el almacén, así que hasta que esté acabado todo es entorno de prueba: los datos actuales no son definitivos.
 - U son uniformes y R rental; se unificarán más adelante, ahora se cargan tal cual. "Area N" y AN son la misma zona. Separar caja, zona, cajón y otros sitios queda para más adelante.
+- Pantallas de la Fase 1, tras preguntarle cómo se usa (buscar, guardar lo que vuelve, revisar una caja, hacer inventario; lo usan todos): el inicio es solo el buscador. El buscador entiende un artículo, una etiqueta o el código de una caja, que abre la caja. Cada resultado muestra foto, nombre, etiquetas, total y rotos, y debajo cada sitio con cantidad, estado y comentarios. La caja muestra código, nombre, artículos y unidades, y de cada cosa foto, nombre, cantidad, estado, comentarios y etiquetas. Se rechazó un resumen por tipos en el inicio. Ella avisa de que se acabará cambiando.
+- Guardar lo que vuelve y hacer inventario necesitan editar: van en la Fase 2.
+- Cada cosa se llama de mil maneras, así que buscar solo por el nombre no basta. Se rechaza que la gente añada sinónimos a mano. Los otros nombres se generarán con IA más adelante (1 a 2 € en total).
