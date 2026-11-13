@@ -1,0 +1,136 @@
+# Almacén — hoja de proyecto
+
+Este documento es la fuente de verdad del proyecto: qué es, qué se ha decidido y por qué, y qué queda pendiente. Cada decisión nueva de producto, alcance o diseño se apunta aquí con fecha, en el Registro de decisiones del final.
+
+## Qué es y para quién
+
+App para el almacén de la asociación. Hay más de 150 cajas y miles de items.
+
+La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén**, donde hay señal.
+
+## Lo que hace
+
+- **Cajas** nombradas con letra + número (P01, C12…). La letra dice qué tipo de cosas contiene:
+  - **P** props
+  - **C** cocina
+  - **O** oficina
+  - **M** matress
+  - **L** lighting
+- **Ver una caja**: cada item con su cantidad, foto, estado (bueno / roto) y comentarios.
+- **Buscar un item**: el total que hay sumando todas las cajas y, debajo, en qué cajas está y cuántos hay en cada una.
+- **Crear y editar** desde la app: cajas, items, cantidades, estado, comentarios y fotos hechas con el móvil. Se empieza solo con ver.
+- **Permisos por persona**: administración (gestiona usuarios), edición (crea y edita) y solo consulta.
+- **Historial de cambios**: quién cambió qué y cuándo.
+- **Papelera**: lo borrado se puede recuperar durante un tiempo.
+
+## Cómo se organizan los datos
+
+- **Tipos**: P, C, O, M, L.
+- **Cajas**: un código cada una (P01…). El tipo sale de la letra.
+- **Catálogo de artículos**: cada artículo existe una sola vez, con **una foto por artículo**, que se ve en todas las cajas donde está.
+- **Contenido**: qué artículo hay en qué caja, con cantidad, estado y comentarios.
+
+El catálogo existe para que los totales salgan bien. Si cada caja tuviera su propio texto libre, "Silla plegable" y "sillas plegables" contarían como dos cosas distintas.
+
+La búsqueda no distingue mayúsculas, tildes ni plurales, y tolera alguna errata.
+
+## Dónde vive (y por qué)
+
+| Pieza | Dónde | Coste |
+|---|---|---|
+| App | Vercel, en la misma cuenta que punteo-trimestral y loose-ends | 0 € |
+| Base de datos | Neon (PostgreSQL), proyecto nuevo y propio | 0 € |
+| Fotos | Cloudflare R2 | 0 € dentro del plan gratis |
+| Código | Repositorio privado en GitHub | 0 € |
+
+Alternativas descartadas, con su motivo:
+
+- **Hoja de cálculo como base de datos**: no sirve para varias personas editando a la vez con miles de items.
+- **Supabase**: su plan gratuito ya está al límite de 2 proyectos con otras apps.
+- **Cualquier opción con cuota mensual**: la asociación no asume ese coste.
+- **Vercel Blob para las fotos**: su plan gratis se comparte entre todos los proyectos de la cuenta. Tiene 1 GB, 2.000 subidas al mes y 10.000 lecturas sin caché. La carga inicial de miles de fotos lo superaría, y Vercel bloquearía Blob 30 días **para todos los proyectos**, punteo-trimestral incluido.
+
+**Sobre R2**, aceptado sabiéndolo:
+- Pide tarjeta para activarse.
+- **No tiene tope de gasto**: lo que pase del plan gratis se cobra.
+- Plan gratis: 10 GB, 1.000.000 de subidas y 10.000.000 de lecturas al mes, sin coste por descargas.
+- Con 6.000 fotos de unos 150 KB, el almacén usaría menos del 10 %.
+- La app limita el tamaño de cada foto.
+
+**Sobre Neon**: el plan gratis da 1 GB por proyecto, y miles de items en texto ocupan unos pocos MB.
+
+## Carga de la hoja de cálculo actual
+
+1. Se lee la hoja sin modificarla.
+2. Informe con:
+   - cuántas cajas y artículos hay;
+   - filas con errores;
+   - nombres que parecen el mismo artículo escrito de formas distintas.
+3. Ella decide qué se une y qué no. No se unifica nada por cuenta propia.
+4. Carga en el entorno de prueba y revisión en el móvil.
+5. Carga en el entorno real.
+
+## Fases
+
+Cada fase se sube a prueba con dos listas: lo que se va a ver y dónde, y lo que se ha tocado y no se ve. Ella lo mira en su móvil, y solo con su sí pasa al entorno real.
+
+- **Fase 0, preparación**:
+  - carpeta y repositorio;
+  - este documento;
+  - informe de la hoja;
+  - cuenta de R2.
+- **Fase 1, consultar**:
+  - entrada con usuario y contraseña;
+  - inicio con buscador y cajas por tipo;
+  - pantalla de caja;
+  - búsqueda con total y desglose por caja;
+  - datos reales importados.
+- **Fase 2, editar**:
+  - crear cajas;
+  - añadir y editar items, buscando primero en el catálogo para no duplicar;
+  - fotos con la cámara;
+  - quitar, con confirmación;
+  - permisos, historial y papelera.
+- **Fase 3, puesta en marcha**:
+  - alta de voluntarios;
+  - copia de seguridad con una restauración probada;
+  - guía de una página para voluntarios.
+
+## Guía de diseño
+
+Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada para tablas en la pantalla de un ordenador.
+
+**Para quién y dónde:** voluntarios de pie en el almacén, con el móvil en una mano y a veces una caja en la otra.
+
+- **Fondo blanco.** Sin tema oscuro.
+- **Letra**: la propia de cada móvil.
+- **Letra grande**, que se lea a un brazo de distancia.
+- **Contraste alto**: nada de grises claros para información importante.
+- **Todo lo que se toca** tiene como mínimo el tamaño de la yema de un dedo.
+- **Lo que se puede tocar se ve siempre como tal.** No hay nada que aparezca "al pasar el ratón".
+- **Lo que más se usa** queda al alcance del pulgar, en la mitad de abajo de la pantalla.
+- **El buscador** está siempre arriba y visible, en todas las pantallas.
+- **Listas**: una fila por artículo, sin recuadros ni tarjetas, separadas por una línea fina. En cada fila se ve la foto pequeña, el nombre y la cantidad. La foto se amplía al tocarla.
+- **Color**: un solo color de acento, índigo `#4e4f74` (de momento), y solo para lo principal. Nada más lleva color.
+- **"Roto"** se marca con texto en negrita, no con rojo.
+- **Borrar** siempre pide confirmación con una ventana propia de la app.
+- **Una sola forma de cada cosa**: un único tamaño de botón y siempre los mismos espacios de separación.
+
+## Pendiente de decidir
+
+- **Cómo se ven las unidades rotas**: dos líneas ("8 bueno" y "2 roto") o una ("8 buenas · 2 rotas"). Se decide viendo las pantallas, no antes.
+
+## Registro de decisiones
+
+**2026-11-13**
+- App de almacén nueva, en carpeta y repositorio propios.
+- Varias personas, en el móvil, dentro del almacén. Hay señal, así que no hace falta que funcione sin conexión.
+- Datos iniciales desde la hoja de cálculo actual.
+- Se empieza solo con ver; crear y editar llegan después.
+- Estado bueno / roto, más comentarios.
+- Descartadas la hoja de cálculo como base de datos y cualquier cuota mensual.
+- Misma infraestructura que punteo-trimestral (Vercel + Neon), con las fotos en Cloudflare R2 en vez de Vercel Blob, por los límites compartidos. R2 aceptado sabiendo que pide tarjeta y no tiene tope de gasto.
+- Una foto por artículo, no por caja.
+- Sí a permisos por persona, historial de cambios y papelera.
+- Guía de diseño nueva, para el móvil. Color de acento índigo, de momento. Letra propia de cada móvil.
+- La forma de mostrar las unidades rotas se decide viendo las pantallas.
