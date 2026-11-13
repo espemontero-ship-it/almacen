@@ -31,8 +31,8 @@ export default function FichaArticulo({ articulo: a, idioma }) {
               <span className="fila-texto">
                 <NombreSitio codigo={s.codigo} nombre={s.nombre} />
                 {s.talla && <span className="estado">{t.talla} {s.talla}</span>}
-                <span className={s.estado === 'roto' ? 'estado estado-roto' : 'estado'}>
-                  {s.estado === 'roto' ? t.roto : t.bueno}
+                <span className={s.rotos > 0 ? 'estado estado-roto' : 'estado'}>
+                  {s.rotos > 0 ? t.buenasRotas(s.cantidad - s.rotos, s.rotos) : t.bueno}
                 </span>
                 {s.comentarios && <span className="comentarios">{s.comentarios}</span>}
               </span>

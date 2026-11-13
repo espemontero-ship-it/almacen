@@ -32,7 +32,7 @@ export default function TallasArticulo({ tallas, sitios, idioma }) {
                 <span className="fila-texto">
                   <span className="codigo">{s.codigo || s.nombre}</span>
                   {s.codigo && s.nombre && <span className="nombre-sitio">{s.nombre}</span>}
-                  {s.estado === 'roto' && <span className="estado estado-roto">{t.roto}</span>}
+                  {s.rotos > 0 && <span className="estado estado-roto">{t.buenasRotas(s.cantidad - s.rotos, s.rotos)}</span>}
                   {s.comentarios && <span className="comentarios">{s.comentarios}</span>}
                 </span>
                 <span className="fila-dato">{s.cantidad}</span>

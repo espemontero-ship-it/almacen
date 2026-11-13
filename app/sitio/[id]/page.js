@@ -5,6 +5,9 @@ import NombreSitio from '../../components/NombreSitio';
 import Etiquetas from '../../components/Etiquetas';
 import { idiomaActual } from '../../../lib/idioma';
 import { textos } from '../../../lib/textos';
+import { sesionActual } from '../../../lib/sesionActual';
+import CajaEditable from './CajaEditable';
+const { listarEtiquetas } = require('../../../lib/edicion.cjs');
 const { obtenerSitio } = require('../../../lib/datos.cjs');
 
 export const dynamic = 'force-dynamic';
@@ -17,6 +20,9 @@ export default async function Sitio({ params }) {
   if (!sitio) notFound();
   const lineas = sitio.contenido.length;
   const t = textos(idioma);
+  const sesion = await sesionActual();
+  const puedeEditar = Boolean(sesion && ['admin', 'editor'].includes(sesion.rol));
+  const etiquetas = puedeEditar ? await listarEtiquetas(idioma) : [];
   return (
     <>
       <Cabecera volver idioma={idioma} />
@@ -27,6 +33,9 @@ export default async function Sitio({ params }) {
         <p className="resumen-sitio">
           {t.nArticulos(lineas)} · {t.nUnidades(sitio.unidades)}
         </p>
+        {puedeEditar ? (
+          <CajaEditable sitioId={sitio.id} contenido={sitio.contenido} etiquetas={etiquetas} idioma={idioma} />
+        ) : (
         <ul className="lista">
           {sitio.contenido.map(c => (
             <li key={c.id} className="fila fila-articulo">
@@ -34,8 +43,8 @@ export default async function Sitio({ params }) {
               <span className="fila-texto">
                 <span className="nombre-articulo">{c.nombre}</span>
                 {c.talla && <span className="estado">{t.talla} {c.talla}</span>}
-                <span className={c.estado === 'roto' ? 'estado estado-roto' : 'estado'}>
-                  {c.estado === 'roto' ? t.roto : t.bueno}
+                <span className={c.rotos > 0 ? 'estado estado-roto' : 'estado'}>
+                  {c.rotos > 0 ? t.buenasRotas(c.cantidad - c.rotos, c.rotos) : t.bueno}
                 </span>
                 <Etiquetas lista={c.etiquetas} />
                 {c.comentarios && <span className="comentarios">{c.comentarios}</span>}
@@ -44,6 +53,7 @@ export default async function Sitio({ params }) {
             </li>
           ))}
         </ul>
+        )}
       </main>
     </>
   );

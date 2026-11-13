@@ -758,3 +758,183 @@ th .col-total {
   font-size: 15px;
   color: var(--secundario);
 }
+
+.contador {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+}
+
+.contador-boton {
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--secundario);
+  background: var(--fondo);
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.contador-boton:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.contador-boton:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.contador-boton:disabled {
+  opacity: 0.35;
+}
+
+.contador-valor {
+  width: 56px;
+  min-height: 44px;
+  height: 44px;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  text-align: center;
+  font-weight: 700;
+  padding: 0 4px;
+  -moz-appearance: textfield;
+}
+
+.contador-valor::-webkit-outer-spin-button,
+.contador-valor::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.fila-editable {
+  border-bottom: 1px solid var(--linea);
+}
+
+.lista > .fila-editable:first-child {
+  border-top: 1px solid var(--linea);
+}
+
+.boton-nombre {
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}
+
+.fila-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 0 16px 68px;
+}
+
+.detalle-campo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.detalle-columna {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+textarea {
+  font: inherit;
+  font-size: 16px;
+  padding: 8px 12px;
+  border: 2px solid var(--secundario);
+  border-radius: 8px;
+  width: 100%;
+}
+
+.dialogo-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px;
+}
+
+.dialogo {
+  background: var(--fondo);
+  border-radius: 12px;
+  padding: 24px 16px 16px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.dialogo p {
+  margin: 0 0 16px;
+  font-weight: 600;
+}
+
+.pie-edicion {
+  padding: 24px 0 48px;
+}
+
+.boton-ancho {
+  width: 100%;
+}
+
+.anadir {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.anadir-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.boton-ancho-texto {
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.etiquetas-elegir {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.etiquetas-elegir legend {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.casilla {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--toque);
+  font-weight: 400 !important;
+}
+
+.casilla input {
+  width: 22px;
+  height: 22px;
+  min-height: 0;
+}
+
+.boton-crear-caja {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 16px;
+}

@@ -24,15 +24,16 @@ export default function TablaTodo({ filas, idioma }) {
     for (const f of filas) {
       if (tipo && (tipo === 'otros' ? f.letra : f.letra !== tipo)) continue;
       if (etiqueta && !f.etiquetas.includes(etiqueta)) continue;
-      if (estado && f.estado !== estado) continue;
+      if (estado === 'roto' && !(f.rotos > 0)) continue;
+      if (estado === 'bueno' && !(f.rotos < f.cantidad)) continue;
       let a = porId.get(f.articulo_id);
       if (!a) {
         a = { id: f.articulo_id, nombre: f.nombre, etiquetas: f.etiquetas, total: 0, rotos: 0, cajas: [], porTalla: {} };
         porId.set(f.articulo_id, a);
       }
       a.total += f.cantidad;
-      if (f.estado === 'roto') a.rotos += f.cantidad;
-      a.cajas.push({ fila: f.id, id: f.sitio_id, texto: f.codigo || f.sitio_nombre, cantidad: f.cantidad, estado: f.estado, talla: f.talla });
+      a.rotos += f.rotos;
+      a.cajas.push({ fila: f.id, id: f.sitio_id, texto: f.codigo || f.sitio_nombre, cantidad: f.cantidad, rotos: f.rotos, talla: f.talla });
       if (f.talla) a.porTalla[f.talla] = (a.porTalla[f.talla] || 0) + f.cantidad;
     }
     return [...porId.values()].map(a => {
@@ -154,8 +155,8 @@ export default function TablaTodo({ filas, idioma }) {
                               <span className="fila-texto">
                                 <span className="codigo">{c.texto}</span>
                                 {c.talla && <span className="estado">{t.talla} {c.talla}</span>}
-                                <span className={c.estado === 'roto' ? 'estado estado-roto' : 'estado'}>
-                                  {c.estado === 'roto' ? t.roto : t.bueno}
+                                <span className={c.rotos > 0 ? 'estado estado-roto' : 'estado'}>
+                                  {c.rotos > 0 ? t.buenasRotas(c.cantidad - c.rotos, c.rotos) : t.bueno}
                                 </span>
                               </span>
                               <span className="fila-dato">{c.cantidad}</span>

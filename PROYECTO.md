@@ -37,6 +37,8 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 - **Entrar**: cada persona con su usuario (o su correo) y contraseña. Arriba, "Entrar"; con sesión, "Personas" (solo administración) y "Salir". Ver y buscar sigue abierto sin entrar.
 - **Recuperar contraseña**: "¿Has olvidado tu contraseña?" → correo → enlace de 2 horas para elegir una nueva. Necesita el envío de correos configurado en Vercel (SMTP_USER, SMTP_APP_PASSWORD, EMAIL_FROM, como en punteo-trimestral).
 - **Personas** (solo administración): lista del equipo con su acceso; invitar (nombre, usuario, correo, acceso: administración, edición o solo consulta) da un enlace de 7 días y lo manda por correo; "Nueva contraseña" da un enlace para mandárselo a mano.
+- **Editar las cajas** (quien entra con acceso de edición o administración): al entrar en una caja, cada artículo tiene la cantidad con [−] [+] que se guarda al momento. Al tocar el nombre se abren: rotas con [−] [+] (se ve "8 buenas · 2 rotas"), comentarios con botón Guardar y "Quitar de la caja" con confirmación. Abajo, "Añadir artículo": busca en el catálogo con sugerencias (cantidad y talla si es ropa) o crea uno nuevo (nombre en español e inglés, etiquetas, si es ropa y su talla).
+- **Crear caja** (desde el inicio, quien edita): tipo de caja, número propuesto (el siguiente libre) y nombre opcional.
 - **Ropa con tallas**: cada prenda es un solo artículo, con la cantidad de cada talla. Al buscarla, las tallas salen como botones con su total (S 9 · M 19…); al tocar uno salen las cajas de esa talla. XXL = 2XL, XXXL = 3XL; W es mujer y M hombre.
 - **Crear y editar** desde la app: cajas, items, cantidades, estado, comentarios y fotos hechas con el móvil. Se empieza solo con ver.
 - **Permisos por persona**: administración (gestiona usuarios), edición (crea y edita) y solo consulta.
@@ -49,7 +51,7 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 - **Cajas y sitios**: un código cada una (P01…), con nombre opcional. El tipo sale de la letra. Los sitios que no son cajas se identifican por su nombre.
 - **Etiquetas**: varias por artículo.
 - **Catálogo de artículos**: cada artículo existe una sola vez, con **una foto por artículo**, que se ve en todas las cajas donde está.
-- **Contenido**: qué artículo hay en qué caja, con cantidad, estado, comentarios y talla (solo en ropa).
+- **Contenido**: qué artículo hay en qué caja, con cantidad, cuántas están rotas, comentarios y talla (solo en ropa). Lo quitado queda marcado como borrado, no se elimina (para la papelera).
 - **Tallas posibles de cada prenda**: guardadas para elegirlas de una lista al añadir ropa (letras S–6XL; números y W/M + número, los que existen en la hoja).
 - **Nombres en español e inglés** de cada artículo y etiqueta, guardados aparte unidos al nombre original de la hoja. Al recargar la hoja no se pierden ni hay que volver a hacerlos.
 
@@ -155,8 +157,8 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 
 ## Qué falta (para recordárselo cuando pregunte)
 
-- **Fase 2, editar**: cambiar cantidades, estado y comentarios; añadir artículos (con la talla elegida de una lista); crear cajas; permisos, historial y papelera. Hace falta para guardar lo que vuelve y hacer inventario.
-- **Entrada con usuario y contraseña**: quitada el 2026-11-13, porque su contraseña no funcionaba. Ahora cualquiera con el enlace ve el inventario. Se decide más adelante cómo se entra. El código de usuarios e invitaciones sigue en el proyecto, sin usarse.
+- **Fase 2**: quedan 2c fotos (Cloudflare R2) y 2d historial y papelera. Guardar lo que vuelve, pickup lists y permisos finos van en desarrollos posteriores.
+- **Envío de correos (recuperar contraseña)**: aparcado. En Vercel están SMTP_USER y SMTP_APP_PASSWORD, pero Gmail los rechaza ("Username and Password not accepted"). Revisar que la contraseña de aplicación sea de esa misma cuenta y vaya sin espacios. Mientras tanto, "Nueva contraseña" en Personas sirve. Además, cuando el envío falla, la pantalla dice "No hay conexión": corregirlo para que diga que no se pudo enviar.
 - **Fotos**: aparcadas. Existen, pero no vienen en la exportación. La cuenta de Cloudflare R2 se crea cuando se retomen.
 - **Datos definitivos**: cargarlos cuando termine la reorganización del almacén. La carga une la ropa por tallas y reutiliza los nombres ya revisados.
 - **9 artículos sin traducir**: no se sabe qué son; tienen el nombre original en los dos idiomas.
@@ -204,3 +206,6 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Regla: cada vez que se sube algo, se apunta en este documento en ese momento.
 - Fase 2 planificada: 2a usuarios (con recuperar contraseña), 2b editar las cajas al entrar en ellas (cantidad, rotas como "8 buenas · 2 rotas", comentarios, quitar, añadir, icono de cámara para la foto, crear caja), 2c fotos con R2, 2d historial y papelera. Fuera: guardar lo que vuelve, pickup lists y permisos finos.
 - Subido 2a: entrar, recuperar contraseña por correo y pantalla Personas. Su contraseña nunca llegó a guardarse: el enlace de invitación no se usó.
+- Fotos: se queda Cloudflare R2 aunque con ~744 artículos cabría en Vercel Blob, para no compartir límites con punteo-trimestral (decisión suya).
+- Subido 2b: editar las cajas al entrar en ellas (cantidad, rotas, comentarios, quitar, añadir o crear artículo) y crear caja. Las rotas pasan a ser un número por línea en vez de un estado.
+- Pendiente: el envío de correos de recuperación falla (Gmail rechaza las credenciales); aparcado.
