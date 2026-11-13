@@ -34,6 +34,9 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 - **Sugerencias al escribir**: desde la segunda letra salen debajo del buscador todos los artículos, etiquetas y cajas que coinciden. Al tocar una sugerencia se va directo a ella.
 - **Inicio**: el buscador y debajo la tabla de todos los artículos (Artículo · Total · Cajas), con filtros de tipo de caja, etiqueta y estado. Al tocar una fila se despliega por caja (y por talla en la ropa). En pantallas anchas, también las columnas Etiquetas y Estado.
 - **Dos idiomas**: botón ES / EN arriba; cada móvil recuerda el suyo. Cambian las pantallas, los nombres de los artículos y las etiquetas. El buscador encuentra en los dos idiomas a la vez.
+- **Entrar**: cada persona con su usuario (o su correo) y contraseña. Arriba, "Entrar"; con sesión, "Personas" (solo administración) y "Salir". Ver y buscar sigue abierto sin entrar.
+- **Recuperar contraseña**: "¿Has olvidado tu contraseña?" → correo → enlace de 2 horas para elegir una nueva. Necesita el envío de correos configurado en Vercel (SMTP_USER, SMTP_APP_PASSWORD, EMAIL_FROM, como en punteo-trimestral).
+- **Personas** (solo administración): lista del equipo con su acceso; invitar (nombre, usuario, correo, acceso: administración, edición o solo consulta) da un enlace de 7 días y lo manda por correo; "Nueva contraseña" da un enlace para mandárselo a mano.
 - **Ropa con tallas**: cada prenda es un solo artículo, con la cantidad de cada talla. Al buscarla, las tallas salen como botones con su total (S 9 · M 19…); al tocar uno salen las cajas de esa talla. XXL = 2XL, XXXL = 3XL; W es mujer y M hombre.
 - **Crear y editar** desde la app: cajas, items, cantidades, estado, comentarios y fotos hechas con el móvil. Se empieza solo con ver.
 - **Permisos por persona**: administración (gestiona usuarios), edición (crea y edita) y solo consulta.
@@ -199,3 +202,5 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - En el buscador, las tallas de cada prenda salen como botones con su total; al tocar uno se ven las cajas de esa talla. Rechazado: una línea por caja y talla, y una línea por talla desplegable ("un follón").
 - La tabla del inicio solo tiene desplegable si el artículo está en más de una caja o tiene varias tallas.
 - Regla: cada vez que se sube algo, se apunta en este documento en ese momento.
+- Fase 2 planificada: 2a usuarios (con recuperar contraseña), 2b editar las cajas al entrar en ellas (cantidad, rotas como "8 buenas · 2 rotas", comentarios, quitar, añadir, icono de cámara para la foto, crear caja), 2c fotos con R2, 2d historial y papelera. Fuera: guardar lo que vuelve, pickup lists y permisos finos.
+- Subido 2a: entrar, recuperar contraseña por correo y pantalla Personas. Su contraseña nunca llegó a guardarse: el enlace de invitación no se usó.

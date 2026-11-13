@@ -738,3 +738,23 @@ th .col-total {
 .tallas-bloque .talla-cajas {
   padding: 8px 0 0;
 }
+
+.cabecera-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.persona .fila {
+  align-items: flex-start;
+}
+
+.enlace-generado {
+  padding: 8px 0 16px;
+}
+
+.enlace-texto {
+  overflow-wrap: anywhere;
+  font-size: 15px;
+  color: var(--secundario);
+}
