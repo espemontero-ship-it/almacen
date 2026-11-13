@@ -2,25 +2,12 @@
 
 import { Fragment, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { textos } from '../../lib/textos';
 
-const TIPOS = [
-  ['P', 'P · Props'],
-  ['C', 'C · Cocina'],
-  ['O', 'O · Oficina'],
-  ['M', 'M · Matress'],
-  ['L', 'L · Lighting'],
-  ['D', 'D · Drawer'],
-  ['A', 'A · Zonas'],
-  ['U', 'U · Uniformes'],
-  ['R', 'R · Rental'],
-  ['otros', 'Otros sitios'],
-];
+const ORDEN_TIPOS = ['P', 'C', 'O', 'M', 'L', 'D', 'A', 'U', 'R', 'otros'];
 
-function textoRotos(n) {
-  return n === 1 ? '1 roto' : `${n} rotos`;
-}
-
-export default function TablaTodo({ filas }) {
+export default function TablaTodo({ filas, idioma }) {
+  const t = textos(idioma);
   const [tipo, setTipo] = useState('');
   const [etiqueta, setEtiqueta] = useState('');
   const [estado, setEstado] = useState('');
@@ -62,43 +49,43 @@ export default function TablaTodo({ filas }) {
     <section className="todo">
       <div className="filtros">
         <label>
-          Tipo de caja
+          {t.tipoCaja}
           <select value={tipo} onChange={e => setTipo(e.target.value)}>
-            <option value="">Todos</option>
-            {TIPOS.map(([valor, texto]) => (
-              <option key={valor} value={valor}>{texto}</option>
+            <option value="">{t.todos}</option>
+            {ORDEN_TIPOS.map(valor => (
+              <option key={valor} value={valor}>{t.tipos[valor]}</option>
             ))}
           </select>
         </label>
         <label>
-          Etiqueta
+          {t.etiqueta}
           <select value={etiqueta} onChange={e => setEtiqueta(e.target.value)}>
-            <option value="">Todas</option>
+            <option value="">{t.todas}</option>
             {etiquetas.map(e => (
               <option key={e} value={e}>{e}</option>
             ))}
           </select>
         </label>
         <label>
-          Estado
+          {t.estado}
           <select value={estado} onChange={e => setEstado(e.target.value)}>
-            <option value="">Todos</option>
-            <option value="bueno">Bueno</option>
-            <option value="roto">Roto</option>
+            <option value="">{t.todos}</option>
+            <option value="bueno">{t.bueno}</option>
+            <option value="roto">{t.roto}</option>
           </select>
         </label>
       </div>
-      <p className="aviso">{articulos.length} {articulos.length === 1 ? 'artículo' : 'artículos'}</p>
+      <p className="aviso">{t.nArticulos(articulos.length)}</p>
       <table className="tabla">
         <thead>
           <tr>
             <th>
               <div className="rejilla">
-                <span className="col-articulo">Artículo</span>
-                <span className="col-etiquetas">Etiquetas</span>
-                <span className="col-estado">Estado</span>
-                <span className="col-total">Total</span>
-                <span className="col-cajas">Cajas</span>
+                <span className="col-articulo">{t.articulo}</span>
+                <span className="col-etiquetas">{t.etiquetas}</span>
+                <span className="col-estado">{t.estado}</span>
+                <span className="col-total">{t.total}</span>
+                <span className="col-cajas">{t.cajas}</span>
               </div>
             </th>
           </tr>
@@ -116,14 +103,14 @@ export default function TablaTodo({ filas }) {
                     <span className="extra-movil">
                       <span className="etiquetas-tabla">
                         {a.etiquetas.length > 0 && `${a.etiquetas.join(' · ')} · `}
-                        {a.rotos > 0 ? <span className="estado-roto">{textoRotos(a.rotos)}</span> : 'Bueno'}
+                        {a.rotos > 0 ? <span className="estado-roto">{t.rotos(a.rotos)}</span> : t.bueno}
                       </span>
                     </span>
                   </span>
                 </span>
                 <span className="col-etiquetas">{a.etiquetas.join(' · ')}</span>
                 <span className={a.rotos > 0 ? 'col-estado estado-roto' : 'col-estado'}>
-                  {a.rotos > 0 ? textoRotos(a.rotos) : 'Bueno'}
+                  {a.rotos > 0 ? t.rotos(a.rotos) : t.bueno}
                 </span>
                 <span className="col-total">{a.total}</span>
                 <span className="col-cajas">{a.cajas.map(c => c.texto).join(', ')}</span>
@@ -157,7 +144,7 @@ export default function TablaTodo({ filas }) {
                               <span className="fila-texto">
                                 <span className="codigo">{c.texto}</span>
                                 <span className={c.estado === 'roto' ? 'estado estado-roto' : 'estado'}>
-                                  {c.estado === 'roto' ? 'Roto' : 'Bueno'}
+                                  {c.estado === 'roto' ? t.roto : t.bueno}
                                 </span>
                               </span>
                               <span className="fila-dato">{c.cantidad}</span>

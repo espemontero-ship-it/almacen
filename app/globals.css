@@ -543,3 +543,29 @@ th .col-total {
   padding: 12px;
   color: var(--secundario);
 }
+
+.idiomas {
+  display: flex;
+  border: 2px solid var(--secundario);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.idioma {
+  min-width: var(--toque);
+  min-height: 40px;
+  padding: 0 8px;
+  border: none;
+  background: var(--fondo);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.idioma + .idioma {
+  border-left: 2px solid var(--secundario);
+}
+
+.idioma-activo {
+  background: var(--texto);
+  color: var(--fondo);
+}

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { textos } from '../../lib/textos';
 
 function enlace(s) {
   if (s.tipo === 'caja') return `/sitio/${s.id}`;
@@ -9,7 +10,8 @@ function enlace(s) {
   return `/articulo/${s.id}`;
 }
 
-export default function Buscador({ busqueda = '' }) {
+export default function Buscador({ busqueda = '', idioma }) {
+  const t = textos(idioma);
   const [texto, setTexto] = useState(busqueda);
   const [resultado, setResultado] = useState(null);
   const [abierto, setAbierto] = useState(false);
@@ -56,20 +58,20 @@ export default function Buscador({ busqueda = '' }) {
             setAbierto(true);
           }}
           onFocus={() => setAbierto(true)}
-          placeholder="Artículo, etiqueta o caja"
-          aria-label="Buscar un artículo, una etiqueta o una caja"
+          placeholder={t.buscarPista}
+          aria-label={t.buscarAria}
           autoComplete="off"
           enterKeyHint="search"
         />
-        <button type="submit" className="boton-principal">Buscar</button>
+        <button type="submit" className="boton-principal">{t.buscar}</button>
       </form>
       {mostrar && (
         <div className="sugerencias">
           {resultado.lista.length === 0 && (
-            <p className="sugerencia-vacia">No hay nada que se parezca a «{resultado.texto}».</p>
+            <p className="sugerencia-vacia">{t.nadaParecido(resultado.texto)}</p>
           )}
           {resultado.aproximado && resultado.lista.length > 0 && (
-            <p className="sugerencia-vacia">Nada exacto. Lo más parecido:</p>
+            <p className="sugerencia-vacia">{t.nadaExactoCorto}</p>
           )}
           {resultado.lista.length > 0 && (
             <ul>
@@ -78,7 +80,7 @@ export default function Buscador({ busqueda = '' }) {
                   <Link href={enlace(s)} className="sugerencia" onClick={() => setAbierto(false)}>
                     {s.tipo === 'caja' && (
                       <>
-                        <span className="sugerencia-tipo">Caja</span>
+                        <span className="sugerencia-tipo">{t.caja}</span>
                         <span className="sugerencia-texto">
                           <strong>{s.codigo || s.nombre}</strong>
                           {s.codigo && s.nombre ? ` ${s.nombre}` : ''}
@@ -87,14 +89,14 @@ export default function Buscador({ busqueda = '' }) {
                     )}
                     {s.tipo === 'etiqueta' && (
                       <>
-                        <span className="sugerencia-tipo">Etiqueta</span>
+                        <span className="sugerencia-tipo">{t.etiqueta}</span>
                         <span className="sugerencia-texto"><strong>{s.nombre}</strong></span>
-                        <span className="sugerencia-dato">{s.articulos} {s.articulos === 1 ? 'artículo' : 'artículos'}</span>
+                        <span className="sugerencia-dato">{t.nArticulos(s.articulos)}</span>
                       </>
                     )}
                     {s.tipo === 'articulo' && (
                       <>
-                        <span className="sugerencia-tipo">Artículo</span>
+                        <span className="sugerencia-tipo">{t.articulo}</span>
                         <span className="sugerencia-texto"><strong>{s.nombre}</strong></span>
                         <span className="sugerencia-dato">{s.total}</span>
                       </>

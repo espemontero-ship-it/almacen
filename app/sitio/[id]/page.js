@@ -3,6 +3,8 @@ import Cabecera from '../../components/Cabecera';
 import Foto from '../../components/Foto';
 import NombreSitio from '../../components/NombreSitio';
 import Etiquetas from '../../components/Etiquetas';
+import { idiomaActual } from '../../../lib/idioma';
+import { textos } from '../../../lib/textos';
 const { obtenerSitio } = require('../../../lib/datos.cjs');
 
 export const dynamic = 'force-dynamic';
@@ -13,15 +15,17 @@ export default async function Sitio({ params }) {
   const sitio = await obtenerSitio(Number(id));
   if (!sitio) notFound();
   const lineas = sitio.contenido.length;
+  const idioma = await idiomaActual();
+  const t = textos(idioma);
   return (
     <>
-      <Cabecera volver />
+      <Cabecera volver idioma={idioma} />
       <main className="contenido">
         <h1 className="sitio-titulo">
           <NombreSitio codigo={sitio.codigo} nombre={sitio.nombre} />
         </h1>
         <p className="resumen-sitio">
-          {lineas} {lineas === 1 ? 'artículo' : 'artículos'} · {sitio.unidades} {sitio.unidades === 1 ? 'unidad' : 'unidades'}
+          {t.nArticulos(lineas)} · {t.nUnidades(sitio.unidades)}
         </p>
         <ul className="lista">
           {sitio.contenido.map(c => (
@@ -30,7 +34,7 @@ export default async function Sitio({ params }) {
               <span className="fila-texto">
                 <span className="nombre-articulo">{c.nombre}</span>
                 <span className={c.estado === 'roto' ? 'estado estado-roto' : 'estado'}>
-                  {c.estado === 'roto' ? 'Roto' : 'Bueno'}
+                  {c.estado === 'roto' ? t.roto : t.bueno}
                 </span>
                 <Etiquetas lista={c.etiquetas} />
                 {c.comentarios && <span className="comentarios">{c.comentarios}</span>}

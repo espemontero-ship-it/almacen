@@ -1,4 +1,5 @@
 import './globals.css';
+import { idiomaActual } from '../lib/idioma';
 
 export const metadata = {
   title: 'Almacén',
@@ -11,9 +12,10 @@ export const viewport = {
   themeColor: '#ffffff',
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const idioma = await idiomaActual();
   return (
-    <html lang="es">
+    <html lang={idioma}>
       <body>{children}</body>
     </html>
   );

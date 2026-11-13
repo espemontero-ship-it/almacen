@@ -2,8 +2,10 @@ import Link from 'next/link';
 import Foto from './Foto';
 import NombreSitio from './NombreSitio';
 import Etiquetas from './Etiquetas';
+import { textos } from '../../lib/textos';
 
-export default function FichaArticulo({ articulo: a }) {
+export default function FichaArticulo({ articulo: a, idioma }) {
+  const t = textos(idioma);
   return (
     <li className="resultado">
       <div className="fila fila-articulo">
@@ -11,11 +13,11 @@ export default function FichaArticulo({ articulo: a }) {
         <span className="fila-texto">
           <span className="nombre-articulo">{a.nombre}</span>
           <Etiquetas lista={a.etiquetas} />
-          {a.rotos > 0 && <span className="estado estado-roto">{a.rotos} rotos</span>}
+          {a.rotos > 0 && <span className="estado estado-roto">{t.rotos(a.rotos)}</span>}
         </span>
         <span className="total">
           <span className="cantidad">{a.total}</span>
-          <span className="etiqueta-total">en total</span>
+          <span className="etiqueta-total">{t.enTotal}</span>
         </span>
       </div>
       <ul className="desglose">
@@ -25,7 +27,7 @@ export default function FichaArticulo({ articulo: a }) {
               <span className="fila-texto">
                 <NombreSitio codigo={s.codigo} nombre={s.nombre} />
                 <span className={s.estado === 'roto' ? 'estado estado-roto' : 'estado'}>
-                  {s.estado === 'roto' ? 'Roto' : 'Bueno'}
+                  {s.estado === 'roto' ? t.roto : t.bueno}
                 </span>
                 {s.comentarios && <span className="comentarios">{s.comentarios}</span>}
               </span>
