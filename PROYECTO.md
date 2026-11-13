@@ -16,6 +16,12 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
   - **O** oficina
   - **M** matress
   - **L** lighting
+  - **D** drawer (cajones)
+  - **A** zonas del almacén
+  - **U** y **R**: pendiente de que diga qué son
+- Las cajas **pueden llevar un nombre o no**, además del código (por ejemplo, P14 "latex weapons").
+- También hay **sitios que no son cajas**, y la app los admite: zonas (Area 14…), casas (Espe House…) y sitios con nombre propio (MK1, Safety, "Lost- para buscar"…).
+- **Etiquetas**: cada artículo puede llevar varias (Props, rentals, Uniforms, Electrical…), como en la hoja actual.
 - **Ver una caja**: cada item con su cantidad, foto, estado (bueno / roto) y comentarios.
 - **Buscar un item**: el total que hay sumando todas las cajas y, debajo, en qué cajas está y cuántos hay en cada una.
 - **Crear y editar** desde la app: cajas, items, cantidades, estado, comentarios y fotos hechas con el móvil. Se empieza solo con ver.
@@ -25,8 +31,9 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 
 ## Cómo se organizan los datos
 
-- **Tipos**: P, C, O, M, L.
-- **Cajas**: un código cada una (P01…). El tipo sale de la letra.
+- **Tipos**: P, C, O, M, L, D y A (U y R, pendientes).
+- **Cajas y sitios**: un código cada una (P01…), con nombre opcional. El tipo sale de la letra. Los sitios que no son cajas se identifican por su nombre.
+- **Etiquetas**: varias por artículo.
 - **Catálogo de artículos**: cada artículo existe una sola vez, con **una foto por artículo**, que se ve en todas las cajas donde está.
 - **Contenido**: qué artículo hay en qué caja, con cantidad, estado y comentarios.
 
@@ -69,6 +76,17 @@ Alternativas descartadas, con su motivo:
 3. Ella decide qué se une y qué no. No se unifica nada por cuenta propia.
 4. Carga en el entorno de prueba y revisión en el móvil.
 5. Carga en el entorno real.
+
+**Hoja actual** (Warehouse items - Organization - Not Only Larp.xlsx, revisada el 2026-11-13): 949 líneas, 824 artículos distintos, 6.032 unidades y 175 sitios. Columnas: nombre, cantidad, descripción, contenedor, etiquetas y foto.
+
+Cómo se carga en el entorno de prueba:
+- **Sin unir nada.** Los artículos escritos de formas distintas (cushion / Cushions…) se cargan tal cual.
+- **Códigos de caja en mayúscula**, así l18 y L18 son la misma caja.
+- **Descripción** pasa a comentarios.
+- **Etiquetas** pasan tal cual.
+- **Estado**: todo empieza como "bueno", porque la hoja no lo tiene.
+- **Las 4 líneas sin cantidad** pasan con cantidad 1.
+- **Fotos**: existen, pero no vienen en la exportación. Pendiente de saber dónde están.
 
 ## Fases
 
@@ -119,6 +137,10 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 ## Pendiente de decidir
 
 - **Cómo se ven las unidades rotas**: dos líneas ("8 bueno" y "2 roto") o una ("8 buenas · 2 rotas"). Se decide viendo las pantallas, no antes.
+- **Qué son las letras U y R.**
+- **Si "Area 14" y las cajas A (A15) son lo mismo**, es decir, si "Area 14" es la zona A14.
+- **Si P9 y "P9 SHEETS" son la misma caja**, y lo mismo con O6 y "O6 ID PJ".
+- **Dónde están las fotos** y cómo se sabe qué foto es de qué artículo.
 
 ## Registro de decisiones
 
@@ -134,3 +156,5 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Sí a permisos por persona, historial de cambios y papelera.
 - Guía de diseño nueva, para el móvil. Color de acento índigo, de momento. Letra propia de cada móvil.
 - La forma de mostrar las unidades rotas se decide viendo las pantallas.
+- Revisada la hoja actual. A son zonas del almacén y D son drawers (cajones). Se admiten sitios que no son cajas. Las cajas pueden llevar nombre o no. Las etiquetas pasan a la app.
+- Carga de prueba sin unir ningún artículo: es un entorno de pruebas. Códigos de caja en mayúscula, descripción a comentarios, todo empieza como "bueno" y las 4 líneas sin cantidad pasan con 1.
