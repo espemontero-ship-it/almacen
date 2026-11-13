@@ -106,7 +106,7 @@ export default function TablaTodo({ filas }) {
         <tbody>
           {articulos.map(a => {
             const abierto = abiertos.has(a.id);
-            const desplegable = a.total !== 1;
+            const desplegable = a.cajas.length > 1;
             const contenido = (
               <>
                 <span className="col-articulo">
@@ -114,8 +114,10 @@ export default function TablaTodo({ filas }) {
                   <span className="nombre-y-extra">
                     <span className="nombre-tabla">{a.nombre}</span>
                     <span className="extra-movil">
-                      {a.etiquetas.length > 0 && <span className="etiquetas-tabla">{a.etiquetas.join(' · ')}</span>}
-                      {a.rotos > 0 && <span className="estado-roto">{textoRotos(a.rotos)}</span>}
+                      <span className="etiquetas-tabla">
+                        {a.etiquetas.length > 0 && `${a.etiquetas.join(' · ')} · `}
+                        {a.rotos > 0 ? <span className="estado-roto">{textoRotos(a.rotos)}</span> : 'Bueno'}
+                      </span>
                     </span>
                   </span>
                 </span>
