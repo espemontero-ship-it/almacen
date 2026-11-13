@@ -6,6 +6,7 @@ Este documento es la fuente de verdad del proyecto: qué es, qué se ha decidido
 
 - **Antes de subir nada** (commit, push o publicar en Vercel) se le pregunta. Subir a GitHub publica solo en la app.
 - **No se comprueba todo** en cada cambio pequeño: basta con compilar y echar un vistazo. Lo que no se haya comprobado se dice.
+- **Cada vez que se sube algo, se apunta aquí en ese mismo momento**: en "Lo que hace" si cambia lo que la app hace, y siempre en el Registro de decisiones.
 
 ## Qué es y para quién
 
@@ -30,6 +31,10 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 - **Etiquetas**: cada artículo puede llevar varias (Props, rentals, Uniforms, Electrical…), como en la hoja actual.
 - **Ver una caja**: cada item con su cantidad, foto, estado (bueno / roto) y comentarios.
 - **Buscar un item**: el total que hay sumando todas las cajas y, debajo, en qué cajas está y cuántos hay en cada una.
+- **Sugerencias al escribir**: desde la segunda letra salen debajo del buscador todos los artículos, etiquetas y cajas que coinciden. Al tocar una sugerencia se va directo a ella.
+- **Inicio**: el buscador y debajo la tabla de todos los artículos (Artículo · Total · Cajas), con filtros de tipo de caja, etiqueta y estado. Al tocar una fila se despliega por caja (y por talla en la ropa). En pantallas anchas, también las columnas Etiquetas y Estado.
+- **Dos idiomas**: botón ES / EN arriba; cada móvil recuerda el suyo. Cambian las pantallas, los nombres de los artículos y las etiquetas. El buscador encuentra en los dos idiomas a la vez.
+- **Ropa con tallas**: cada prenda es un solo artículo, con la cantidad de cada talla. Al buscarla, las tallas salen como botones con su total (S 9 · M 19…); al tocar uno salen las cajas de esa talla. XXL = 2XL, XXXL = 3XL; W es mujer y M hombre.
 - **Crear y editar** desde la app: cajas, items, cantidades, estado, comentarios y fotos hechas con el móvil. Se empieza solo con ver.
 - **Permisos por persona**: administración (gestiona usuarios), edición (crea y edita) y solo consulta.
 - **Historial de cambios**: quién cambió qué y cuándo.
@@ -41,7 +46,9 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 - **Cajas y sitios**: un código cada una (P01…), con nombre opcional. El tipo sale de la letra. Los sitios que no son cajas se identifican por su nombre.
 - **Etiquetas**: varias por artículo.
 - **Catálogo de artículos**: cada artículo existe una sola vez, con **una foto por artículo**, que se ve en todas las cajas donde está.
-- **Contenido**: qué artículo hay en qué caja, con cantidad, estado y comentarios.
+- **Contenido**: qué artículo hay en qué caja, con cantidad, estado, comentarios y talla (solo en ropa).
+- **Tallas posibles de cada prenda**: guardadas para elegirlas de una lista al añadir ropa (letras S–6XL; números y W/M + número, los que existen en la hoja).
+- **Nombres en español e inglés** de cada artículo y etiqueta, guardados aparte unidos al nombre original de la hoja. Al recargar la hoja no se pierden ni hay que volver a hacerlos.
 
 El catálogo existe para que los totales salgan bien. Si cada caja tuviera su propio texto libre, "Silla plegable" y "sillas plegables" contarían como dos cosas distintas.
 
@@ -145,10 +152,11 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 
 ## Qué falta (para recordárselo cuando pregunte)
 
-- **Otros nombres de cada artículo, generados con IA**: Claude genera solo, sin que nadie escriba nada, nombres alternativos en español y en inglés para cada artículo ("cushion" → cojín, almohadón, pillow), y el buscador los usa. Coste estimado: 1 a 2 € en total por todos los artículos, una sola vez, y menos de un céntimo por cada artículo nuevo. Se cobra en la cuenta de Anthropic que ya usa punteo-trimestral (comprobar antes que sigue activa). Se hará más adelante, sobre los datos definitivos.
-- **Ver todos los artículos**: hace falta en algunos momentos, para acciones futuras. Una lista de 844 artículos no sirve en el móvil; hay que pensar la forma cuando toque.
-- **Fotos**: aparcadas. Existen, pero no vienen en la exportación. La cuenta de Cloudflare R2 se crea cuando se retomen.
+- **Fase 2, editar**: cambiar cantidades, estado y comentarios; añadir artículos (con la talla elegida de una lista); crear cajas; permisos, historial y papelera. Hace falta para guardar lo que vuelve y hacer inventario.
 - **Entrada con usuario y contraseña**: quitada el 2026-11-13, porque su contraseña no funcionaba. Ahora cualquiera con el enlace ve el inventario. Se decide más adelante cómo se entra. El código de usuarios e invitaciones sigue en el proyecto, sin usarse.
+- **Fotos**: aparcadas. Existen, pero no vienen en la exportación. La cuenta de Cloudflare R2 se crea cuando se retomen.
+- **Datos definitivos**: cargarlos cuando termine la reorganización del almacén. La carga une la ropa por tallas y reutiliza los nombres ya revisados.
+- **9 artículos sin traducir**: no se sabe qué son; tienen el nombre original en los dos idiomas.
 
 ## Pendiente de decidir
 
@@ -182,3 +190,12 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Echaba de menos ver la lista de todo y filtrarla. En el inicio, debajo del buscador, va una tabla por artículo (Artículo · Total · Cajas), de la A a la Z, con filtros de tipo de caja, etiqueta y estado. Al tocar una fila se despliega cuántos hay en cada caja. Rechazado: una tabla caja por caja, porque busca objetos, no cajas.
 - Regla: preguntar antes de subir cualquier cosa, y no comprobarlo todo en cada cambio pequeño.
 - Tabla del inicio: etiquetas y estado. En el móvil van debajo del nombre; en pantallas anchas, como columnas propias (Artículo · Etiquetas · Estado · Total · Cajas). Los artículos de una sola unidad no tienen desplegable.
+- Subido: sugerencias al escribir en el buscador (artículos, etiquetas y cajas), todas las que coincidan, en una lista que se desliza.
+- Subido: botón ES / EN con las pantallas en los dos idiomas.
+- Nombres en español e inglés generados con IA (Claude, unos 1 $): el resultado fue malo (categorías como traducción, marcas como sinónimos) y se paró en 800 de 863. Ella no se fía de que la IA invente; los 863 los repasó Claude a mano con reglas estrictas (nombre normal en España; sinónimos solo equivalentes exactos, sin marcas ni categorías) y los que no sabía qué eran se le preguntaron.
+- Revisión de nombres: página privada por grupos, todo dado por bueno y solo se toca lo que está mal. Ella corrigió 20 y se dieron todos por revisados. El Excel de 863 filas no servía para revisar.
+- Ropa: cada prenda pasa a ser un solo artículo con la cantidad por talla (129 artículos → 29 prendas). "Camisetas Conscience" y "Camiseta Conscience negra" son la misma prenda; "Abrigo Aleph plot" y "Abrigo Aleph" también.
+- Subido: ropa unida por tallas y nombres en el idioma elegido.
+- En el buscador, las tallas de cada prenda salen como botones con su total; al tocar uno se ven las cajas de esa talla. Rechazado: una línea por caja y talla, y una línea por talla desplegable ("un follón").
+- La tabla del inicio solo tiene desplegable si el artículo está en más de una caja o tiene varias tallas.
+- Regla: cada vez que se sube algo, se apunta en este documento en ese momento.
