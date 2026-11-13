@@ -44,6 +44,8 @@ La búsqueda no distingue mayúsculas, tildes ni plurales, y tolera alguna errat
 
 ## Dónde vive (y por qué)
 
+**Dirección de la app (entorno de prueba):** https://almacen-nu-eosin.vercel.app — proyecto almacen en Vercel, base de datos Neon almacen-db (plan gratuito, Frankfurt).
+
 | Pieza | Dónde | Coste |
 |---|---|---|
 | App | Vercel, en la misma cuenta que punteo-trimestral y loose-ends | 0 € |
@@ -170,3 +172,4 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Pantallas de la Fase 1, tras preguntarle cómo se usa (buscar, guardar lo que vuelve, revisar una caja, hacer inventario; lo usan todos): el inicio es solo el buscador. El buscador entiende un artículo, una etiqueta o el código de una caja, que abre la caja. Cada resultado muestra foto, nombre, etiquetas, total y rotos, y debajo cada sitio con cantidad, estado y comentarios. La caja muestra código, nombre, artículos y unidades, y de cada cosa foto, nombre, cantidad, estado, comentarios y etiquetas. Se rechazó un resumen por tipos en el inicio. Ella avisa de que se acabará cambiando.
 - Guardar lo que vuelve y hacer inventario necesitan editar: van en la Fase 2.
 - Cada cosa se llama de mil maneras, así que buscar solo por el nombre no basta. Se rechaza que la gente añada sinónimos a mano. Los otros nombres se generarán con IA más adelante (1 a 2 € en total).
+- Fase 1 publicada en Vercel con la hoja cargada en Neon. Cuenta de administración para Espe, que elige su contraseña con un enlace de invitación.
