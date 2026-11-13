@@ -55,3 +55,24 @@ CREATE TABLE IF NOT EXISTS contenido (
 
 CREATE INDEX IF NOT EXISTS contenido_sitio ON contenido (sitio_id);
 CREATE INDEX IF NOT EXISTS contenido_articulo ON contenido (articulo_id);
+
+CREATE TABLE IF NOT EXISTS nombres_ia (
+  tipo TEXT NOT NULL CHECK (tipo IN ('articulo', 'etiqueta')),
+  original TEXT NOT NULL,
+  es TEXT NOT NULL,
+  en TEXT NOT NULL,
+  otros TEXT[] NOT NULL DEFAULT '{}',
+  PRIMARY KEY (tipo, original)
+);
+
+ALTER TABLE articulos ADD COLUMN IF NOT EXISTS nombre_es TEXT;
+ALTER TABLE articulos ADD COLUMN IF NOT EXISTS nombre_en TEXT;
+ALTER TABLE articulos ADD COLUMN IF NOT EXISTS buscable TEXT;
+ALTER TABLE etiquetas ADD COLUMN IF NOT EXISTS nombre_es TEXT;
+ALTER TABLE etiquetas ADD COLUMN IF NOT EXISTS nombre_en TEXT;
+ALTER TABLE etiquetas ADD COLUMN IF NOT EXISTS buscable TEXT;
+
+CREATE INDEX IF NOT EXISTS articulos_buscable_trgm ON articulos USING gin (buscable gin_trgm_ops);
+
+ALTER TABLE nombres_ia ADD COLUMN IF NOT EXISTS revisado TIMESTAMPTZ;
+ALTER TABLE nombres_ia ADD COLUMN IF NOT EXISTS corregido BOOLEAN NOT NULL DEFAULT false;

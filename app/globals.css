@@ -569,3 +569,108 @@ th .col-total {
   background: var(--texto);
   color: var(--fondo);
 }
+
+.revision {
+  padding-top: 8px;
+}
+
+.revision-cabecera {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--fondo);
+  border-bottom: 1px solid var(--linea);
+  padding-bottom: 4px;
+}
+
+.revision-avance {
+  margin: 8px 0 0;
+  color: var(--secundario);
+  font-size: 16px;
+}
+
+.revision-nav {
+  display: flex;
+  justify-content: space-between;
+}
+
+.revision-linea {
+  border-bottom: 1px solid var(--linea);
+}
+
+.revision-boton {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  min-height: var(--toque);
+  padding: 10px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.revision-nombres {
+  overflow-wrap: anywhere;
+}
+
+.revision-original {
+  color: var(--secundario);
+}
+
+.revision-otros {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--secundario);
+}
+
+.revision-marca {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.revision-editando {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 0 16px;
+}
+
+.revision-editando label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.revision-editando .revision-original {
+  margin: 0;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.revision-botones {
+  display: flex;
+  gap: 8px;
+}
+
+.boton-secundario {
+  min-height: var(--toque);
+  padding: 8px 16px;
+  border: 2px solid var(--secundario);
+  border-radius: 8px;
+  background: var(--fondo);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.revision-pie {
+  padding: 24px 0 48px;
+}
+
+.revision-siguiente {
+  width: 100%;
+}

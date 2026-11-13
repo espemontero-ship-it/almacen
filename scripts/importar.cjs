@@ -3,6 +3,7 @@ const path = require('path');
 const ExcelJS = require('exceljs');
 const { getPool } = require('../lib/db.cjs');
 const { normalizar, leerContenedor } = require('../lib/normalizar.cjs');
+const { aplicarNombresIA } = require('../lib/nombresIA.cjs');
 
 function texto(valor) {
   if (valor == null) return '';
@@ -96,6 +97,7 @@ async function importar(archivo) {
       );
     }
 
+    await aplicarNombresIA(cliente);
     await cliente.query('COMMIT');
     const unidades = filas.reduce((suma, f) => suma + f.cantidad, 0);
     return { lineas: filas.length, sitios: sitios.size, articulos: articulos.size, etiquetas: etiquetas.size, unidades };
