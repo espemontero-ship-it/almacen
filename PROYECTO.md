@@ -86,7 +86,7 @@ Cómo se carga en el entorno de prueba:
 - **Etiquetas** pasan tal cual.
 - **Estado**: todo empieza como "bueno", porque la hoja no lo tiene.
 - **Las 4 líneas sin cantidad** pasan con cantidad 1.
-- **Fotos**: existen, pero no vienen en la exportación. Pendiente de saber dónde están.
+- **Fotos**: existen, pero no vienen en la exportación. Aparcadas de momento.
 
 ## Fases
 
@@ -140,7 +140,6 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - **Qué son las letras U y R.**
 - **Si "Area 14" y las cajas A (A15) son lo mismo**, es decir, si "Area 14" es la zona A14.
 - **Si P9 y "P9 SHEETS" son la misma caja**, y lo mismo con O6 y "O6 ID PJ".
-- **Dónde están las fotos** y cómo se sabe qué foto es de qué artículo.
 
 ## Registro de decisiones
 
@@ -158,3 +157,4 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - La forma de mostrar las unidades rotas se decide viendo las pantallas.
 - Revisada la hoja actual. A son zonas del almacén y D son drawers (cajones). Se admiten sitios que no son cajas. Las cajas pueden llevar nombre o no. Las etiquetas pasan a la app.
 - Carga de prueba sin unir ningún artículo: es un entorno de pruebas. Códigos de caja en mayúscula, descripción a comentarios, todo empieza como "bueno" y las 4 líneas sin cantidad pasan con 1.
+- Las fotos se aparcan de momento. Se está reorganizando el almacén, así que hasta que esté acabado todo es entorno de prueba: los datos actuales no son definitivos.
