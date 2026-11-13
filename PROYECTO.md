@@ -174,3 +174,4 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Cada cosa se llama de mil maneras, así que buscar solo por el nombre no basta. Se rechaza que la gente añada sinónimos a mano. Los otros nombres se generarán con IA más adelante (1 a 2 € en total).
 - Fase 1 publicada en Vercel con la hoja cargada en Neon. Cuenta de administración para Espe, que elige su contraseña con un enlace de invitación.
 - Su contraseña no funcionaba al entrar, y pidió quitar la contraseña de momento. La app queda abierta a quien tenga el enlace.
+- Echaba de menos ver la lista de todo y filtrarla. En el inicio, debajo del buscador, va una tabla por artículo (Artículo · Total · Cajas), de la A a la Z, con filtros de tipo de caja, etiqueta y estado. Al tocar una fila se despliega cuántos hay en cada caja. Rechazado: una tabla caja por caja, porque busca objetos, no cajas.

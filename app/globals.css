@@ -340,40 +340,88 @@ select:focus {
   outline-offset: 1px;
 }
 
+
 .tabla {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .tabla th {
   text-align: left;
   font-size: 14px;
+  font-weight: 400;
   color: var(--secundario);
-  padding: 8px 8px 8px 0;
+  padding: 8px 0;
   border-bottom: 2px solid var(--secundario);
 }
 
-.tabla td {
-  padding: 0 8px 0 0;
-  border-bottom: 1px solid var(--linea);
-  vertical-align: middle;
+.tabla th:nth-child(1) {
+  width: 52%;
+}
+
+.tabla th:nth-child(2) {
+  width: 16%;
+  padding-right: 12px;
 }
 
 .tabla .numero {
   text-align: right;
-  padding-right: 0;
-  font-weight: 700;
-  white-space: nowrap;
 }
 
-.tabla th.numero {
-  font-weight: 400;
+.tabla td {
+  padding: 0;
+  border-bottom: 1px solid var(--linea);
 }
 
-.enlace-celda {
-  display: flex;
+.boton-fila {
+  display: grid;
+  grid-template-columns: 52% 16% 32%;
   align-items: center;
+  width: 100%;
   min-height: var(--toque);
   padding: 8px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.col-articulo {
+  display: flex;
+  gap: 4px;
+  font-weight: 600;
   overflow-wrap: anywhere;
+  padding-right: 8px;
+}
+
+.flecha {
+  flex: none;
+  width: 1em;
+  color: var(--secundario);
+}
+
+.col-total {
+  text-align: right;
+  font-weight: 700;
+  padding-right: 12px;
+}
+
+.col-cajas {
+  color: var(--secundario);
+  overflow-wrap: anywhere;
+}
+
+.fila-abierta td {
+  border-bottom: none;
+}
+
+.detalle-cajas {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 8px 1.3em;
+}
+
+.detalle-cajas li + li {
+  border-top: 1px solid var(--linea);
 }
