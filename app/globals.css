@@ -1,0 +1,307 @@
+:root {
+  --fondo: #ffffff;
+  --texto: #1a1a1a;
+  --secundario: #444444;
+  --linea: #d6d6d6;
+  --acento: #4e4f74;
+  --sobre-acento: #ffffff;
+  --toque: 48px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 18px;
+  line-height: 1.35;
+  -webkit-text-size-adjust: 100%;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cabecera {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--fondo);
+  border-bottom: 1px solid var(--linea);
+  padding: 8px 16px 12px;
+}
+
+.cabecera-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--toque);
+}
+
+.titulo-app {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.enlace-volver,
+.boton-texto {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque);
+  padding: 0 4px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.buscador {
+  display: flex;
+  gap: 8px;
+}
+
+.buscador input {
+  flex: 1;
+  min-width: 0;
+}
+
+input {
+  min-height: var(--toque);
+  padding: 8px 12px;
+  border: 2px solid var(--secundario);
+  border-radius: 8px;
+  background: var(--fondo);
+  width: 100%;
+}
+
+input:focus {
+  outline: 3px solid var(--acento);
+  outline-offset: 1px;
+}
+
+.boton-principal {
+  min-height: var(--toque);
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--acento);
+  color: var(--sobre-acento);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.boton-principal:disabled {
+  opacity: 0.6;
+}
+
+.contenido {
+  padding: 0 16px 24px;
+}
+
+.grupo {
+  margin-top: 24px;
+}
+
+.grupo-titulo,
+.sitio-titulo {
+  margin: 0;
+  padding: 8px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.sitio-titulo {
+  margin-top: 16px;
+  font-size: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: baseline;
+}
+
+.lista,
+.desglose {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lista > li {
+  border-bottom: 1px solid var(--linea);
+}
+
+.lista > li:first-child {
+  border-top: 1px solid var(--linea);
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--toque);
+  padding: 8px 0;
+}
+
+.fila-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.fila-enlace::after {
+  content: '›';
+  font-size: 24px;
+  color: var(--secundario);
+  padding-left: 4px;
+}
+
+.fila-dato {
+  color: var(--secundario);
+  white-space: nowrap;
+}
+
+.codigo {
+  font-weight: 700;
+}
+
+.nombre-sitio {
+  color: var(--secundario);
+}
+
+.sitio-titulo .nombre-sitio {
+  font-weight: 400;
+}
+
+.fila-articulo {
+  align-items: flex-start;
+  padding: 12px 0;
+}
+
+.nombre-articulo {
+  width: 100%;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.estado {
+  color: var(--secundario);
+  font-size: 16px;
+}
+
+.estado-roto {
+  color: var(--texto);
+  font-weight: 700;
+}
+
+.comentarios {
+  width: 100%;
+  color: var(--secundario);
+  font-size: 16px;
+}
+
+.cantidad {
+  font-size: 22px;
+  font-weight: 700;
+  min-width: 2ch;
+  text-align: right;
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.etiqueta-total {
+  font-size: 14px;
+  color: var(--secundario);
+}
+
+.foto {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--linea);
+  background: var(--fondo);
+}
+
+.foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.desglose {
+  padding-left: 68px;
+  padding-bottom: 8px;
+}
+
+.fila-desglose {
+  padding: 4px 0;
+  border-top: 1px solid var(--linea);
+}
+
+.aviso {
+  margin: 16px 0;
+  color: var(--secundario);
+}
+
+.pantalla-entrada {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.formulario label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.error {
+  margin: 0;
+  font-weight: 700;
+}
+
+.etiquetas {
+  width: 100%;
+  color: var(--secundario);
+  font-size: 16px;
+}
+
+.resumen-sitio {
+  margin: 0 0 8px;
+  color: var(--secundario);
+}
+
+.fila-desglose .fila-texto {
+  row-gap: 0;
+}

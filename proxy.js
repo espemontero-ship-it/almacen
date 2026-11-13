@@ -1,0 +1,24 @@
+import { NextResponse } from 'next/server';
+const { leerSesion, SESSION_COOKIE } = require('./lib/auth.cjs');
+
+const PUBLICAS = ['/login', '/api/login', '/invitacion', '/api/invitacion'];
+
+export async function proxy(request) {
+  const { pathname } = request.nextUrl;
+  if (PUBLICAS.some(p => pathname === p || pathname.startsWith(p + '/'))) {
+    return NextResponse.next();
+  }
+  const sesion = await leerSesion(request.cookies.get(SESSION_COOKIE)?.value);
+  if (sesion) return NextResponse.next();
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.json({ error: 'No autenticado' }, { status: 401 });
+  }
+  const url = request.nextUrl.clone();
+  url.pathname = '/login';
+  url.search = '';
+  return NextResponse.redirect(url);
+}
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|icon.svg).*)'],
+};
