@@ -141,7 +141,6 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - **Cómo se ven las unidades rotas**: dos líneas ("8 bueno" y "2 roto") o una ("8 buenas · 2 rotas"). Se decide viendo las pantallas, no antes.
 - **Separar caja, zona, cajón y otros sitios** como cosas distintas en la app: probablemente más adelante, no ahora.
 - **Unificar U y R**: más adelante.
-- **Si P9 y "P9 SHEETS" son la misma caja**, y lo mismo con O6 y "O6 ID PJ".
 
 ## Registro de decisiones
 
