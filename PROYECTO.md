@@ -17,10 +17,11 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
   - **M** matress
   - **L** lighting
   - **D** drawer (cajones)
-  - **A** zonas del almacén
-  - **U** y **R**: pendiente de que diga qué son
+  - **A** zonas del almacén ("Area 14" y A14 son lo mismo)
+  - **U** uniformes
+  - **R** rental (alquiler). U y R se unificarán más adelante; de momento se cargan tal cual.
 - Las cajas **pueden llevar un nombre o no**, además del código (por ejemplo, P14 "latex weapons").
-- También hay **sitios que no son cajas**, y la app los admite: zonas (Area 14…), casas (Espe House…) y sitios con nombre propio (MK1, Safety, "Lost- para buscar"…).
+- También hay **sitios que no son cajas**, y la app los admite: casas (Espe House…) y sitios con nombre propio (MK1, Safety, "Lost- para buscar"…).
 - **Etiquetas**: cada artículo puede llevar varias (Props, rentals, Uniforms, Electrical…), como en la hoja actual.
 - **Ver una caja**: cada item con su cantidad, foto, estado (bueno / roto) y comentarios.
 - **Buscar un item**: el total que hay sumando todas las cajas y, debajo, en qué cajas está y cuántos hay en cada una.
@@ -31,7 +32,7 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 
 ## Cómo se organizan los datos
 
-- **Tipos**: P, C, O, M, L, D y A (U y R, pendientes).
+- **Tipos**: P, C, O, M, L, D, A, U y R.
 - **Cajas y sitios**: un código cada una (P01…), con nombre opcional. El tipo sale de la letra. Los sitios que no son cajas se identifican por su nombre.
 - **Etiquetas**: varias por artículo.
 - **Catálogo de artículos**: cada artículo existe una sola vez, con **una foto por artículo**, que se ve en todas las cajas donde está.
@@ -86,6 +87,7 @@ Cómo se carga en el entorno de prueba:
 - **Etiquetas** pasan tal cual.
 - **Estado**: todo empieza como "bueno", porque la hoja no lo tiene.
 - **Las 4 líneas sin cantidad** pasan con cantidad 1.
+- **"Area N"** se carga como la zona **AN** (Area 14 → A14).
 - **Fotos**: existen, pero no vienen en la exportación. Aparcadas de momento.
 
 ## Fases
@@ -137,8 +139,8 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 ## Pendiente de decidir
 
 - **Cómo se ven las unidades rotas**: dos líneas ("8 bueno" y "2 roto") o una ("8 buenas · 2 rotas"). Se decide viendo las pantallas, no antes.
-- **Qué son las letras U y R.**
-- **Si "Area 14" y las cajas A (A15) son lo mismo**, es decir, si "Area 14" es la zona A14.
+- **Separar caja, zona, cajón y otros sitios** como cosas distintas en la app: probablemente más adelante, no ahora.
+- **Unificar U y R**: más adelante.
 - **Si P9 y "P9 SHEETS" son la misma caja**, y lo mismo con O6 y "O6 ID PJ".
 
 ## Registro de decisiones
@@ -158,3 +160,4 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Revisada la hoja actual. A son zonas del almacén y D son drawers (cajones). Se admiten sitios que no son cajas. Las cajas pueden llevar nombre o no. Las etiquetas pasan a la app.
 - Carga de prueba sin unir ningún artículo: es un entorno de pruebas. Códigos de caja en mayúscula, descripción a comentarios, todo empieza como "bueno" y las 4 líneas sin cantidad pasan con 1.
 - Las fotos se aparcan de momento. Se está reorganizando el almacén, así que hasta que esté acabado todo es entorno de prueba: los datos actuales no son definitivos.
+- U son uniformes y R rental; se unificarán más adelante, ahora se cargan tal cual. "Area N" y AN son la misma zona. Separar caja, zona, cajón y otros sitios queda para más adelante.
