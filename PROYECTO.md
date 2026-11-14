@@ -35,7 +35,7 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 - **Inicio**: el buscador y debajo la tabla de todos los artículos (Artículo · Total · Cajas), con filtros de tipo de caja, etiqueta y estado. Al tocar una fila se despliega por caja (y por talla en la ropa). En pantallas anchas, también las columnas Etiquetas y Estado.
 - **Dos idiomas**: botón ES / EN arriba; cada móvil recuerda el suyo. Cambian las pantallas, los nombres de los artículos y las etiquetas. El buscador encuentra en los dos idiomas a la vez.
 - **Entrar**: cada persona con su usuario (o su correo) y contraseña. Arriba, "Entrar"; con sesión, "Personas" (solo administración) y "Salir". Ver y buscar sigue abierto sin entrar.
-- **Recuperar contraseña**: "¿Has olvidado tu contraseña?" → correo → enlace de 2 horas para elegir una nueva. Necesita el envío de correos configurado en Vercel (SMTP_USER, SMTP_APP_PASSWORD, EMAIL_FROM, como en punteo-trimestral).
+- **Recuperar contraseña**: "¿Has olvidado tu contraseña?" → correo → enlace de 2 horas para elegir una nueva. Los correos salen por Gmail con SMTP_USER y SMTP_APP_PASSWORD (contraseña de aplicación de esa misma cuenta, que necesita la verificación en dos pasos activada).
 - **Personas** (solo administración): lista del equipo con su acceso; invitar (nombre, usuario, correo, acceso: administración, edición o solo consulta) da un enlace de 7 días y lo manda por correo; "Nueva contraseña" da un enlace para mandárselo a mano.
 - **Editar las cajas** (quien entra con acceso de edición o administración): al entrar en una caja, cada artículo tiene la cantidad con [−] [+] que se guarda al momento. Al tocar el nombre se abren: rotas con [−] [+] (se ve "8 buenas · 2 rotas"), comentarios con botón Guardar y "Quitar de la caja" con confirmación. Abajo, "Añadir artículo": busca en el catálogo con sugerencias (cantidad y talla si es ropa) o crea uno nuevo (nombre en español e inglés, etiquetas, si es ropa y su talla).
 - **Fotos**: una por artículo. Al editar una caja, cada artículo tiene un botón con icono de cámara: abre la cámara (o la galería), la app reduce la foto (lado máximo 1200 px, JPEG) y la sube a Cloudflare R2. Al tocar una foto se ve en grande. Miniatura en la tabla del inicio, y foto en la ficha y en la caja.
@@ -161,7 +161,7 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 ## Qué falta (para recordárselo cuando pregunte)
 
 - **Desarrollos posteriores**: guardar lo que vuelve, pickup lists (listas de salida a eventos) y permisos finos.
-- **Envío de correos (recuperar contraseña)**: aparcado. En Vercel están SMTP_USER y SMTP_APP_PASSWORD, pero Gmail los rechaza ("Username and Password not accepted"). Revisar que la contraseña de aplicación sea de esa misma cuenta y vaya sin espacios. Mientras tanto, "Nueva contraseña" en Personas sirve. Además, cuando el envío falla, la pantalla dice "No hay conexión": corregirlo para que diga que no se pudo enviar.
+- **Mensaje de error en Recuperar contraseña**: si el envío del correo falla, la pantalla dice "No hay conexión"; debería decir que no se ha podido enviar el correo.
 - **Datos definitivos**: cargarlos cuando termine la reorganización del almacén. La carga une la ropa por tallas y reutiliza los nombres ya revisados.
 - **9 artículos sin traducir**: no se sabe qué son; tienen el nombre original en los dos idiomas.
 
@@ -213,3 +213,4 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Pendiente: el envío de correos de recuperación falla (Gmail rechaza las credenciales); aparcado.
 - Subido 2c: fotos con Cloudflare R2. El bucket almacen-fotos está en la jurisdicción europea, así que la dirección lleva .eu. (con la normal da Access Denied). Las fotos no son públicas: se enseñan con enlaces temporales de 6 horas. Claves en Vercel: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET.
 - Subido 2d: historial (lo ve todo el mundo, con sección general además de por caja y por artículo) y papelera de 30 días en cada caja. Con esto queda terminada la Fase 2.
+- 2026-11-14: el correo de recuperación funciona y ha llegado. El fallo eran las credenciales de Gmail en Vercel (contraseña de aplicación).
