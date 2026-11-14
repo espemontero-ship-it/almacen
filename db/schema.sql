@@ -88,3 +88,19 @@ ALTER TABLE contenido ADD COLUMN IF NOT EXISTS borrado TIMESTAMPTZ;
 UPDATE contenido SET rotos = cantidad, estado = 'bueno' WHERE estado = 'roto';
 
 ALTER TABLE articulos ADD COLUMN IF NOT EXISTS foto_clave TEXT;
+
+CREATE TABLE IF NOT EXISTS cambios (
+  id SERIAL PRIMARY KEY,
+  cuando TIMESTAMPTZ NOT NULL DEFAULT now(),
+  usuario_id INTEGER,
+  usuario_nombre TEXT,
+  sitio_id INTEGER,
+  articulo_id INTEGER,
+  contenido_id INTEGER,
+  accion TEXT NOT NULL,
+  detalle JSONB NOT NULL DEFAULT '{}'
+);
+
+CREATE INDEX IF NOT EXISTS cambios_cuando ON cambios (cuando DESC);
+CREATE INDEX IF NOT EXISTS cambios_sitio ON cambios (sitio_id, cuando DESC);
+CREATE INDEX IF NOT EXISTS cambios_articulo ON cambios (articulo_id, cuando DESC);

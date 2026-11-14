@@ -4,6 +4,7 @@ import NombreSitio from './NombreSitio';
 import Etiquetas from './Etiquetas';
 import { textos } from '../../lib/textos';
 import TallasArticulo from './TallasArticulo';
+import { textosHistorial } from '../../lib/textosHistorial';
 
 export default function FichaArticulo({ articulo: a, idioma }) {
   const t = textos(idioma);
@@ -42,6 +43,9 @@ export default function FichaArticulo({ articulo: a, idioma }) {
         ))}
       </ul>
       )}
+      <p className="enlace-historial">
+        <Link href={`/historial?articulo=${a.id}`} className="enlace-volver">{textosHistorial(idioma).verHistorialArticulo}</Link>
+      </p>
     </li>
   );
 }

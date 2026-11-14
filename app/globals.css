@@ -1006,3 +1006,41 @@ textarea {
   font-size: 20px;
   cursor: pointer;
 }
+
+.acciones-inicio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.acciones-inicio .boton-secundario {
+  display: inline-flex;
+  align-items: center;
+}
+
+.historial-linea {
+  padding: 10px 0;
+}
+
+.historial-quien,
+.historial-que {
+  margin: 0;
+}
+
+.historial-quien {
+  font-size: 15px;
+  color: var(--secundario);
+}
+
+.historial-caja {
+  font-size: 16px;
+}
+
+.enlace-historial {
+  margin: 16px 0;
+}
+
+.papelera {
+  margin-top: 8px;
+}

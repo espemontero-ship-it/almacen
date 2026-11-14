@@ -16,11 +16,14 @@ export default async function Inicio() {
     <>
       <Cabecera idioma={idioma} />
       <main className="contenido">
-        {puedeEditar && (
-          <Link href="/caja-nueva" className="boton-secundario boton-crear-caja">
-            {idioma === 'en' ? '+ New box' : '+ Crear caja'}
-          </Link>
-        )}
+        <div className="acciones-inicio">
+          {puedeEditar && (
+            <Link href="/caja-nueva" className="boton-secundario">
+              {idioma === 'en' ? '+ New box' : '+ Crear caja'}
+            </Link>
+          )}
+          <Link href="/historial" className="boton-secundario">{idioma === 'en' ? 'History' : 'Historial'}</Link>
+        </div>
         <TablaTodo filas={filas} idioma={idioma} />
       </main>
     </>

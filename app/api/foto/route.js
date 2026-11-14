@@ -1,6 +1,7 @@
 const { obtenerSesion } = require('../../../lib/auth.cjs');
 const { subirFoto, urlFoto } = require('../../../lib/fotos.cjs');
 const { query } = require('../../../lib/db.cjs');
+const { apuntar } = require('../../../lib/edicion.cjs');
 
 export const dynamic = 'force-dynamic';
 
@@ -30,5 +31,6 @@ export async function POST(request) {
     return Response.json({ error: error.message || 'No se ha podido subir la foto.' }, { status: 500 });
   }
   await query('UPDATE articulos SET foto_clave = $2 WHERE id = $1', [articuloId, clave]);
+  await apuntar({ id: sesion.id, nombre: sesion.nombre }, { articuloId, accion: 'foto' });
   return Response.json({ ok: true, url: await urlFoto(clave) });
 }

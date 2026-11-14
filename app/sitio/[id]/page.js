@@ -6,8 +6,11 @@ import Etiquetas from '../../components/Etiquetas';
 import { idiomaActual } from '../../../lib/idioma';
 import { textos } from '../../../lib/textos';
 import { sesionActual } from '../../../lib/sesionActual';
+import Link from 'next/link';
 import CajaEditable from './CajaEditable';
-const { listarEtiquetas } = require('../../../lib/edicion.cjs');
+import Papelera from './Papelera';
+import { textosHistorial } from '../../../lib/textosHistorial';
+const { listarEtiquetas, quitados } = require('../../../lib/edicion.cjs');
 const { obtenerSitio } = require('../../../lib/datos.cjs');
 
 export const dynamic = 'force-dynamic';
@@ -23,6 +26,8 @@ export default async function Sitio({ params }) {
   const sesion = await sesionActual();
   const puedeEditar = Boolean(sesion && ['admin', 'editor'].includes(sesion.rol));
   const etiquetas = puedeEditar ? await listarEtiquetas(idioma) : [];
+  const papelera = puedeEditar ? await quitados(sitio.id) : [];
+  const th = textosHistorial(idioma);
   return (
     <>
       <Cabecera volver idioma={idioma} />
@@ -54,6 +59,10 @@ export default async function Sitio({ params }) {
           ))}
         </ul>
         )}
+        {puedeEditar && <Papelera lineas={papelera} titulo={th.papelera} textoRecuperar={th.recuperar} idioma={idioma} />}
+        <p className="enlace-historial">
+          <Link href={`/historial?caja=${sitio.id}`} className="enlace-volver">{th.verHistorialCaja}</Link>
+        </p>
       </main>
     </>
   );

@@ -40,6 +40,8 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 - **Editar las cajas** (quien entra con acceso de edición o administración): al entrar en una caja, cada artículo tiene la cantidad con [−] [+] que se guarda al momento. Al tocar el nombre se abren: rotas con [−] [+] (se ve "8 buenas · 2 rotas"), comentarios con botón Guardar y "Quitar de la caja" con confirmación. Abajo, "Añadir artículo": busca en el catálogo con sugerencias (cantidad y talla si es ropa) o crea uno nuevo (nombre en español e inglés, etiquetas, si es ropa y su talla).
 - **Fotos**: una por artículo. Al editar una caja, cada artículo tiene un botón con icono de cámara: abre la cámara (o la galería), la app reduce la foto (lado máximo 1200 px, JPEG) y la sube a Cloudflare R2. Al tocar una foto se ve en grande. Miniatura en la tabla del inicio, y foto en la ficha y en la caja.
 - **Crear caja** (desde el inicio, quien edita): tipo de caja, número propuesto (el siguiente libre) y nombre opcional.
+- **Historial** (lo ve todo el mundo): cada cambio queda apuntado con quién, cuándo y qué (cantidades, rotas, comentarios, añadir, quitar, recuperar, artículo nuevo, caja nueva y fotos). Botón "Historial" en el inicio con todos los cambios; "Historial de esta caja" al final de cada caja; "Historial de este artículo" en la ficha. Empieza a contar desde el 2026-11-14.
+- **Papelera** (quien edita): al final de cada caja, "Quitado de esta caja (últimos 30 días)", con botón Recuperar que lo devuelve tal como estaba.
 - **Ropa con tallas**: cada prenda es un solo artículo, con la cantidad de cada talla. Al buscarla, las tallas salen como botones con su total (S 9 · M 19…); al tocar uno salen las cajas de esa talla. XXL = 2XL, XXXL = 3XL; W es mujer y M hombre.
 - **Crear y editar** desde la app: cajas, items, cantidades, estado, comentarios y fotos hechas con el móvil. Se empieza solo con ver.
 - **Permisos por persona**: administración (gestiona usuarios), edición (crea y edita) y solo consulta.
@@ -158,7 +160,7 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 
 ## Qué falta (para recordárselo cuando pregunte)
 
-- **Fase 2**: queda 2d historial y papelera. Guardar lo que vuelve, pickup lists y permisos finos van en desarrollos posteriores.
+- **Desarrollos posteriores**: guardar lo que vuelve, pickup lists (listas de salida a eventos) y permisos finos.
 - **Envío de correos (recuperar contraseña)**: aparcado. En Vercel están SMTP_USER y SMTP_APP_PASSWORD, pero Gmail los rechaza ("Username and Password not accepted"). Revisar que la contraseña de aplicación sea de esa misma cuenta y vaya sin espacios. Mientras tanto, "Nueva contraseña" en Personas sirve. Además, cuando el envío falla, la pantalla dice "No hay conexión": corregirlo para que diga que no se pudo enviar.
 - **Datos definitivos**: cargarlos cuando termine la reorganización del almacén. La carga une la ropa por tallas y reutiliza los nombres ya revisados.
 - **9 artículos sin traducir**: no se sabe qué son; tienen el nombre original en los dos idiomas.
@@ -210,3 +212,4 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Subido 2b: editar las cajas al entrar en ellas (cantidad, rotas, comentarios, quitar, añadir o crear artículo) y crear caja. Las rotas pasan a ser un número por línea en vez de un estado.
 - Pendiente: el envío de correos de recuperación falla (Gmail rechaza las credenciales); aparcado.
 - Subido 2c: fotos con Cloudflare R2. El bucket almacen-fotos está en la jurisdicción europea, así que la dirección lleva .eu. (con la normal da Access Denied). Las fotos no son públicas: se enseñan con enlaces temporales de 6 horas. Claves en Vercel: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET.
+- Subido 2d: historial (lo ve todo el mundo, con sección general además de por caja y por artículo) y papelera de 30 días en cada caja. Con esto queda terminada la Fase 2.
