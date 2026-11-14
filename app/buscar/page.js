@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation';
 import Cabecera from '../components/Cabecera';
-import FichaArticulo from '../components/FichaArticulo';
 import Escritorio from '../components/Escritorio';
 import { idiomaActual } from '../../lib/idioma';
 import { textos } from '../../lib/textos';
@@ -27,17 +26,9 @@ export default async function Buscar({ searchParams }) {
   return (
     <>
       <Cabecera busqueda={texto} volver idioma={idioma} />
-      <div className="solo-escritorio">
+      <div>
         <Escritorio filas={filas} idioma={idioma} conFiltros={false} orden={ids} aviso={aviso} puedeEditar={puedeEditar} />
       </div>
-      <main className="contenido solo-movil">
-        {aviso && <p className="aviso">{aviso}</p>}
-        <ul className="lista">
-          {articulos.map(a => (
-            <FichaArticulo key={a.id} articulo={a} idioma={idioma} puedeEditar={puedeEditar} />
-          ))}
-        </ul>
-      </main>
     </>
   );
 }

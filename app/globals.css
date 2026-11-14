@@ -1362,3 +1362,31 @@ thead .col-total, thead .esc-num, th { font-weight: 400 !important; }
 @media (min-width: 900px) { .contenido.reducido:has(.fx) { max-width: none; } }
 .fx-total strong { font-weight: 700 !important; }
 @media (min-width: 900px) { .fx-rotulo-movil { display: none; } }
+
+/* Móvil: inicio y búsqueda con el mismo diseño que el ordenador, a tamaño de móvil */
+.acciones-inicio-movil { padding: 12px 16px 0; margin: 0; }
+.cx-valor-solo { font-size: 1.1em; }
+.cx-comentario-solo { color: var(--secundario); font-size: 0.875em; }
+@media (max-width: 899px) {
+  html body .esc.esc { font-size: 16px; }
+  .esc-main { padding: 12px 16px 32px; }
+  .esc-filtros { gap: 10px 14px; }
+  .esc-filtros label { flex-direction: column; align-items: flex-start; gap: 2px; font-size: 14px; }
+  html body .esc.esc .esc-filtros select { height: 44px; min-height: 44px; font-size: 16px; }
+  .esc-tick { flex-direction: row !important; align-items: center !important; align-self: flex-end; min-height: 44px; }
+  .esc-tick input { width: 22px; height: 22px; }
+  .esc-contador { width: 100%; order: 5; }
+  html body .esc.esc .esc-vistas { height: 44px; margin-left: 0; }
+  html body .esc.esc .esc-vistas button { font-size: 16px; padding: 0 16px; }
+  .esc-cuadricula { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .esc-tarjeta > span:not(.esc-foto), .esc-tarjeta .esc-nombre { font-size: 14px; }
+  .esc-tabla.esc-lista-B { width: 100%; table-layout: auto; }
+  .esc-lista-B th, .esc-lista-B td { width: auto !important; }
+  .esc-lista-B th:nth-child(5), .esc-lista-B td:nth-child(5), .esc-lista-B th:nth-child(6), .esc-lista-B td:nth-child(6) { display: none; }
+  .esc-lista-B td { font-size: 15px; padding: 8px 6px; }
+  .esc-lista-B .esc-foto-40 { width: 40px; height: 40px; }
+  .esc-tabla th { position: static; }
+}
+/* Lista: la flechita no descuadra los nombres de dos líneas */
+.esc-lista-B td:nth-child(2) { position: relative; padding-left: 22px; }
+.esc-lista-B td:nth-child(2) .esc-flecha { position: absolute; left: 4px; width: auto; }

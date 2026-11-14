@@ -101,12 +101,12 @@ const T2 = {
 };
 
 // Foto con el botón de la cámara como icono pequeño en su esquina.
-function FotoCamara({ c, x, actualizar }) {
+function FotoCamara({ c, x, actualizar, soloVer }) {
   return (
     <span className="cx-foto">
       <Foto url={c.foto_url} nombre={c.nombre} />
       <span className="cx-camara">
-        <BotonFoto articuloId={c.articulo_id} etiqueta={x.foto} onSubida={url => actualizar(c.id, { foto_url: url })} />
+        {!soloVer && <BotonFoto articuloId={c.articulo_id} etiqueta={x.foto} onSubida={url => actualizar(c.id, { foto_url: url })} />}
       </span>
     </span>
   );
@@ -167,7 +167,7 @@ function CampoComentario({ valor, onGuardar, pista, etiqueta }) {
   );
 }
 
-function Linea({ c, idioma, version, actualizar, onQuitada }) {
+function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false }) {
   const t = textos(idioma);
   const x = T[idioma === 'en' ? 'en' : 'es'];
   const y = T2[idioma === 'en' ? 'en' : 'es'];
@@ -198,11 +198,11 @@ function Linea({ c, idioma, version, actualizar, onQuitada }) {
   }
 
   const nombre = (
-    <NombreEditable articuloId={c.articulo_id} nombre={c.nombre} sinonimos={c.sinonimos} idioma={idioma} puedeEditar className="nombre-articulo" />
+    <NombreEditable articuloId={c.articulo_id} nombre={c.nombre} sinonimos={c.sinonimos} idioma={idioma} puedeEditar={!soloVer} className="nombre-articulo" />
   );
   const talla = c.talla ? `${t.talla} ${c.talla}` : null;
   const etiquetasTexto = c.etiquetas?.length ? c.etiquetas.join(' · ') : null;
-  const cantidad = (
+  const cantidad = soloVer ? <span className="cx-valor-solo cx-cantidad">{c.cantidad}</span> : (
     <Numero
       valor={c.cantidad}
       etiqueta={x.cantidad}
@@ -210,7 +210,7 @@ function Linea({ c, idioma, version, actualizar, onQuitada }) {
       onCambio={n => guardar({ accion: 'cantidad', id: c.id, cantidad: n }, { cantidad: n, rotos: Math.min(c.rotos, n) })}
     />
   );
-  const rotas = (
+  const rotas = soloVer ? <span className={c.rotos > 0 ? 'cx-valor-solo estado-roto' : 'cx-valor-solo'}>{c.rotos}</span> : (
     <Numero
       valor={c.rotos}
       max={c.cantidad}
@@ -219,7 +219,7 @@ function Linea({ c, idioma, version, actualizar, onQuitada }) {
       onCambio={n => guardar({ accion: 'rotos', id: c.id, rotos: n }, { rotos: n })}
     />
   );
-  const comentario = (
+  const comentario = soloVer ? (c.comentarios ? <span className="cx-comentario-solo">{c.comentarios}</span> : null) : (
     <CampoComentario
       valor={c.comentarios || ''}
       pista={y.anadirComentario}
@@ -227,7 +227,7 @@ function Linea({ c, idioma, version, actualizar, onQuitada }) {
       onGuardar={v => guardar({ accion: 'comentarios', id: c.id, comentarios: v }, { comentarios: v || null })}
     />
   );
-  const botonQuitar = (
+  const botonQuitar = soloVer ? null : (
     <button type="button" className="cx-quitar" onClick={() => setConfirmar(true)}>{y.quitarCorto}</button>
   );
   const extras = (
@@ -252,8 +252,8 @@ function Linea({ c, idioma, version, actualizar, onQuitada }) {
     return (
       <li>
         <div className="esc-tarjeta cx-tarjeta">
-          <FotoCamara c={c} x={x} actualizar={actualizar} />
-          <NombreEditable articuloId={c.articulo_id} nombre={c.nombre} sinonimos={c.sinonimos} idioma={idioma} puedeEditar className="esc-nombre" />
+          <FotoCamara c={c} x={x} actualizar={actualizar} soloVer={soloVer} />
+          <NombreEditable articuloId={c.articulo_id} nombre={c.nombre} sinonimos={c.sinonimos} idioma={idioma} puedeEditar={!soloVer} className="esc-nombre" />
           {(talla || etiquetasTexto) && <span className="esc-gris">{[talla, etiquetasTexto].filter(Boolean).join(' · ')}</span>}
           <span className="esc-gris cx-pares"><span className="cx-par">{y.cant} {cantidad}</span><span className="cx-par">{x.rotas} {rotas}</span></span>
           <span className="esc-gris">{comentario}</span>
@@ -266,7 +266,7 @@ function Linea({ c, idioma, version, actualizar, onQuitada }) {
 
   return (
     <li className={`cx-t cx-t${version}`}>
-      <FotoCamara c={c} x={x} actualizar={actualizar} />
+      <FotoCamara c={c} x={x} actualizar={actualizar} soloVer={soloVer} />
       <div className="cx-datos">
         {nombre}
         {(version === '2' || talla) && (
@@ -461,7 +461,7 @@ function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho }) {
 // Caja: igual que el inicio, con botón Cuadrícula / Lista en el ordenador.
 // Lista: una fila por artículo (dos columnas en el ordenador). Cuadrícula: las tarjetas del inicio.
 // En el móvil, solo la lista.
-export default function CajaEditable({ sitioId, contenido, etiquetas, idioma }) {
+export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, soloVer = false }) {
   const router = useRouter();
   const en = idioma === 'en';
   const [lineas, setLineas] = useState(contenido);
@@ -485,7 +485,7 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma }) 
     setLineas(l => l.filter(v => v.id !== id));
   }
 
-  const comunes = { idioma, actualizar, onQuitada: quitada };
+  const comunes = { idioma, actualizar, onQuitada: quitada, soloVer };
 
   return (
     <>
@@ -505,9 +505,11 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma }) 
         <CabeceraTabla version="2" idioma={idioma} />
         {lineas.map(c => <Linea key={c.id} c={c} version="2" {...comunes} />)}
       </ul>
-      <div className="pie-edicion">
-        <AnadirArticulo sitioId={sitioId} etiquetas={etiquetas} idioma={idioma} onHecho={() => router.refresh()} />
-      </div>
+      {!soloVer && (
+        <div className="pie-edicion">
+          <AnadirArticulo sitioId={sitioId} etiquetas={etiquetas} idioma={idioma} onHecho={() => router.refresh()} />
+        </div>
+      )}
     </>
   );
 }
