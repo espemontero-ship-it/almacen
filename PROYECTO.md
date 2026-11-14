@@ -164,6 +164,25 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - **Borrar** siempre pide confirmación con una ventana propia de la app.
 - **Una sola forma de cada cosa**: un único tamaño de botón y siempre los mismos espacios de separación.
 
+### Identidad visual del sitio: versión 3 (elegida el 2026-11-14)
+
+Elegida entre varias versiones para el ordenador. Es la identidad visual del sitio.
+
+- **Letra**: la del sistema, a 13 px en la barra de arriba y los filtros. **Sin negritas**: título, enlaces, rótulos, contador y botones con grosor normal.
+- **Bordes**: siempre finos (1 px) y gris claro (`#d6d6d6`). Nada de líneas gruesas.
+- **Esquinas rectas**: buscador, desplegables, botones, grupos de botones y tarjetas.
+- **Sin fondos grises ni sombreados**: todo sobre blanco.
+- **Lo elegido** (ES / EN, Cuadrícula / Lista) y el botón **Buscar**: relleno negro con letra blanca.
+- **Mismo alto** para buscador, Buscar, desplegables y grupos de botones: 34 px.
+- **Barra de arriba (forma G)**: una sola fila compacta con Almacén, el buscador, los enlaces como texto (sin subrayar y sin recuadro) y ES / EN.
+- **Tarjetas**: borde fino gris claro, sin fondo, esquinas rectas.
+- **Se aplica a todo el sitio**: móvil, ordenador y todas las pantallas (decisión suya, 2026-11-14). Donde choca con las reglas de arriba, mandan estas:
+  - **Sin morado**: todos los botones principales (Buscar, Guardar, Añadir, Entrar…) en negro. El color de acento pasa a ser negro.
+  - **Letra**: 16 en el móvil (más grande que en el ordenador, para leer en el almacén) y 13 en el ordenador.
+  - **Negrita solo** en nombres de artículo, totales y rotas. Todo lo demás, con grosor normal.
+  - **Botones en el móvil**: siguen del tamaño de un dedo (48 de alto), con el estilo de la versión 3.
+  - **Enlaces** como texto, sin subrayar.
+
 ## Qué falta (para recordárselo cuando pregunte)
 
 - **Desarrollos posteriores**: guardar lo que vuelve, pickup lists (listas de salida a eventos) y permisos finos.
@@ -235,3 +254,7 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Editar nombres con doble clic sobre el nombre, en cualquier pantalla, sin botones nuevos. Los sinónimos solo se ven mientras se edita. Sustituye a la decisión de no dejar añadir sinónimos a mano.
 - Reglas nuevas: solo se hace exactamente lo que ella pide; no se mete nada sin preguntar y, ante cualquier duda, decide ella; antes de proponer nada se relee este documento.
 - Subido: todo lo anterior.
+- Barra de arriba del ordenador: elegida la forma G (una fila compacta, enlaces como texto) entre 8 opciones. Se ve el EN entero.
+- Identidad visual: elegida la versión 3 entre varias (letra 13 sin negritas, bordes finos gris claro, esquinas rectas, sin fondos grises, elegido y Buscar en negro, alto 34). Se aplica a todo el sitio, también al móvil: sin morado, letra 16 en el móvil, negrita solo en nombres, totales y rotas, botones del móvil del tamaño de un dedo, enlaces sin subrayar. Detalle en la Guía de diseño.
+- Sinónimos: 528 de los 745 artículos no tienen ninguno; queda para más adelante.
+- Subido: barra G e identidad visual versión 3 en todo el sitio.

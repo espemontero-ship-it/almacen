@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Buscador from './Buscador';
 import BotonIdioma from './BotonIdioma';
+import BarraOpciones from './BarraOpciones';
 import { textos } from '../../lib/textos';
 import { sesionActual } from '../../lib/sesionActual';
 
@@ -34,25 +35,25 @@ export default async function Cabecera({ busqueda = '', volver = false, idioma, 
         </div>
         <Buscador key={busqueda} busqueda={busqueda} idioma={idioma} />
       </header>
-      {!sinBarraEscritorio && <div className="esc solo-escritorio esc-barra-fija">
+      {!sinBarraEscritorio && <BarraOpciones>
         <header className="esc-barra">
           <Link href="/" className="esc-titulo">{t.titulo}</Link>
           <div className="esc-buscador"><Buscador key={busqueda} busqueda={busqueda} idioma={idioma} /></div>
           <nav className="esc-nav">
-            <Link href="/historial">{en ? 'History' : 'Historial'}</Link>
-            {puedeEditar && <Link href="/caja-nueva">{en ? '+ New box' : '+ Crear caja'}</Link>}
-            {sesion?.rol === 'admin' && <Link href="/personas">{t.personas}</Link>}
+            <Link href="/historial" className="esc-accion">{en ? 'History' : 'Historial'}</Link>
+            {puedeEditar && <Link href="/caja-nueva" className="esc-accion esc-accion-crear">{en ? '+ New box' : '+ Crear caja'}</Link>}
+            {sesion?.rol === 'admin' && <Link href="/personas" className="esc-accion">{t.personas}</Link>}
             {sesion ? (
               <form action="/api/logout" method="post">
-                <button type="submit">{t.salir}</button>
+                <button type="submit" className="esc-accion">{t.salir}</button>
               </form>
             ) : (
-              <Link href="/login">{t.entrar}</Link>
+              <Link href="/login" className="esc-accion">{t.entrar}</Link>
             )}
-            <BotonIdioma idioma={idioma} />
           </nav>
+          <div className="esc-idioma"><BotonIdioma idioma={idioma} /></div>
         </header>
-      </div>}
+      </BarraOpciones>}
     </>
   );
 }

@@ -3,7 +3,7 @@
   --texto: #1a1a1a;
   --secundario: #444444;
   --linea: #d6d6d6;
-  --acento: #4e4f74;
+  --acento: #1a1a1a;
   --sobre-acento: #ffffff;
   --toque: 48px;
 }
@@ -18,7 +18,7 @@ body {
   background: var(--fondo);
   color: var(--texto);
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.35;
   -webkit-text-size-adjust: 100%;
 }
@@ -82,14 +82,14 @@ a {
 input {
   min-height: var(--toque);
   padding: 8px 12px;
-  border: 2px solid var(--secundario);
-  border-radius: 8px;
+  border: 1px solid var(--linea);
+  border-radius: 0;
   background: var(--fondo);
   width: 100%;
 }
 
 input:focus {
-  outline: 3px solid var(--acento);
+  outline: 1px solid var(--texto);
   outline-offset: 1px;
 }
 
@@ -97,7 +97,7 @@ input:focus {
   min-height: var(--toque);
   padding: 8px 16px;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   background: var(--acento);
   color: var(--sobre-acento);
   font-weight: 700;
@@ -238,7 +238,7 @@ input:focus {
   flex: none;
   width: 56px;
   height: 56px;
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
   border: 1px solid var(--linea);
   background: var(--fondo);
@@ -328,15 +328,15 @@ select {
   font-size: 16px;
   min-height: var(--toque);
   padding: 8px;
-  border: 2px solid var(--secundario);
-  border-radius: 8px;
+  border: 1px solid var(--linea);
+  border-radius: 0;
   background: var(--fondo);
   width: 100%;
   min-width: 0;
 }
 
 select:focus {
-  outline: 3px solid var(--acento);
+  outline: 1px solid var(--texto);
   outline-offset: 1px;
 }
 
@@ -353,7 +353,7 @@ select:focus {
   font-weight: 400;
   color: var(--secundario);
   padding: 8px 0;
-  border-bottom: 2px solid var(--secundario);
+  border-bottom: 1px solid var(--linea);
 }
 
 .tabla td {
@@ -498,8 +498,8 @@ th .col-total {
   max-height: 45vh;
   overflow-y: auto;
   background: var(--fondo);
-  border: 2px solid var(--secundario);
-  border-radius: 8px;
+  border: 1px solid var(--linea);
+  border-radius: 0;
 }
 
 .sugerencias ul {
@@ -546,8 +546,8 @@ th .col-total {
 
 .idiomas {
   display: flex;
-  border: 2px solid var(--secundario);
-  border-radius: 8px;
+  border: 1px solid var(--linea);
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -562,7 +562,7 @@ th .col-total {
 }
 
 .idioma + .idioma {
-  border-left: 2px solid var(--secundario);
+  border-left: 1px solid var(--linea);
 }
 
 .idioma-activo {
@@ -660,8 +660,8 @@ th .col-total {
 .boton-secundario {
   min-height: var(--toque);
   padding: 8px 16px;
-  border: 2px solid var(--secundario);
-  border-radius: 8px;
+  border: 1px solid var(--linea);
+  border-radius: 0;
   background: var(--fondo);
   font-weight: 600;
   cursor: pointer;
@@ -722,8 +722,8 @@ th .col-total {
   min-height: 44px;
   min-width: 56px;
   padding: 6px 10px;
-  border: 2px solid var(--secundario);
-  border-radius: 8px;
+  border: 1px solid var(--linea);
+  border-radius: 0;
   background: var(--fondo);
   font-size: 16px;
   cursor: pointer;
@@ -768,7 +768,7 @@ th .col-total {
 .contador-boton {
   width: 44px;
   height: 44px;
-  border: 2px solid var(--secundario);
+  border: 1px solid var(--linea);
   background: var(--fondo);
   font-size: 22px;
   font-weight: 700;
@@ -776,11 +776,11 @@ th .col-total {
 }
 
 .contador-boton:first-child {
-  border-radius: 8px 0 0 8px;
+  border-radius: 0;
 }
 
 .contador-boton:last-child {
-  border-radius: 0 8px 8px 0;
+  border-radius: 0;
 }
 
 .contador-boton:disabled {
@@ -847,8 +847,8 @@ textarea {
   font: inherit;
   font-size: 16px;
   padding: 8px 12px;
-  border: 2px solid var(--secundario);
-  border-radius: 8px;
+  border: 1px solid var(--linea);
+  border-radius: 0;
   width: 100%;
 }
 
@@ -865,7 +865,7 @@ textarea {
 
 .dialogo {
   background: var(--fondo);
-  border-radius: 12px;
+  border-radius: 0;
   padding: 24px 16px 16px;
   width: 100%;
   max-width: 420px;
@@ -964,8 +964,8 @@ textarea {
   justify-content: center;
   width: 56px;
   height: 36px;
-  border: 2px solid var(--secundario);
-  border-radius: 8px;
+  border: 1px solid var(--linea);
+  border-radius: 0;
   background: var(--fondo);
   color: var(--texto);
   cursor: pointer;
@@ -1064,7 +1064,7 @@ textarea {
 .esc-main { padding: 16px 24px 40px; max-width: 1400px; }
 .esc-filtros { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; margin-bottom: 14px; }
 .esc-filtros label { display: flex; align-items: center; gap: 6px; color: var(--secundario); font-weight: 600; }
-.esc-filtros select { min-height: 34px; padding: 2px 8px; border: 2px solid var(--secundario); border-radius: 8px; background: var(--fondo); }
+.esc-filtros select { min-height: 34px; padding: 2px 8px; border: 1px solid var(--linea); border-radius: 8px; background: var(--fondo); }
 .esc-tick input { width: 16px; height: 16px; min-height: 0; margin: 0; }
 .esc-contador { color: var(--secundario); }
 .esc-gris { color: var(--secundario); }
@@ -1082,15 +1082,15 @@ textarea {
 .esc-lista-B th:nth-child(4) { width: 170px; }
 .esc-lista-B th:nth-child(5) { width: 150px; }
 .esc-lista-B th:nth-child(6) { width: 260px; }
-.esc-tabla th { text-align: left; font-size: 14px; font-weight: 400; color: var(--secundario); padding: 6px 8px; border-bottom: 2px solid var(--secundario); position: sticky; top: 59px; background: var(--fondo); }
+.esc-tabla th { text-align: left; font-size: 14px; font-weight: 400; color: var(--secundario); padding: 6px 8px; border-bottom: 1px solid var(--linea); position: sticky; top: 59px; background: var(--fondo); }
 .esc-tabla td { padding: 6px 8px; border-bottom: 1px solid var(--linea); vertical-align: middle; }
 .esc-c-foto { width: 56px; }
 .esc-fila-desplegable { cursor: pointer; }
 .esc-flecha { display: inline-block; width: 18px; color: var(--secundario); }
 .esc-caja-linea { display: block; padding: 3px 0; }
-.esc-vistas { display: inline-flex; margin-left: auto; border: 2px solid var(--secundario); border-radius: 8px; overflow: hidden; }
+.esc-vistas { display: inline-flex; margin-left: auto; border: 1px solid var(--linea); border-radius: 8px; overflow: hidden; }
 .esc-vistas button { border: none; background: var(--fondo); padding: 6px 12px; cursor: pointer; font-weight: 600; }
-.esc-vistas button + button { border-left: 2px solid var(--secundario); }
+.esc-vistas button + button { border-left: 1px solid var(--linea); }
 .esc-vistas .esc-vista-activa { background: var(--texto); color: var(--fondo); }
 .esc-cuadricula { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
 .esc-tarjeta { display: flex; flex-direction: column; gap: 3px; padding: 6px; border: 1px solid var(--linea); border-radius: 8px; height: 100%; }
@@ -1118,3 +1118,50 @@ textarea {
 .nombre-editando { outline: none; border-bottom: 1px solid var(--texto); cursor: text; white-space: normal; overflow-wrap: anywhere; }
 .nombre-zona { display: inline-flex; flex-direction: column; gap: 2px; min-width: 0; }
 .sinonimos-editando { display: block; font-size: 0.8em; font-weight: 400; color: var(--secundario); }
+
+/* Barra de arriba del ordenador (forma G) */
+/* Común a todas: que quepa todo y el EN se vea */
+[data-barra] .esc-barra { position: static; }
+[data-barra] .esc-buscador { min-width: 0; flex: 1 1 auto; }
+[data-barra] .esc-nav { flex-shrink: 0; margin-left: auto; gap: 18px; }
+[data-barra] .esc-idioma { flex-shrink: 0; }
+[data-barra] .esc-nav .esc-accion { display: inline-flex; align-items: center; color: var(--texto); font-weight: 600; text-decoration: none; background: none; border: none; padding: 0; min-height: 0; cursor: pointer; font-size: 15px; white-space: nowrap; }
+[data-barra] .esc-idioma .idiomas { border: 1px solid var(--linea); border-radius: 8px; }
+[data-barra] .esc-idioma .idioma { min-width: 36px; min-height: 34px; padding: 0 8px; font-size: 14px; }
+[data-barra] .esc-idioma .idioma + .idioma { border-left: 1px solid var(--linea); }
+/* G: más baja y compacta */
+[data-barra="G"] .esc-barra { padding: 5px 24px; gap: 14px; }
+[data-barra="G"] .esc-titulo { font-size: 16px; }
+[data-barra="G"] input { height: 34px; min-height: 34px; padding: 2px 8px; font-size: 15px; }
+[data-barra="G"] .buscador button { height: 34px; min-height: 34px; font-size: 15px; }
+[data-barra="G"] .esc-nav .esc-accion { font-size: 14px; }
+[data-barra="G"] .esc-idioma .idiomas { display: inline-flex; height: 34px; }
+[data-barra="G"] .esc-idioma .idioma { height: 100%; min-height: 0; min-width: 34px; font-size: 15px; }
+
+/* Ordenador: estilo 3 elegido para barra y filtros (borde fino claro, esquinas rectas, letra 13 sin negritas, elegido y Buscar en negro) */
+html { --cb: 1px solid var(--linea); --cr: 6px; --act-bg: var(--texto); --act-c: var(--fondo); --act-b: none; --busbg: var(--texto); --busc: var(--fondo); --busb: 1px solid var(--texto); }
+html { --cr: 0; }
+/* Letra: un solo tamaño y grosor en barra y filtros */
+html body .esc.esc .esc-titulo, html body .esc.esc .esc-nav .esc-accion, html body .esc.esc .esc-filtros label, html body .esc.esc .esc-contador { font-size: 13px; font-weight: 400; color: var(--texto); }
+/* Controles: alto 34, borde fino, sin fondos grises */
+html body .esc.esc .buscador input, html body .esc.esc .esc-filtros select { height: 34px; min-height: 34px; padding: 0 8px; font-size: 13px; font-weight: 400; border: var(--cb); border-radius: var(--cr); background: var(--fondo); }
+html body .esc.esc .esc-idioma .idiomas, html body .esc.esc .esc-vistas { display: inline-flex; gap: 0; height: 34px; border: var(--cb); border-radius: var(--cr); overflow: hidden; background: var(--fondo); }
+html body .esc.esc .esc-idioma .idioma, html body .esc.esc .esc-vistas button { height: 100%; min-height: 0; padding: 0 12px; font-size: 13px; font-weight: 400; border: none; border-radius: 0; background: var(--fondo); color: var(--texto); }
+html body .esc.esc .esc-idioma .idioma + .idioma, html body .esc.esc .esc-vistas button + button { border-left: var(--cb); }
+html body .esc.esc .esc-idioma .idioma-activo, html body .esc.esc .esc-vistas .esc-vista-activa { background: var(--act-bg); color: var(--act-c); font-weight: 400; box-shadow: inset 0 0 0 var(--act-b-ancho, 0) var(--texto); }
+html body .esc.esc .esc-tick input { accent-color: var(--texto); }
+html body .esc.esc .buscador button { height: 34px; min-height: 34px; padding: 0 14px; font-size: 13px; font-weight: 400; border: var(--busb); border-radius: var(--cr); background: var(--busbg); color: var(--busc); }
+/* Tarjetas y línea bajo la barra: finas y claras, sin fondo */
+html body .esc.esc .esc-tarjeta { border: 1px solid var(--linea); border-radius: 6px; background: var(--fondo); }
+html body .esc.esc .esc-tarjeta { border-radius: 0; }
+html body .esc.esc .esc-barra { border-bottom: 1px solid var(--linea); }
+
+/* ===== Identidad visual versión 3, en todo el sitio (2026-11-14) =====
+   Negrita solo en nombres de artículo, totales y rotas; todo lo demás con grosor normal. */
+body, body * { font-weight: 400 !important; }
+.nombre-articulo, .nombre-tabla, .esc-nombre, .sugerencia-texto strong, .anadir strong, .formulario strong,
+.col-total, .total .cantidad, .cantidad, .esc-num, .esc-num strong, .esc-tarjeta strong,
+.estado-roto, .estado-roto * { font-weight: 700 !important; }
+/* Enlaces como texto, sin subrayar; los títulos de columna no van en negrita */
+.enlace-volver, .boton-texto { text-decoration: none; }
+thead .col-total, thead .esc-num, th { font-weight: 400 !important; }
