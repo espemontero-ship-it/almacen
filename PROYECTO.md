@@ -33,6 +33,7 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 - **Etiquetas**: cada artículo puede llevar varias (Props, rentals, Uniforms, Electrical…), como en la hoja actual.
 - **Ver una caja**: cada item con su cantidad, foto, estado (bueno / roto) y comentarios.
 - **Buscar un item**: el total que hay sumando todas las cajas y, debajo, en qué cajas está y cuántos hay en cada una.
+- **Ficha del artículo**: arriba la foto, el nombre (editable con doble clic), las etiquetas, "26 en total · U3, U5" y las rotas si las hay; en la ropa, botones de talla que filtran las cajas; debajo, cada caja en una tarjeta como las del inicio (código, nombre de la caja, talla, cantidad, rotas y comentario), que lleva a la caja. La búsqueda del móvil sigue con la ficha anterior.
 - **Sugerencias al escribir**: desde la segunda letra salen debajo del buscador todos los artículos, etiquetas y cajas que coinciden. Al tocar una sugerencia se va directo a ella.
 - **Inicio en el móvil**: el buscador y debajo la tabla de todos los artículos (Artículo · Total · Cajas), con filtros de etiqueta, estado y la casilla "Con foto". Al tocar una fila se despliega por caja (y por talla en la ropa).
 - **Inicio en el ordenador** (pantallas de 900 px o más): arriba, una sola barra con Almacén (vuelve al inicio), el buscador, Historial, + Crear caja, Personas, Salir y ES / EN. Debajo, filtros de etiqueta, estado y "Con foto", y el botón Cuadrícula / Lista. Cuadrícula: tarjetas pequeñas con foto, nombre, etiquetas, tallas, total y cajas; el estado solo sale si hay algo roto; al pulsar una tarjeta se abre la ficha. Lista: tabla compacta (Artículo · Total · Cajas · Estado · Etiquetas) con desplegable por caja.
@@ -189,7 +190,7 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - **Mensaje de error en Recuperar contraseña**: si el envío del correo falla, la pantalla dice "No hay conexión"; debería decir que no se ha podido enviar el correo.
 - **Datos definitivos**: cargarlos cuando termine la reorganización del almacén. La carga une la ropa por tallas y reutiliza los nombres ya revisados.
 - **9 artículos sin traducir**: no se sabe qué son; tienen el nombre original en los dos idiomas.
-- **Revisión de pantallas una a una**: aprobadas inicio, búsqueda y caja. Quedan por enseñar historial, Crear caja, Personas, Entrar y Recuperar contraseña, y la ficha del artículo en el ordenador (diseño antiguo, con opciones).
+- **Revisión de pantallas**: terminada el 2026-11-14 (inicio, búsqueda, caja, historial, Crear caja, Personas, Entrar, Recuperar y ficha del artículo).
 - **Unidades en la caja** ("14 artículos · 74 unidades"): preguntó qué pintan; sin resolver.
 - **En el móvil**, a la ficha del artículo solo se llega desde las sugerencias del buscador.
 - **Sinónimos**: la lista no tiene las palabras en inglés; se hizo mal. Aparcado por decisión suya.
@@ -261,3 +262,6 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - Revisión de toda la web con la versión 3: Personas, Crear caja, Entrar, Recuperar e invitación con la barra de arriba en el ordenador; contenido a la izquierda en todas las pantallas; en el historial el código de la caja va en la misma línea del cambio; tarjetas sin doble marco; "Almacén" del móvil del mismo tamaño que el resto; el nombre de las personas sin negrita.
 - Caja rehecha tras varias versiones descartadas: información a la vista sin pulsar nada, cantidad y rotas con − número + (elegida entre casilla, − + y las dos), comentario en una casilla siempre visible sin botón Guardar, cámara en la esquina de la foto, Cuadrícula / Lista como en el inicio con la Lista en dos columnas, y todo alineado a la línea de arriba de la foto. El estado "Bueno" / "8 buenas · 2 rotas" ya no sale aparte: lo da la columna Rotas.
 - Subido: revisión de pantallas y caja nueva.
+- Historial, Crear caja, Personas, Entrar y Recuperar: aprobadas tal como quedaron. En Entrar, en el ordenador, no salen "‹ Inicio" ni el título porque ya están en la barra.
+- Ficha del artículo: elegida la opción de cajas en tarjetas (entre cabecera con tabla y dos columnas), con las cajas también listadas junto al total.
+- Subido: ficha del artículo nueva.
