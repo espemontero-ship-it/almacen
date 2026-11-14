@@ -1044,3 +1044,77 @@ textarea {
 .papelera {
   margin-top: 8px;
 }
+
+/* ===== Inicio en ordenador (Escritorio.js) ===== */
+.solo-escritorio { display: none; }
+@media (min-width: 900px) {
+  .solo-escritorio { display: block; }
+  .solo-movil { display: none; }
+}
+.esc { font-size: 15px; }
+.esc input, .esc select, .esc button { font-size: 15px; }
+.esc input { min-height: 38px; padding: 6px 10px; }
+.esc .buscador button { min-height: 38px; padding: 4px 14px; }
+.esc-barra { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 20px; padding: 10px 24px; background: var(--fondo); border-bottom: 1px solid var(--linea); }
+.esc-titulo { font-weight: 700; font-size: 18px; white-space: nowrap; }
+.esc-buscador { flex: 1; max-width: 560px; }
+.esc-nav { display: flex; align-items: center; gap: 16px; margin-left: auto; white-space: nowrap; }
+.esc-nav a, .esc-nav button { background: none; border: none; padding: 0; min-height: 0; cursor: pointer; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.esc-nav form { margin: 0; }
+.esc-main { padding: 16px 24px 40px; max-width: 1400px; }
+.esc-filtros { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; margin-bottom: 14px; }
+.esc-filtros label { display: flex; align-items: center; gap: 6px; color: var(--secundario); font-weight: 600; }
+.esc-filtros select { min-height: 34px; padding: 2px 8px; border: 2px solid var(--secundario); border-radius: 8px; background: var(--fondo); }
+.esc-tick input { width: 16px; height: 16px; min-height: 0; margin: 0; }
+.esc-contador { color: var(--secundario); }
+.esc-gris { color: var(--secundario); }
+.esc-num { text-align: right; }
+.esc-nombre { font-weight: 600; }
+.esc-sub { display: block; font-size: 13px; color: var(--secundario); margin-left: 18px; }
+.esc-foto { display: inline-block; overflow: hidden; border-radius: 8px; border: 1px solid var(--linea); flex: none; }
+.esc-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.esc-foto-40 { width: 44px; height: 44px; }
+.esc-foto-cuadrada { width: 100%; aspect-ratio: 1; }
+.esc-tabla { width: auto; border-collapse: collapse; table-layout: fixed; }
+.esc-lista-B th:nth-child(1) { width: 34px; }
+.esc-lista-B th:nth-child(2) { width: 320px; }
+.esc-lista-B th:nth-child(3) { width: 56px; }
+.esc-lista-B th:nth-child(4) { width: 170px; }
+.esc-lista-B th:nth-child(5) { width: 150px; }
+.esc-lista-B th:nth-child(6) { width: 260px; }
+.esc-tabla th { text-align: left; font-size: 14px; font-weight: 400; color: var(--secundario); padding: 6px 8px; border-bottom: 2px solid var(--secundario); position: sticky; top: 59px; background: var(--fondo); }
+.esc-tabla td { padding: 6px 8px; border-bottom: 1px solid var(--linea); vertical-align: middle; }
+.esc-c-foto { width: 56px; }
+.esc-fila-desplegable { cursor: pointer; }
+.esc-flecha { display: inline-block; width: 18px; color: var(--secundario); }
+.esc-caja-linea { display: block; padding: 3px 0; }
+.esc-vistas { display: inline-flex; margin-left: auto; border: 2px solid var(--secundario); border-radius: 8px; overflow: hidden; }
+.esc-vistas button { border: none; background: var(--fondo); padding: 6px 12px; cursor: pointer; font-weight: 600; }
+.esc-vistas button + button { border-left: 2px solid var(--secundario); }
+.esc-vistas .esc-vista-activa { background: var(--texto); color: var(--fondo); }
+.esc-cuadricula { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+.esc-tarjeta { display: flex; flex-direction: column; gap: 3px; padding: 6px; border: 1px solid var(--linea); border-radius: 8px; height: 100%; }
+.esc-tarjeta .esc-foto { margin-bottom: 4px; }
+.esc-tarjeta > span:not(.esc-foto) { font-size: 12px; }
+
+.filtros .filtro-tick { flex-direction: row; align-items: center; align-self: end; min-height: var(--toque); gap: 8px; }
+.filtro-tick input { width: 22px; height: 22px; min-height: 0; margin: 0; flex: none; }
+
+/* Ordenador: barra común y tamaño más contenido en el resto de pantallas */
+@media (min-width: 900px) {
+  .esc-barra-fija { position: sticky; top: 0; z-index: 10; }
+  .esc-barra-fija .esc-barra { position: static; }
+  .contenido.reducido { zoom: 0.83; padding: 16px 29px 40px; max-width: 1300px; }
+}
+.esc-aviso { margin: 0 0 12px; color: var(--secundario); }
+
+.esc-lista-B td { padding: 2px 6px; font-size: 13px; line-height: 1.25; }
+.esc-lista-B .esc-foto-40 { width: 24px; height: 24px; border-radius: 4px; }
+.esc-lista-B .esc-sub { font-size: 12px; }
+.esc-lista-B th { font-size: 12px; padding: 3px 6px; }
+
+/* Editar nombre y sinónimos con doble clic */
+.nombre-error { color: var(--texto); font-size: 13px; font-weight: 600; }
+.nombre-editando { outline: none; border-bottom: 1px solid var(--texto); cursor: text; white-space: normal; overflow-wrap: anywhere; }
+.nombre-zona { display: inline-flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sinonimos-editando { display: block; font-size: 0.8em; font-weight: 400; color: var(--secundario); }

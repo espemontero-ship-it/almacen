@@ -31,7 +31,7 @@ export default async function Sitio({ params }) {
   return (
     <>
       <Cabecera volver idioma={idioma} />
-      <main className="contenido">
+      <main className="contenido reducido">
         <h1 className="sitio-titulo">
           <NombreSitio codigo={sitio.codigo} nombre={sitio.nombre} />
         </h1>

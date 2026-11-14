@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Foto from '../../components/Foto';
 import BotonFoto from '../../components/BotonFoto';
+import NombreEditable from '../../components/NombreEditable';
 import { textos } from '../../../lib/textos';
 import { ordenarTallas } from '../../../lib/tallas.cjs';
 
@@ -144,14 +145,26 @@ function Linea({ inicial, idioma, onQuitada }) {
           <Foto url={c.foto_url} nombre={c.nombre} />
           <BotonFoto articuloId={c.articulo_id} etiqueta={x.foto} onSubida={url => setC(v => ({ ...v, foto_url: url }))} />
         </span>
-        <button type="button" className="fila-texto boton-nombre" onClick={() => setAbierta(!abierta)} aria-expanded={abierta}>
-          <span className="nombre-articulo">{c.nombre}</span>
+        <div
+          role="button"
+          tabIndex={0}
+          className="fila-texto boton-nombre"
+          onClick={() => setAbierta(!abierta)}
+          onKeyDown={e => {
+            if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault();
+              setAbierta(!abierta);
+            }
+          }}
+          aria-expanded={abierta}
+        >
+          <NombreEditable articuloId={c.articulo_id} nombre={c.nombre} sinonimos={c.sinonimos} idioma={idioma} puedeEditar className="nombre-articulo" />
           {c.talla && <span className="estado">{t.talla} {c.talla}</span>}
           <span className={c.rotos > 0 ? 'estado estado-roto' : 'estado'}>
             {c.rotos > 0 ? t.buenasRotas(c.cantidad - c.rotos, c.rotos) : t.bueno}
           </span>
           {c.comentarios && !abierta && <span className="comentarios">{c.comentarios}</span>}
-        </button>
+        </div>
         <Contador
           etiqueta={x.cantidad}
           valor={c.cantidad}

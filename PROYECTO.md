@@ -4,6 +4,8 @@ Este documento es la fuente de verdad del proyecto: qué es, qué se ha decidido
 
 ## Regla de trabajo
 
+- **Solo se hace exactamente lo que ella pide.** Nada más: ni quitar, ni añadir, ni cambiar nada que no haya pedido, aunque parezca que va con lo pedido. Si algo de lo pedido obliga a tocar otra cosa, se le pregunta antes.
+- **No se mete nada sin preguntar. Ante cualquier duda, las decisiones las toma ella, no Claude.**
 - **Antes de subir nada** (commit, push o publicar en Vercel) se le pregunta. Subir a GitHub publica solo en la app.
 - **No se comprueba todo** en cada cambio pequeño: basta con compilar y echar un vistazo. Lo que no se haya comprobado se dice.
 - **Cada vez que se sube algo, se apunta aquí en ese mismo momento**: en "Lo que hace" si cambia lo que la app hace, y siempre en el Registro de decisiones.
@@ -32,7 +34,11 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 - **Ver una caja**: cada item con su cantidad, foto, estado (bueno / roto) y comentarios.
 - **Buscar un item**: el total que hay sumando todas las cajas y, debajo, en qué cajas está y cuántos hay en cada una.
 - **Sugerencias al escribir**: desde la segunda letra salen debajo del buscador todos los artículos, etiquetas y cajas que coinciden. Al tocar una sugerencia se va directo a ella.
-- **Inicio**: el buscador y debajo la tabla de todos los artículos (Artículo · Total · Cajas), con filtros de tipo de caja, etiqueta y estado. Al tocar una fila se despliega por caja (y por talla en la ropa). En pantallas anchas, también las columnas Etiquetas y Estado.
+- **Inicio en el móvil**: el buscador y debajo la tabla de todos los artículos (Artículo · Total · Cajas), con filtros de etiqueta, estado y la casilla "Con foto". Al tocar una fila se despliega por caja (y por talla en la ropa).
+- **Inicio en el ordenador** (pantallas de 900 px o más): arriba, una sola barra con Almacén (vuelve al inicio), el buscador, Historial, + Crear caja, Personas, Salir y ES / EN. Debajo, filtros de etiqueta, estado y "Con foto", y el botón Cuadrícula / Lista. Cuadrícula: tarjetas pequeñas con foto, nombre, etiquetas, tallas, total y cajas; el estado solo sale si hay algo roto; al pulsar una tarjeta se abre la ficha. Lista: tabla compacta (Artículo · Total · Cajas · Estado · Etiquetas) con desplegable por caja.
+- **Búsqueda en el ordenador**: los resultados salen con las mismas tarjetas y el mismo botón Cuadrícula / Lista que el inicio.
+- **Ficha del artículo, caja e historial en el ordenador**: la misma barra de arriba y la letra y los botones más pequeños. Personas y Crear caja siguen como en el móvil.
+- **Editar el nombre** (quien edita): doble clic (o doble toque) sobre el nombre de un artículo en cualquier pantalla. Se escribe sobre el propio texto; debajo aparecen sus sinónimos, que solo se ven mientras se edita. Se edita el nombre del idioma que se está viendo; los sinónimos son una sola lista para los dos idiomas. Cada uno se guarda al salir de él; Enter guarda y cierra; Esc cancela. Queda en el historial y el buscador encuentra el nombre nuevo.
 - **Dos idiomas**: botón ES / EN arriba; cada móvil recuerda el suyo. Cambian las pantallas, los nombres de los artículos y las etiquetas. El buscador encuentra en los dos idiomas a la vez.
 - **Entrar**: cada persona con su usuario (o su correo) y contraseña. Arriba, "Entrar"; con sesión, "Personas" (solo administración) y "Salir". Ver y buscar sigue abierto sin entrar.
 - **Recuperar contraseña**: "¿Has olvidado tu contraseña?" → correo → enlace de 2 horas para elegir una nueva. Los correos salen por Gmail con SMTP_USER y SMTP_APP_PASSWORD (contraseña de aplicación de esa misma cuenta, que necesita la verificación en dos pasos activada).
@@ -40,7 +46,7 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 - **Editar las cajas** (quien entra con acceso de edición o administración): al entrar en una caja, cada artículo tiene la cantidad con [−] [+] que se guarda al momento. Al tocar el nombre se abren: rotas con [−] [+] (se ve "8 buenas · 2 rotas"), comentarios con botón Guardar y "Quitar de la caja" con confirmación. Abajo, "Añadir artículo": busca en el catálogo con sugerencias (cantidad y talla si es ropa) o crea uno nuevo (nombre en español e inglés, etiquetas, si es ropa y su talla).
 - **Fotos**: una por artículo. Al editar una caja, cada artículo tiene un botón con icono de cámara: abre la cámara (o la galería), la app reduce la foto (lado máximo 1200 px, JPEG) y la sube a Cloudflare R2. Al tocar una foto se ve en grande. Miniatura en la tabla del inicio, y foto en la ficha y en la caja.
 - **Crear caja** (desde el inicio, quien edita): tipo de caja, número propuesto (el siguiente libre) y nombre opcional.
-- **Historial** (lo ve todo el mundo): cada cambio queda apuntado con quién, cuándo y qué (cantidades, rotas, comentarios, añadir, quitar, recuperar, artículo nuevo, caja nueva y fotos). Botón "Historial" en el inicio con todos los cambios; "Historial de esta caja" al final de cada caja; "Historial de este artículo" en la ficha. Empieza a contar desde el 2026-11-14.
+- **Historial** (lo ve todo el mundo): cada cambio queda apuntado con quién, cuándo y qué (cantidades, rotas, comentarios, añadir, quitar, recuperar, artículo nuevo, caja nueva, fotos, nombres y sinónimos). Botón "Historial" en el inicio con todos los cambios; "Historial de esta caja" al final de cada caja. El enlace "Historial de este artículo" se quitó. Empieza a contar desde el 2026-11-14.
 - **Papelera** (quien edita): al final de cada caja, "Quitado de esta caja (últimos 30 días)", con botón Recuperar que lo devuelve tal como estaba.
 - **Ropa con tallas**: cada prenda es un solo artículo, con la cantidad de cada talla. Al buscarla, las tallas salen como botones con su total (S 9 · M 19…); al tocar uno salen las cajas de esa talla. XXL = 2XL, XXXL = 3XL; W es mujer y M hombre.
 - **Crear y editar** desde la app: cajas, items, cantidades, estado, comentarios y fotos hechas con el móvil. Se empieza solo con ver.
@@ -164,6 +170,11 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - **Mensaje de error en Recuperar contraseña**: si el envío del correo falla, la pantalla dice "No hay conexión"; debería decir que no se ha podido enviar el correo.
 - **Datos definitivos**: cargarlos cuando termine la reorganización del almacén. La carga une la ropa por tallas y reutiliza los nombres ya revisados.
 - **9 artículos sin traducir**: no se sabe qué son; tienen el nombre original en los dos idiomas.
+- **Revisar todas las pantallas una a una**, con opciones, empezando por: la ficha del artículo en el ordenador (diseño antiguo) y la barra de arriba (se ve enorme comparada con lo demás).
+- **Unidades en la caja** ("14 artículos · 74 unidades"): preguntó qué pintan; sin resolver.
+- **En el móvil**, a la ficha del artículo solo se llega desde las sugerencias del buscador.
+- **Sinónimos**: la lista no tiene las palabras en inglés; se hizo mal. Aparcado por decisión suya.
+- **Borrar 2 archivos de prueba** de la carpeta "prueba/" de las fotos en Cloudflare.
 
 ## Pendiente de decidir
 
@@ -214,3 +225,13 @@ Es propia de esta app. La de punteo-trimestral no aplica, porque está pensada p
 - Subido 2c: fotos con Cloudflare R2. El bucket almacen-fotos está en la jurisdicción europea, así que la dirección lleva .eu. (con la normal da Access Denied). Las fotos no son públicas: se enseñan con enlaces temporales de 6 horas. Claves en Vercel: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET.
 - Subido 2d: historial (lo ve todo el mundo, con sección general además de por caja y por artículo) y papelera de 30 días en cada caja. Con esto queda terminada la Fase 2.
 - 2026-11-14: el correo de recuperación funciona y ha llegado. El fallo eran las credenciales de Gmail en Vercel (contraseña de aplicación).
+
+**2026-11-14 (rediseño de ordenador)**
+- En el ordenador todo era enorme y desordenado, no se veían las fotos y los filtros no tenían sentido. Se enseñaron 6 diseños completos en la app y eligió el 2 (catálogo de fotos con Cuadrícula / Lista), con la tarjeta más pequeña (C) y sin "Bueno" en las tarjetas: el estado solo sale si hay algo roto.
+- Filtros: buscador, etiqueta, estado y casilla "Con foto". "Tipo de caja" se quita en todas partes, también en el móvil.
+- La Lista del ordenador se hace compacta, con las columnas en orden nombre, unidades, caja y estado (Etiquetas queda al final) y sin hueco en el nombre.
+- Búsqueda en el ordenador con las mismas tarjetas. Ficha, caja e historial con la barra de arriba y tamaño más pequeño.
+- "Historial de este artículo" se quita de todas partes: no tenía sentido.
+- Editar nombres con doble clic sobre el nombre, en cualquier pantalla, sin botones nuevos. Los sinónimos solo se ven mientras se edita. Sustituye a la decisión de no dejar añadir sinónimos a mano.
+- Reglas nuevas: solo se hace exactamente lo que ella pide; no se mete nada sin preguntar y, ante cualquier duda, decide ella; antes de proponer nada se relee este documento.
+- Subido: todo lo anterior.

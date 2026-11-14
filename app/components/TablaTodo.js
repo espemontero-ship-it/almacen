@@ -5,12 +5,11 @@ import Link from 'next/link';
 import { textos } from '../../lib/textos';
 import Foto from './Foto';
 import { ordenarTallas } from '../../lib/tallas.cjs';
+import NombreEditable from './NombreEditable';
 
-const ORDEN_TIPOS = ['P', 'C', 'O', 'M', 'L', 'D', 'A', 'U', 'R', 'otros'];
-
-export default function TablaTodo({ filas, idioma }) {
+export default function TablaTodo({ filas, idioma, puedeEditar = false }) {
   const t = textos(idioma);
-  const [tipo, setTipo] = useState('');
+  const [conFoto, setConFoto] = useState(false);
   const [etiqueta, setEtiqueta] = useState('');
   const [estado, setEstado] = useState('');
   const [abiertos, setAbiertos] = useState(() => new Set());
@@ -23,13 +22,13 @@ export default function TablaTodo({ filas, idioma }) {
   const articulos = useMemo(() => {
     const porId = new Map();
     for (const f of filas) {
-      if (tipo && (tipo === 'otros' ? f.letra : f.letra !== tipo)) continue;
+      if (conFoto && !f.foto_url) continue;
       if (etiqueta && !f.etiquetas.includes(etiqueta)) continue;
       if (estado === 'roto' && !(f.rotos > 0)) continue;
       if (estado === 'bueno' && !(f.rotos < f.cantidad)) continue;
       let a = porId.get(f.articulo_id);
       if (!a) {
-        a = { id: f.articulo_id, nombre: f.nombre, foto_url: f.foto_url, etiquetas: f.etiquetas, total: 0, rotos: 0, cajas: [], porTalla: {} };
+        a = { id: f.articulo_id, nombre: f.nombre, sinonimos: f.sinonimos || [], foto_url: f.foto_url, etiquetas: f.etiquetas, total: 0, rotos: 0, cajas: [], porTalla: {} };
         porId.set(f.articulo_id, a);
       }
       a.total += f.cantidad;
@@ -43,7 +42,7 @@ export default function TablaTodo({ filas, idioma }) {
       const cajas = [...a.cajas].sort((x, y) => (orden.get(x.talla) ?? -1) - (orden.get(y.talla) ?? -1));
       return { ...a, tallas, cajas, textoCajas: [...new Set(a.cajas.map(c => c.texto))].join(', ') };
     }).sort((x, y) => x.nombre.localeCompare(y.nombre, 'es', { sensitivity: 'base', ignorePunctuation: true }));
-  }, [filas, tipo, etiqueta, estado]);
+  }, [filas, conFoto, etiqueta, estado]);
 
   function alternar(id) {
     setAbiertos(previo => {
@@ -57,15 +56,6 @@ export default function TablaTodo({ filas, idioma }) {
   return (
     <section className="todo">
       <div className="filtros">
-        <label>
-          {t.tipoCaja}
-          <select value={tipo} onChange={e => setTipo(e.target.value)}>
-            <option value="">{t.todos}</option>
-            {ORDEN_TIPOS.map(valor => (
-              <option key={valor} value={valor}>{t.tipos[valor]}</option>
-            ))}
-          </select>
-        </label>
         <label>
           {t.etiqueta}
           <select value={etiqueta} onChange={e => setEtiqueta(e.target.value)}>
@@ -82,6 +72,10 @@ export default function TablaTodo({ filas, idioma }) {
             <option value="bueno">{t.bueno}</option>
             <option value="roto">{t.roto}</option>
           </select>
+        </label>
+        <label className="filtro-tick">
+          <input type="checkbox" checked={conFoto} onChange={e => setConFoto(e.target.checked)} />
+          {t.conFoto}
         </label>
       </div>
       <p className="aviso">{t.nArticulos(articulos.length)}</p>
@@ -109,7 +103,7 @@ export default function TablaTodo({ filas, idioma }) {
                   <span className="flecha" aria-hidden="true">{desplegable ? (abierto ? '▾' : '▸') : ''}</span>
                   {a.foto_url && <Foto url={a.foto_url} nombre={a.nombre} pequena />}
                   <span className="nombre-y-extra">
-                    <span className="nombre-tabla">{a.nombre}</span>
+                    <NombreEditable articuloId={a.id} nombre={a.nombre} sinonimos={a.sinonimos} idioma={idioma} puedeEditar={puedeEditar} className="nombre-tabla" />
                     <span className="extra-movil">
                       <span className="etiquetas-tabla">
                         {a.etiquetas.length > 0 && `${a.etiquetas.join(' · ')} · `}
@@ -131,14 +125,21 @@ export default function TablaTodo({ filas, idioma }) {
                 <tr className={abierto ? 'fila-abierta' : undefined}>
                   <td>
                     {desplegable ? (
-                      <button
-                        type="button"
+                      <div
+                        role="button"
+                        tabIndex={0}
                         className="rejilla boton-fila"
                         aria-expanded={abierto}
                         onClick={() => alternar(a.id)}
+                        onKeyDown={e => {
+                          if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+                            e.preventDefault();
+                            alternar(a.id);
+                          }
+                        }}
                       >
                         {contenido}
-                      </button>
+                      </div>
                     ) : (
                       <div className="rejilla boton-fila fila-fija">{contenido}</div>
                     )}

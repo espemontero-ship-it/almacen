@@ -4,16 +4,16 @@ import NombreSitio from './NombreSitio';
 import Etiquetas from './Etiquetas';
 import { textos } from '../../lib/textos';
 import TallasArticulo from './TallasArticulo';
-import { textosHistorial } from '../../lib/textosHistorial';
+import NombreEditable from './NombreEditable';
 
-export default function FichaArticulo({ articulo: a, idioma }) {
+export default function FichaArticulo({ articulo: a, idioma, puedeEditar = false }) {
   const t = textos(idioma);
   return (
     <li className="resultado">
       <div className="fila fila-articulo">
         <Foto url={a.foto_url} nombre={a.nombre} />
         <span className="fila-texto">
-          <span className="nombre-articulo">{a.nombre}</span>
+          <NombreEditable articuloId={a.id} nombre={a.nombre} sinonimos={a.sinonimos} idioma={idioma} puedeEditar={puedeEditar} className="nombre-articulo" />
           <Etiquetas lista={a.etiquetas} />
           {a.rotos > 0 && <span className="estado estado-roto">{t.rotos(a.rotos)}</span>}
         </span>
@@ -43,9 +43,6 @@ export default function FichaArticulo({ articulo: a, idioma }) {
         ))}
       </ul>
       )}
-      <p className="enlace-historial">
-        <Link href={`/historial?articulo=${a.id}`} className="enlace-volver">{textosHistorial(idioma).verHistorialArticulo}</Link>
-      </p>
     </li>
   );
 }

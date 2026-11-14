@@ -17,7 +17,7 @@ export default async function CajaNueva() {
   for (const l of LETRAS) siguientes[l] = await siguienteNumero(l);
   return (
     <>
-      <Cabecera volver idioma={idioma} />
+      <Cabecera volver idioma={idioma} sinBarraEscritorio />
       <main className="contenido">
         <FormularioCaja letras={LETRAS} siguientes={siguientes} idioma={idioma} />
       </main>

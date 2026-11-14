@@ -28,7 +28,7 @@ export default async function Historial({ searchParams }) {
   return (
     <>
       <Cabecera volver idioma={idioma} />
-      <main className="contenido">
+      <main className="contenido reducido">
         <h1 className="sitio-titulo">{titulo}</h1>
         <ListaHistorial cambios={cambios} idioma={idioma} mostrarCaja={!sitioId} />
       </main>
