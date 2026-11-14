@@ -34,13 +34,15 @@ function Img({ url, nombre, clase }) {
   );
 }
 
-export default function Escritorio({ filas, idioma, conFiltros = true, orden = null, aviso = null, puedeEditar = false }) {
+export default function Escritorio({ filas, idioma, conFiltros = true, orden = null, aviso = null, puedeEditar = false, conAcciones = false }) {
   const t = textos(idioma);
   const en = idioma === 'en';
   const [etiqueta, setEtiqueta] = useState('');
   const [estado, setEstado] = useState('');
   const [conFoto, setConFoto] = useState(false);
-  const [vista, setVista] = useState('cuadricula');  const [abiertos, setAbiertos] = useState(() => new Set());
+  const [vista, setVista] = useState('cuadricula');
+  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+  const [abiertos, setAbiertos] = useState(() => new Set());
 
   const todos = useMemo(() => {
     const lista = agrupar(filas);
@@ -72,11 +74,54 @@ export default function Escritorio({ filas, idioma, conFiltros = true, orden = n
     });
   }
 
+  const filtrosActivos = (etiqueta ? 1 : 0) + (estado ? 1 : 0) + (conFoto ? 1 : 0);
+  const selectEtiqueta = (
+    <select className="esc-m-select" aria-label={t.etiqueta} value={etiqueta} onChange={e => setEtiqueta(e.target.value)}>
+      <option value="">{t.etiqueta}: {t.todas.toLowerCase()}</option>
+      {etiquetas.map(e => <option key={e} value={e}>{e}</option>)}
+    </select>
+  );
+  const selectEstado = (
+    <select className="esc-m-select" aria-label={t.estado} value={estado} onChange={e => setEstado(e.target.value)}>
+      <option value="">{t.estado}: {t.todos.toLowerCase()}</option>
+      <option value="bueno">{t.bueno}</option>
+      <option value="roto">{t.roto}</option>
+    </select>
+  );
+  const tickFoto = (
+    <label className="esc-m-tick">
+      <input type="checkbox" checked={conFoto} onChange={e => setConFoto(e.target.checked)} />
+      {en ? 'Photo' : 'Foto'}
+    </label>
+  );
+
   return (
     <div className="esc">
       <main className="esc-main">
         {aviso && <p className="esc-aviso">{aviso}</p>}
-        <div className="esc-filtros">
+        <div className="solo-movil esc-movil">
+          <div className="esc-m-fila">
+            {conFiltros && (
+              <button type="button" className={filtrosAbiertos ? 'esc-m-filtros esc-m-filtros-activo' : 'esc-m-filtros'} aria-expanded={filtrosAbiertos} onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}>
+                {en ? 'Filters' : 'Filtros'}{filtrosActivos > 0 ? ` (${filtrosActivos})` : ''} {filtrosAbiertos ? '▴' : '▾'}
+              </button>
+            )}
+            {!conFiltros && <span className="esc-contador">{t.nArticulos(articulos.length)}</span>}
+            <span className="esc-vistas esc-m-vistas">
+              <button type="button" aria-label={en ? 'Grid' : 'Cuadrícula'} className={vista === 'cuadricula' ? 'esc-vista-activa' : ''} onClick={() => setVista('cuadricula')}>▦</button>
+              <button type="button" aria-label={en ? 'List' : 'Lista'} className={vista === 'lista' ? 'esc-vista-activa' : ''} onClick={() => setVista('lista')}>☰</button>
+            </span>
+          </div>
+          {conFiltros && filtrosAbiertos && (
+            <div className="esc-m-fila esc-m-panel">
+              {selectEtiqueta}
+              {selectEstado}
+              {tickFoto}
+              <span className="esc-contador">{t.nArticulos(articulos.length)}</span>
+            </div>
+          )}
+        </div>
+        <div className="esc-filtros solo-escritorio">
           {conFiltros && (<>
           <label>
             {t.etiqueta}

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Cabecera from './components/Cabecera';
 import Escritorio from './components/Escritorio';
 import { idiomaActual } from '../lib/idioma';
@@ -17,15 +16,7 @@ export default async function Inicio() {
   return (
     <>
       <Cabecera idioma={idioma} />
-      <div className="solo-movil acciones-inicio acciones-inicio-movil">
-        {puedeEditar && (
-          <Link href="/caja-nueva" className="boton-secundario">
-            {idioma === 'en' ? '+ New box' : '+ Crear caja'}
-          </Link>
-        )}
-        <Link href="/historial" className="boton-secundario">{idioma === 'en' ? 'History' : 'Historial'}</Link>
-      </div>
-      <Escritorio filas={filas} idioma={idioma} puedeEditar={puedeEditar} />
+      <Escritorio filas={filas} idioma={idioma} puedeEditar={puedeEditar} conAcciones />
     </>
   );
 }

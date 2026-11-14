@@ -1390,3 +1390,60 @@ thead .col-total, thead .esc-num, th { font-weight: 400 !important; }
 /* Lista: la flechita no descuadra los nombres de dos líneas */
 .esc-lista-B td:nth-child(2) { position: relative; padding-left: 22px; }
 .esc-lista-B td:nth-child(2) .esc-flecha { position: absolute; left: 4px; width: auto; }
+
+/* PROVISIONAL: filtros compactos en el móvil (A dos filas, B botón Filtros) */
+.esc-movil { margin-bottom: 10px; }
+.esc-movil .caja-prov { margin-bottom: 8px; }
+.esc-m-fila { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+html body .esc.esc .esc-m-select { flex: 1 1 0; min-width: 0; height: 44px; min-height: 44px; padding: 0 6px; font-size: 15px; border: 1px solid var(--linea); border-radius: 0; background: var(--fondo); }
+.esc-m-tick { display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 15px; flex: none; }
+.esc-m-tick input { width: 22px; height: 22px; min-height: 0; margin: 0; }
+.esc-m-fila .esc-contador { font-size: 14px; flex: 1; }
+.esc-m-enlace { min-height: 44px; display: inline-flex; align-items: center; padding: 0 4px; font-size: 15px; color: var(--texto); }
+html body .esc.esc .esc-m-vistas { margin-left: auto; height: 44px; }
+html body .esc.esc .esc-m-vistas button { width: 44px; padding: 0; font-size: 20px; }
+.esc-m-filtros { min-height: 44px; padding: 0 12px; border: 1px solid var(--linea); border-radius: 0; background: var(--fondo); font: inherit; font-size: 15px; color: var(--texto); cursor: pointer; }
+.esc-m-filtros-activo { background: var(--texto); color: var(--fondo); }
+.esc-m-panel { flex-wrap: wrap; }
+.esc-m-panel .esc-contador { flex-basis: 100%; }
+@media (max-width: 899px) { .esc-filtros.solo-escritorio { display: none; } }
+
+/* PROVISIONAL: menú del móvil M1, M2, M3 */
+.cm { display: flex; flex-direction: column; gap: 8px; }
+.cm .cm-prov { margin: 0; }
+.cm-fila { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.cm-titulo { font-size: 16px; color: var(--texto); }
+.cm-enlaces { display: flex; align-items: center; flex-wrap: wrap; gap: 0 16px; justify-content: flex-start; }
+.cm-form { margin: 0; display: inline; }
+.cm-enlace { display: inline-flex; align-items: center; min-height: 40px; padding: 0; border: none; background: none; font: inherit; font-size: 15px; color: var(--texto); cursor: pointer; text-decoration: none; }
+.cm-todo { gap: 8px; }
+.cm-todo .cm-enlaces { flex: 1; gap: 0 10px; flex-wrap: nowrap; justify-content: center; }
+.cm-todo .cm-enlace { font-size: 13px; }
+.cm-todo .cm-titulo { font-size: 14px; }
+.cm-todo .idioma { min-width: 32px; font-size: 13px; }
+.cm-boton-menu { min-height: 44px; padding: 0 14px; border: 1px solid var(--linea); border-radius: 0; background: var(--fondo); font: inherit; font-size: 15px; color: var(--texto); cursor: pointer; }
+.cm-boton-menu-activo { background: var(--texto); color: var(--fondo); }
+.cm-desplegable { display: flex; flex-direction: column; align-items: flex-start; gap: 0; padding: 4px 0; border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); }
+.cm-desplegable .cm-enlace { min-height: 44px; width: 100%; }
+.cm-desplegable .idiomas { margin: 6px 0; }
+.cm-enlace { white-space: nowrap; } .cm-todo .cm-enlaces { gap: 0 8px; }
+
+/* Móvil: medidas fijas para que la parte de arriba quede ordenada.
+   Filas de 44 de alto, 16 de margen a los lados, 8 entre filas. */
+@media (max-width: 899px) {
+  .cabecera.cm { padding: 12px 16px; gap: 8px; border-bottom: 1px solid var(--linea); }
+  .cm-fila { min-height: 44px; margin: 0; }
+  .cm-titulo { font-size: 17px; }
+  .cm .buscador input, .cm .buscador button { height: 44px; min-height: 44px; }
+  .cm .idiomas { height: 44px; display: inline-flex; }
+  .cm .idioma { height: 100%; min-height: 0; min-width: 44px; }
+  .cm-enlaces.cm-fila { gap: 0 18px; }
+  .cm-desplegable { margin: 0; }
+  .esc-main { padding: 12px 16px 32px; }
+  .esc-movil { margin: 0 0 12px; }
+  .esc-movil .esc-m-fila { margin: 0; min-height: 44px; }
+  .esc-movil .esc-m-panel { margin-top: 8px; }
+  .esc-m-filtros { height: 44px; }
+}
+@media (max-width: 899px) { .cm-todo .cm-enlaces { gap: 0 7px; } .cm-todo .idioma { min-width: 34px; font-size: 13px; } .cm-todo .cm-titulo { font-size: 14px; } }
+@media (min-width: 900px) { .cabecera.cm { display: none; } }
