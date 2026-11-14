@@ -11,13 +11,18 @@ export default function ListaHistorial({ cambios, idioma, mostrarCaja = true }) 
           <p className="historial-quien">
             <strong>{h.usuario_nombre || t.alguien}</strong> · {fechaHora(h.cuando, idioma)}
           </p>
-          <p className="historial-que">{describir(h, idioma)}</p>
-          {mostrarCaja && h.sitio_id && (
-            <Link href={`/sitio/${h.sitio_id}`} className="enlace-volver historial-caja">
-              {h.codigo || h.sitio_nombre}
-              {h.codigo && h.sitio_nombre ? ` ${h.sitio_nombre}` : ''}
-            </Link>
-          )}
+          <p className="historial-que">
+            {describir(h, idioma)}
+            {mostrarCaja && h.sitio_id && (
+              <>
+                {' · '}
+                <Link href={`/sitio/${h.sitio_id}`} className="historial-caja">
+                  {h.codigo || h.sitio_nombre}
+                  {h.codigo && h.sitio_nombre ? ` ${h.sitio_nombre}` : ''}
+                </Link>
+              </>
+            )}
+          </p>
         </li>
       ))}
     </ul>

@@ -5,14 +5,14 @@ import BarraOpciones from './BarraOpciones';
 import { textos } from '../../lib/textos';
 import { sesionActual } from '../../lib/sesionActual';
 
-export default async function Cabecera({ busqueda = '', volver = false, idioma, sinBarraEscritorio = false }) {
+export default async function Cabecera({ busqueda = '', volver = false, idioma, sinBarraEscritorio = false, soloEscritorio = false }) {
   const t = textos(idioma);
   const en = idioma === 'en';
   const sesion = await sesionActual();
   const puedeEditar = Boolean(sesion && ['admin', 'editor'].includes(sesion.rol));
   return (
     <>
-      <header className={sinBarraEscritorio ? 'cabecera' : 'cabecera solo-movil'}>
+      {!soloEscritorio && <header className={sinBarraEscritorio ? 'cabecera' : 'cabecera solo-movil'}>
         <div className="cabecera-fila">
           {volver ? (
             <Link href="/" className="enlace-volver">{t.inicio}</Link>
@@ -34,7 +34,7 @@ export default async function Cabecera({ busqueda = '', volver = false, idioma, 
           </div>
         </div>
         <Buscador key={busqueda} busqueda={busqueda} idioma={idioma} />
-      </header>
+      </header>}
       {!sinBarraEscritorio && <BarraOpciones>
         <header className="esc-barra">
           <Link href="/" className="esc-titulo">{t.titulo}</Link>

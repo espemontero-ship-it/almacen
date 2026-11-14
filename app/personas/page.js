@@ -14,8 +14,8 @@ export default async function Personas() {
   const usuarios = await listarUsuarios();
   return (
     <>
-      <Cabecera volver idioma={idioma} sinBarraEscritorio />
-      <main className="contenido">
+      <Cabecera volver idioma={idioma} />
+      <main className="contenido reducido">
         <GestionPersonas usuarios={usuarios} idioma={idioma} />
       </main>
     </>

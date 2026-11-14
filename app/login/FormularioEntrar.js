@@ -32,7 +32,7 @@ export default function FormularioEntrar({ idioma }) {
   }
 
   return (
-    <main className="pantalla-entrada">
+    <main className="pantalla-entrada pantalla-entrar">
       <Link href="/" className="enlace-volver">{t.inicio}</Link>
       <h1 className="titulo-app">{t.titulo}</h1>
       <form onSubmit={entrar} className="formulario">

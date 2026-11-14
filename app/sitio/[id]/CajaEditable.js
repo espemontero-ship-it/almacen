@@ -95,35 +95,94 @@ function Contador({ valor, onCambio, etiqueta, min = 0, max }) {
   );
 }
 
-function Linea({ inicial, idioma, onQuitada }) {
+const T2 = {
+  es: { anadirComentario: 'Añadir comentario', cant: 'Cant.', comentario: 'Comentario', quitarCorto: 'Quitar', articulo: 'Artículo', etiquetas: 'Etiquetas', foto: 'Foto', sinComentario: 'Sin comentario', opciones: 'Caja (provisional):' },
+  en: { anadirComentario: 'Add comment', cant: 'Qty', comentario: 'Comment', quitarCorto: 'Remove', articulo: 'Item', etiquetas: 'Tags', foto: 'Photo', sinComentario: 'No comment', opciones: 'Box (provisional):' },
+};
+
+// Foto con el botón de la cámara como icono pequeño en su esquina.
+function FotoCamara({ c, x, actualizar }) {
+  return (
+    <span className="cx-foto">
+      <Foto url={c.foto_url} nombre={c.nombre} />
+      <span className="cx-camara">
+        <BotonFoto articuloId={c.articulo_id} etiqueta={x.foto} onSubida={url => actualizar(c.id, { foto_url: url })} />
+      </span>
+    </span>
+  );
+}
+
+// Títulos de columna de las tablas (versiones 1 y 2), una sola vez arriba.
+function CabeceraTabla({ version, idioma }) {
+  const x = T[idioma === 'en' ? 'en' : 'es'];
+  const y = T2[idioma === 'en' ? 'en' : 'es'];
+  return (
+    <li className={`cx-cab cx-cab-${version}`} aria-hidden="true">
+      <span>{y.foto}</span>
+      <span>{y.articulo}</span>
+      <span className="cx-num">{x.cantidad}</span>
+      <span className="cx-num">{x.rotas}</span>
+      {version === '1' && <span>{y.comentario}</span>}
+      {version === '1' && <span>{y.etiquetas}</span>}
+      <span />
+    </li>
+  );
+}
+
+// Una línea de la caja: solo datos; cantidad, rotas y comentario se cambian con doble clic.
+// version: '1' tabla compacta, '2' tabla con foto grande, '3' tarjeta.
+// Cantidad y rotas: − número +. Cada pulsación se guarda al momento.
+function Numero({ valor, min = 0, max, onCambio, etiqueta, className = '' }) {
+  const limitar = n => Math.max(min, max != null ? Math.min(max, n) : n);
+  return (
+    <span className="num-pasos">
+      <button type="button" className="num-boton" aria-label={`${etiqueta} −`} disabled={valor <= min} onClick={() => onCambio(limitar(valor - 1))}>−</button>
+      <span className={`num-valor ${className}`}>{valor}</span>
+      <button type="button" className="num-boton" aria-label={`${etiqueta} +`} disabled={max != null && valor >= max} onClick={() => onCambio(limitar(valor + 1))}>+</button>
+    </span>
+  );
+}
+
+// Comentario: casilla visible siempre; se guarda con Enter o al salir.
+function CampoComentario({ valor, onGuardar, pista, etiqueta }) {
+  const [texto, setTexto] = useState(valor || '');
+  useEffect(() => setTexto(valor || ''), [valor]);
+  function confirmar() {
+    const t = texto.replace(/\s+/g, ' ').trim();
+    if (t !== (valor || '')) onGuardar(t);
+  }
+  return (
+    <input
+      className="cx-coment-campo"
+      value={texto}
+      placeholder={pista}
+      aria-label={etiqueta}
+      onChange={e => setTexto(e.target.value)}
+      onBlur={confirmar}
+      onKeyDown={e => {
+        if (e.key === 'Enter') { e.preventDefault(); e.currentTarget.blur(); }
+        if (e.key === 'Escape') { e.preventDefault(); setTexto(valor || ''); }
+      }}
+    />
+  );
+}
+
+function Linea({ c, idioma, version, actualizar, onQuitada }) {
   const t = textos(idioma);
   const x = T[idioma === 'en' ? 'en' : 'es'];
-  const [c, setC] = useState(inicial);
-  const [abierta, setAbierta] = useState(false);
-  const [comentario, setComentario] = useState(inicial.comentarios || '');
+  const y = T2[idioma === 'en' ? 'en' : 'es'];
   const [aviso, setAviso] = useState('');
   const [confirmar, setConfirmar] = useState(false);
 
-  async function guardar(cuerpo, siguiente) {
-    const anterior = c;
-    setC(siguiente);
+  async function guardar(cuerpo, cambios) {
+    const anterior = { ...c };
+    actualizar(c.id, cambios);
     setAviso('');
     try {
       const { fila } = await editar(cuerpo);
-      if (fila) setC(v => ({ ...v, ...fila }));
+      if (fila) actualizar(c.id, fila);
     } catch (err) {
-      setC(anterior);
-      setAviso(err.message || x.error);
-    }
-  }
-
-  async function guardarComentario() {
-    setAviso('');
-    try {
-      await editar({ accion: 'comentarios', id: c.id, comentarios: comentario });
-      setC(v => ({ ...v, comentarios: comentario.trim() || null }));
-      setAviso(x.guardado);
-    } catch (err) {
+      actualizar(c.id, anterior);
       setAviso(err.message || x.error);
     }
   }
@@ -138,61 +197,42 @@ function Linea({ inicial, idioma, onQuitada }) {
     }
   }
 
-  return (
-    <li className="fila-editable">
-      <div className="fila fila-articulo">
-        <span className="foto-columna">
-          <Foto url={c.foto_url} nombre={c.nombre} />
-          <BotonFoto articuloId={c.articulo_id} etiqueta={x.foto} onSubida={url => setC(v => ({ ...v, foto_url: url }))} />
-        </span>
-        <div
-          role="button"
-          tabIndex={0}
-          className="fila-texto boton-nombre"
-          onClick={() => setAbierta(!abierta)}
-          onKeyDown={e => {
-            if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
-              e.preventDefault();
-              setAbierta(!abierta);
-            }
-          }}
-          aria-expanded={abierta}
-        >
-          <NombreEditable articuloId={c.articulo_id} nombre={c.nombre} sinonimos={c.sinonimos} idioma={idioma} puedeEditar className="nombre-articulo" />
-          {c.talla && <span className="estado">{t.talla} {c.talla}</span>}
-          <span className={c.rotos > 0 ? 'estado estado-roto' : 'estado'}>
-            {c.rotos > 0 ? t.buenasRotas(c.cantidad - c.rotos, c.rotos) : t.bueno}
-          </span>
-          {c.comentarios && !abierta && <span className="comentarios">{c.comentarios}</span>}
-        </div>
-        <Contador
-          etiqueta={x.cantidad}
-          valor={c.cantidad}
-          onCambio={n => guardar({ accion: 'cantidad', id: c.id, cantidad: n }, { ...c, cantidad: n, rotos: Math.min(c.rotos, n) })}
-        />
-      </div>
-      {abierta && (
-        <div className="fila-detalle">
-          <label className="detalle-campo">
-            {x.rotas}
-            <Contador
-              etiqueta={x.rotas}
-              valor={c.rotos}
-              max={c.cantidad}
-              onCambio={n => guardar({ accion: 'rotos', id: c.id, rotos: n }, { ...c, rotos: n })}
-            />
-          </label>
-          <label className="detalle-campo detalle-columna">
-            {x.comentarios}
-            <textarea value={comentario} onChange={e => setComentario(e.target.value)} rows={2} />
-          </label>
-          <div className="revision-botones">
-            <button type="button" className="boton-secundario" onClick={guardarComentario}>{x.guardar}</button>
-            <button type="button" className="boton-secundario" onClick={() => setConfirmar(true)}>{x.quitar}</button>
-          </div>
-        </div>
-      )}
-      {aviso && <p className="aviso">{aviso}</p>}
+  const nombre = (
+    <NombreEditable articuloId={c.articulo_id} nombre={c.nombre} sinonimos={c.sinonimos} idioma={idioma} puedeEditar className="nombre-articulo" />
+  );
+  const talla = c.talla ? `${t.talla} ${c.talla}` : null;
+  const etiquetasTexto = c.etiquetas?.length ? c.etiquetas.join(' · ') : null;
+  const cantidad = (
+    <Numero
+      valor={c.cantidad}
+      etiqueta={x.cantidad}
+      className="cx-cantidad"
+      onCambio={n => guardar({ accion: 'cantidad', id: c.id, cantidad: n }, { cantidad: n, rotos: Math.min(c.rotos, n) })}
+    />
+  );
+  const rotas = (
+    <Numero
+      valor={c.rotos}
+      max={c.cantidad}
+      etiqueta={x.rotas}
+      className={c.rotos > 0 ? 'cx-rotas estado-roto' : 'cx-rotas'}
+      onCambio={n => guardar({ accion: 'rotos', id: c.id, rotos: n }, { rotos: n })}
+    />
+  );
+  const comentario = (
+    <CampoComentario
+      valor={c.comentarios || ''}
+      pista={y.anadirComentario}
+      etiqueta={x.comentarios}
+      onGuardar={v => guardar({ accion: 'comentarios', id: c.id, comentarios: v }, { comentarios: v || null })}
+    />
+  );
+  const botonQuitar = (
+    <button type="button" className="cx-quitar" onClick={() => setConfirmar(true)}>{y.quitarCorto}</button>
+  );
+  const extras = (
+    <>
+      {aviso && <p className="aviso cx-aviso">{aviso}</p>}
       {confirmar && (
         <div className="dialogo-fondo" role="dialog" aria-modal="true">
           <div className="dialogo">
@@ -204,6 +244,47 @@ function Linea({ inicial, idioma, onQuitada }) {
           </div>
         </div>
       )}
+    </>
+  );
+
+  if (version === 'tarjeta') {
+    // Misma tarjeta que el inicio (Cuadrícula), con los datos editables con doble clic.
+    return (
+      <li>
+        <div className="esc-tarjeta cx-tarjeta">
+          <FotoCamara c={c} x={x} actualizar={actualizar} />
+          <NombreEditable articuloId={c.articulo_id} nombre={c.nombre} sinonimos={c.sinonimos} idioma={idioma} puedeEditar className="esc-nombre" />
+          {(talla || etiquetasTexto) && <span className="esc-gris">{[talla, etiquetasTexto].filter(Boolean).join(' · ')}</span>}
+          <span className="esc-gris cx-pares"><span className="cx-par">{y.cant} {cantidad}</span><span className="cx-par">{x.rotas} {rotas}</span></span>
+          <span className="esc-gris">{comentario}</span>
+          <span>{botonQuitar}</span>
+        </div>
+        {extras}
+      </li>
+    );
+  }
+
+  return (
+    <li className={`cx-t cx-t${version}`}>
+      <FotoCamara c={c} x={x} actualizar={actualizar} />
+      <div className="cx-datos">
+        {nombre}
+        {(version === '2' || talla) && (
+          <span className="cx-meta cx-meta-movil">{[talla, etiquetasTexto].filter(Boolean).join(' · ')}</span>
+        )}
+        <span className={version === '2' ? 'cx-coment-linea' : 'cx-coment-linea cx-solo-movil'}>{comentario}</span>
+      </div>
+      <div className="cx-solo-movil cx-numeros-movil">
+        <span className="cx-num-movil"><span className="cx-rotulo">{x.cantidad}</span>{cantidad}</span>
+        <span className="cx-num-movil"><span className="cx-rotulo">{x.rotas}</span>{rotas}</span>
+        {botonQuitar}
+      </div>
+      <span className="cx-num cx-col-cantidad cx-solo-escritorio">{cantidad}</span>
+      <span className="cx-num cx-col-rotas cx-solo-escritorio">{rotas}</span>
+      {version === '1' && <span className="cx-col-comentario cx-solo-escritorio">{comentario}</span>}
+      {version === '1' && <span className="cx-col-etiquetas cx-solo-escritorio">{etiquetasTexto}</span>}
+      <span className="cx-col-quitar cx-solo-escritorio">{botonQuitar}</span>
+      {extras}
     </li>
   );
 }
@@ -377,16 +458,52 @@ function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho }) {
   );
 }
 
+// Caja: igual que el inicio, con botón Cuadrícula / Lista en el ordenador.
+// Lista: una fila por artículo (dos columnas en el ordenador). Cuadrícula: las tarjetas del inicio.
+// En el móvil, solo la lista.
 export default function CajaEditable({ sitioId, contenido, etiquetas, idioma }) {
   const router = useRouter();
+  const en = idioma === 'en';
   const [lineas, setLineas] = useState(contenido);
+  const [vista, setVista] = useState('lista');
   useEffect(() => setLineas(contenido), [contenido]);
+  useEffect(() => {
+    const guardada = window.localStorage.getItem('caja-vista');
+    if (guardada === 'lista' || guardada === 'cuadricula') setVista(guardada);
+  }, []);
+
+  function elegir(v) {
+    setVista(v);
+    window.localStorage.setItem('caja-vista', v);
+  }
+
+  function actualizar(id, cambios) {
+    setLineas(l => l.map(v => (v.id === id ? { ...v, ...cambios } : v)));
+  }
+
+  function quitada(id) {
+    setLineas(l => l.filter(v => v.id !== id));
+  }
+
+  const comunes = { idioma, actualizar, onQuitada: quitada };
+
   return (
     <>
-      <ul className="lista">
-        {lineas.map(c => (
-          <Linea key={c.id} inicial={c} idioma={idioma} onQuitada={id => setLineas(l => l.filter(v => v.id !== id))} />
-        ))}
+      <div className="esc solo-escritorio cx-barra-vistas">
+        <span className="esc-vistas">
+          <button type="button" className={vista === 'cuadricula' ? 'esc-vista-activa' : ''} onClick={() => elegir('cuadricula')}>{en ? 'Grid' : 'Cuadrícula'}</button>
+          <button type="button" className={vista === 'lista' ? 'esc-vista-activa' : ''} onClick={() => elegir('lista')}>{en ? 'List' : 'Lista'}</button>
+        </span>
+      </div>
+      {vista === 'cuadricula' && (
+        <ul className="esc-cuadricula cx-cuadricula solo-escritorio">
+          {lineas.map(c => <Linea key={c.id} c={c} version="tarjeta" {...comunes} />)}
+        </ul>
+      )}
+      <ul className={vista === 'cuadricula' ? 'lista cx-lista cx-lista-2 solo-movil' : 'lista cx-lista cx-lista-2 cx-dos-columnas'}>
+        <CabeceraTabla version="2" idioma={idioma} />
+        <CabeceraTabla version="2" idioma={idioma} />
+        {lineas.map(c => <Linea key={c.id} c={c} version="2" {...comunes} />)}
       </ul>
       <div className="pie-edicion">
         <AnadirArticulo sitioId={sitioId} etiquetas={etiquetas} idioma={idioma} onHecho={() => router.refresh()} />

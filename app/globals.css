@@ -1034,7 +1034,7 @@ textarea {
 }
 
 .historial-caja {
-  font-size: 16px;
+  font-size: inherit;
 }
 
 .enlace-historial {
@@ -1165,3 +1165,156 @@ body, body * { font-weight: 400 !important; }
 /* Enlaces como texto, sin subrayar; los títulos de columna no van en negrita */
 .enlace-volver, .boton-texto { text-decoration: none; }
 thead .col-total, thead .esc-num, th { font-weight: 400 !important; }
+
+/* Coherencia de todas las pantallas con la versión 3 */
+.nombre-persona { width: 100%; overflow-wrap: anywhere; font-weight: 400; color: var(--texto); }
+.titulo-app { font-size: 16px; }
+.esc-tarjeta .esc-foto { border: none; }
+@media (min-width: 900px) {
+  /* Contenido alineado a la izquierda, como el inicio, y más estrecho para que todo quede cerca */
+  .contenido.reducido { margin: 0; max-width: 920px; }
+  /* Entrar, recuperar contraseña e invitación: a la izquierda, mismo tamaño que el resto */
+  .pantalla-entrada { margin: 0; padding: 16px 29px 40px; zoom: 0.83; }
+  .pantalla-entrar > .enlace-volver, .pantalla-entrar > .titulo-app { display: none; }
+}
+
+/* ===== PROVISIONAL: versiones 1, 2 y 3 de la caja (móvil y ordenador). Se quita al elegir. ===== */
+.caja-prov { display: flex; align-items: center; gap: 6px; margin: 0 0 12px; padding: 6px 10px; background: #fff6d6; border: 1px solid #e6d590; font-size: 14px; }
+.caja-prov button { min-width: 36px; min-height: 32px; border: 1px solid #b9a95a; background: #fff; cursor: pointer; }
+.caja-prov .caja-prov-activo { background: var(--texto); color: var(--fondo); }
+/* Dato editable con doble clic */
+.valor-editable { display: inline-block; min-width: 1.2em; cursor: text; }
+.valor-vacio { color: var(--secundario); }
+.valor-editando { min-height: 0; width: 100%; padding: 0 2px; border: none; border-bottom: 1px solid var(--texto); border-radius: 0; background: var(--fondo); font: inherit; }
+.valor-editando:focus { outline: none; }
+.valor-editando-numero { width: 4.5em; text-align: right; }
+/* Piezas comunes */
+.cx-foto { position: relative; display: block; flex: none; }
+.cx-foto .foto { display: block; }
+.cx-camara { position: absolute; right: 3px; bottom: 3px; }
+.cx-camara .boton-foto-envoltura { display: block; }
+.cx-camara .boton-foto { width: 30px; height: 30px; min-height: 0; padding: 0; background: var(--fondo); }
+.cx-camara .boton-foto svg { width: 17px; height: 17px; }
+.cx-camara .estado { display: none; }
+.cx-datos { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.cx-meta { color: var(--secundario); font-size: 0.875em; }
+.cx-rotulo { color: var(--secundario); font-size: 0.8em; }
+.cx-num { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.cx-coment-linea { font-size: 0.875em; }
+.cx-quitar { min-height: 0; padding: 4px; border: none; background: none; color: var(--secundario); cursor: pointer; }
+.cx-solo-escritorio { display: none; }
+.cx-cab { display: none; }
+/* Tablas (1 y 2) en el móvil: foto | nombre, datos y comentario | cantidad | rotas; Quitar debajo a la derecha */
+.cx-t { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto auto; gap: 4px 12px; align-items: start; padding: 10px 0; }
+.cx-t .cx-foto .foto { width: 64px; height: 64px; }
+.cx-t2 { grid-template-columns: 88px minmax(0, 1fr) auto auto; }
+.cx-t2 .cx-foto .foto { width: 88px; height: 88px; }
+.cx-t .cx-col-quitar { grid-column: 2 / -1; justify-self: end; }
+.cx-t .cx-cantidad, .cx-t3 .cx-cantidad { font-size: 1.15em; }
+/* Tarjetas (3) */
+.cx-lista-3 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.cx-lista-3 > li.cx-t3, .cx-lista-3 > li.cx-t3:first-child { border: 1px solid var(--linea); }
+.cx-t3 { display: flex; flex-direction: column; gap: 6px; padding: 10px; }
+.cx-t3 .cx-foto .foto { width: 100%; height: auto; aspect-ratio: 4 / 3; }
+.cx-numeros { display: flex; gap: 24px; align-items: baseline; }
+.cx-t3 .cx-quitar { align-self: flex-start; padding-left: 0; }
+@media (min-width: 900px) {
+  .contenido.reducido.pagina-caja { max-width: none; }
+  .cx-solo-movil { display: none; }
+  .cx-solo-escritorio { display: block; }
+  .cx-cab { display: grid; color: var(--secundario); font-size: 0.875em; padding: 6px 0; align-items: end; }
+  .cx-lista-1 { max-width: 1250px; }
+  .cx-lista-2 { max-width: 900px; }
+  .cx-cab-1, .cx-t1 { grid-template-columns: 56px minmax(200px, 2fr) 80px 80px minmax(180px, 2fr) minmax(120px, 1fr) 64px; gap: 16px; align-items: center; }
+  .cx-cab-2, .cx-t2 { grid-template-columns: 110px minmax(240px, 1fr) 90px 90px 64px; gap: 16px; align-items: center; }
+  .cx-t1 .cx-foto .foto { width: 56px; height: 56px; }
+  .cx-t2 .cx-foto .foto { width: 110px; height: 110px; }
+  .cx-t .cx-col-quitar { grid-column: auto; justify-self: end; }
+  .cx-col-etiquetas { color: var(--secundario); font-size: 0.875em; }
+  .cx-lista-3 { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+}
+@media (min-width: 900px) { .cx-t1 .cx-meta-movil { display: none; } }
+@media (max-width: 899px) {
+  /* Quitar en la misma fila, abajo a la derecha bajo los números, sin añadir otra línea */
+  .cx-t .cx-col-quitar { grid-row: 1; grid-column: 3 / -1; align-self: end; justify-self: end; }
+  .cx-t { min-height: 64px; }
+}
+@media (max-width: 899px) {
+  .cx-t > .cx-foto { grid-row: 1; grid-column: 1; }
+  .cx-t > .cx-datos { grid-row: 1; grid-column: 2; }
+  .cx-t > .cx-col-cantidad { grid-row: 1; grid-column: 3; align-self: start; }
+  .cx-t > .cx-col-rotas { grid-row: 1; grid-column: 4; align-self: start; }
+}
+.cx-quitar-movil .cx-quitar { padding: 4px 0; }
+@media (max-width: 899px) { .cx-t { min-height: 0; } }
+
+/* Caja: Cuadrícula / Lista como en el inicio */
+.cx-barra-vistas { justify-content: flex-end; margin: 0 0 12px; }
+.cx-cuadricula { list-style: none; margin: 0 0 16px; padding: 0; }
+.cx-tarjeta .cx-foto { margin-bottom: 4px; }
+.cx-tarjeta .cx-foto .foto { width: 100%; height: auto; aspect-ratio: 1; border: none; }
+.cx-tarjeta > span:not(.cx-foto) { font-size: 12px; }
+.cx-tarjeta .cx-quitar { padding: 2px 0; font-size: 12px; }
+.cx-tarjeta .cx-camara .boton-foto { width: 26px; height: 26px; }
+@media (min-width: 900px) {
+  .cx-barra-vistas.solo-escritorio { display: flex; }
+  .cx-lista-2.cx-dos-columnas { max-width: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; }
+  .cx-dos-columnas > li, .cx-dos-columnas > li:first-child { border-top: none; }
+}
+.cx-pares { display: flex; flex-wrap: wrap; gap: 0 10px; } .cx-par { white-space: nowrap; }
+@media (max-width: 899px) { .cx-cuadricula { display: none; } .cx-lista-2.solo-movil { display: block; } }
+
+/* PROVISIONAL: formas de cambiar cantidad y rotas (A casilla, B − número +, C − casilla +) */
+.num-casilla { width: 3.6em; min-height: 36px; height: 36px; padding: 0 6px; text-align: center; border: 1px solid var(--linea); border-radius: 0; background: var(--fondo); font: inherit; }
+.num-pasos { display: inline-flex; align-items: stretch; }
+.num-boton { width: 32px; height: 36px; padding: 0; border: 1px solid var(--linea); background: var(--fondo); font-size: 18px; cursor: pointer; color: var(--texto); }
+.num-boton:disabled { color: var(--linea); cursor: default; }
+.num-pasos .num-casilla { border-left: none; border-right: none; }
+.num-valor { display: inline-flex; align-items: center; justify-content: center; min-width: 2.2em; padding: 0 4px; border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); }
+@media (max-width: 899px) {
+  .num-casilla, .num-boton { height: 44px; min-height: 44px; }
+  .num-boton { width: 40px; }
+}
+.cx-tarjeta .num-casilla { width: 3em; height: 28px; min-height: 28px; }
+.cx-tarjeta .num-boton { width: 24px; height: 28px; font-size: 14px; }
+.cx-tarjeta .cx-pares { flex-direction: column; gap: 4px; }
+.cx-tarjeta .cx-par { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+@media (min-width: 900px) {
+  .cx-cab-2, .cx-t2 { grid-template-columns: 110px minmax(200px, 1fr) 124px 124px 56px; }
+}
+@media (max-width: 899px) {
+  .cx-t, .cx-t2 { grid-template-columns: 88px minmax(0, 1fr) minmax(0, 1fr); row-gap: 8px; }
+  .cx-t > .cx-foto { grid-row: 1 / span 2; grid-column: 1; }
+  .cx-t > .cx-datos { grid-row: 1; grid-column: 2 / -1; }
+  .cx-t > .cx-col-cantidad { grid-row: 2; grid-column: 2; align-items: flex-start; text-align: left; }
+  .cx-t > .cx-col-rotas { grid-row: 2; grid-column: 3; align-items: flex-start; text-align: left; }
+}
+@media (max-width: 899px) {
+  .cx-t, .cx-t2 { grid-template-columns: 88px minmax(0, 1fr) 140px; }
+  .cx-t > .cx-foto { grid-row: 1; grid-column: 1; }
+  .cx-t > .cx-col-cantidad { grid-row: 2; grid-column: 1 / 3; }
+  .cx-t > .cx-col-rotas { grid-row: 2; grid-column: 3; }
+}
+/* Comentario: casilla visible siempre */
+.cx-coment-campo { display: block; width: 100%; min-height: 34px; height: 34px; margin-top: 4px; padding: 0 8px; border: 1px solid var(--linea); border-radius: 0; background: var(--fondo); font: inherit; font-size: 0.875em; }
+.cx-coment-campo::placeholder { color: var(--secundario); }
+.cx-tarjeta .cx-coment-campo { height: 28px; min-height: 28px; font-size: 12px; }
+@media (max-width: 899px) { .cx-coment-campo { height: 44px; min-height: 44px; } }
+/* Caja (lista): todo alineado a la línea de arriba de la foto; comentario abajo, a ras de la foto */
+@media (min-width: 900px) {
+  .cx-t2 { align-items: start; }
+  .cx-t2 > .cx-datos { align-self: stretch; }
+  .cx-t2 .cx-coment-linea { margin-top: auto; }
+  .cx-t2 > .cx-col-cantidad, .cx-t2 > .cx-col-rotas { align-items: center; }
+  .cx-cab-2 .cx-num { align-items: center; text-align: center; }
+  .cx-t2 > .cx-col-quitar { display: flex; align-items: center; height: 36px; }
+}
+.num-boton:disabled { border-color: var(--linea); background: var(--fondo); }
+@media (max-width: 899px) {
+  .cx-t, .cx-t2 { grid-template-columns: 88px minmax(0, 1fr); }
+  .cx-t > .cx-datos { grid-column: 2; }
+  .cx-numeros-movil { grid-row: 2; grid-column: 1 / -1; display: flex; align-items: flex-end; gap: 20px; }
+  .cx-num-movil { display: flex; flex-direction: column; gap: 2px; }
+  .cx-numeros-movil .cx-quitar { margin-left: auto; min-height: 44px; }
+}
+@media (min-width: 900px) { .cx-numeros-movil { display: none; } .cx-col-cantidad.cx-solo-escritorio, .cx-col-rotas.cx-solo-escritorio { display: flex; } }

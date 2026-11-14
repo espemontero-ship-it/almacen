@@ -114,7 +114,7 @@ export default function GestionPersonas({ usuarios, idioma }) {
           <li key={u.id} className="persona">
             <div className="fila">
               <span className="fila-texto">
-                <span className="nombre-articulo">{u.nombre}</span>
+                <span className="nombre-persona">{u.nombre}</span>
                 <span className="estado">{u.usuario}{u.correo ? ` · ${u.correo}` : ''}</span>
                 <span className="estado">{t.roles[u.rol]}</span>
                 {!u.activo && <span className="estado estado-roto">{t.pendiente}</span>}
