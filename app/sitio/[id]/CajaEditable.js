@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Foto from '../../components/Foto';
+import BotonFoto from '../../components/BotonFoto';
 import { textos } from '../../../lib/textos';
 import { ordenarTallas } from '../../../lib/tallas.cjs';
 
@@ -31,6 +32,7 @@ const T = {
     esRopa: 'Es ropa (tiene tallas)',
     crearBoton: 'Crear y añadir',
     cerrar: 'Cerrar',
+    foto: 'Hacer foto',
     error: 'No se ha podido guardar.',
   },
   en: {
@@ -55,6 +57,7 @@ const T = {
     esRopa: 'It is clothing (has sizes)',
     crearBoton: 'Create and add',
     cerrar: 'Close',
+    foto: 'Take photo',
     error: 'Could not be saved.',
   },
 };
@@ -137,7 +140,10 @@ function Linea({ inicial, idioma, onQuitada }) {
   return (
     <li className="fila-editable">
       <div className="fila fila-articulo">
-        <Foto url={c.foto_url} nombre={c.nombre} />
+        <span className="foto-columna">
+          <Foto url={c.foto_url} nombre={c.nombre} />
+          <BotonFoto articuloId={c.articulo_id} etiqueta={x.foto} onSubida={url => setC(v => ({ ...v, foto_url: url }))} />
+        </span>
         <button type="button" className="fila-texto boton-nombre" onClick={() => setAbierta(!abierta)} aria-expanded={abierta}>
           <span className="nombre-articulo">{c.nombre}</span>
           {c.talla && <span className="estado">{t.talla} {c.talla}</span>}

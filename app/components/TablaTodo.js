@@ -3,6 +3,7 @@
 import { Fragment, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { textos } from '../../lib/textos';
+import Foto from './Foto';
 import { ordenarTallas } from '../../lib/tallas.cjs';
 
 const ORDEN_TIPOS = ['P', 'C', 'O', 'M', 'L', 'D', 'A', 'U', 'R', 'otros'];
@@ -28,7 +29,7 @@ export default function TablaTodo({ filas, idioma }) {
       if (estado === 'bueno' && !(f.rotos < f.cantidad)) continue;
       let a = porId.get(f.articulo_id);
       if (!a) {
-        a = { id: f.articulo_id, nombre: f.nombre, etiquetas: f.etiquetas, total: 0, rotos: 0, cajas: [], porTalla: {} };
+        a = { id: f.articulo_id, nombre: f.nombre, foto_url: f.foto_url, etiquetas: f.etiquetas, total: 0, rotos: 0, cajas: [], porTalla: {} };
         porId.set(f.articulo_id, a);
       }
       a.total += f.cantidad;
@@ -106,6 +107,7 @@ export default function TablaTodo({ filas, idioma }) {
               <>
                 <span className="col-articulo">
                   <span className="flecha" aria-hidden="true">{desplegable ? (abierto ? '▾' : '▸') : ''}</span>
+                  {a.foto_url && <Foto url={a.foto_url} nombre={a.nombre} pequena />}
                   <span className="nombre-y-extra">
                     <span className="nombre-tabla">{a.nombre}</span>
                     <span className="extra-movil">

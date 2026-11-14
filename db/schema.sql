@@ -86,3 +86,5 @@ CREATE UNIQUE INDEX IF NOT EXISTS usuarios_correo ON usuarios (lower(correo));
 ALTER TABLE contenido ADD COLUMN IF NOT EXISTS rotos INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE contenido ADD COLUMN IF NOT EXISTS borrado TIMESTAMPTZ;
 UPDATE contenido SET rotos = cantidad, estado = 'bueno' WHERE estado = 'roto';
+
+ALTER TABLE articulos ADD COLUMN IF NOT EXISTS foto_clave TEXT;
