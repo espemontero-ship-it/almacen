@@ -8,6 +8,7 @@ Este documento es la fuente de verdad del proyecto: qué es, qué se ha decidido
 - **No se mete nada sin preguntar. Ante cualquier duda, las decisiones las toma ella, no Claude.**
 - **Antes de subir nada** (commit, push o publicar en Vercel) se le pregunta. Subir a GitHub publica solo en la app.
 - **No se comprueba todo** en cada cambio pequeño: basta con compilar y echar un vistazo. Lo que no se haya comprobado se dice.
+- **Antes de cada subida se lanzan las pruebas** (`npm test`, unos 10 segundos) y se le dice el resultado. Si falla alguna, no se sube. Cada parte nueva lleva sus pruebas.
 - **Cada vez que se sube algo, se apunta aquí en ese mismo momento**: en "Lo que hace" si cambia lo que la app hace, y siempre en el Registro de decisiones.
 
 ## Qué es y para quién
@@ -195,6 +196,13 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - **Revisión de pantallas**: terminada el 2026-11-14 (inicio, búsqueda, caja, historial, Crear caja, Personas, Entrar, Recuperar y ficha del artículo).
 - **Sinónimos**: la lista no tiene las palabras en inglés; se hizo mal. Aparcado por decisión suya.
 
+## Pruebas automáticas
+
+- 52 pruebas en la carpeta "pruebas", como las de punteo-trimestral. Usan una base de datos de prueba vacía que se crea y se borra sola, con datos inventados: no tocan ni la base del ordenador ni la de la web.
+- **De lo que hace la app (29):** buscar (español, inglés, etiqueta, tallas, código de caja, sugerencias, erratas, lo quitado no cuenta); editar una caja (cantidad, rotas, comentario, quitar y recuperar, añadir, artículo nuevo, llenado, historial); cajas (número siguiente, sin repetir, orden de "Cajas"); nombres y sinónimos; usuarios (entrar, enlace de un solo uso, sesión manipulada) y permisos (consulta no edita, Personas solo administración).
+- **De pantalla (23):** inicio y búsqueda (tarjetas, Lista, filtros, inglés), caja (sin usuario no hay botones; +, Quitar con confirmación, error vuelve al valor de antes), llenado, ficha (tallas), historial, menú del móvil y buscador.
+- **No cubren** cómo se pintan las pantallas que leen directamente de la base de datos ("Cajas", Personas y la página de la caja entera); lo que hay detrás sí está probado.
+
 ## Pendiente de decidir
 
 - **Cómo se ven las unidades rotas**: dos líneas ("8 bueno" y "2 roto") o una ("8 buenas · 2 rotas"). Se decide viendo las pantallas, no antes.
@@ -272,3 +280,5 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - Listas de recogida para eventos (decidido por ella): en la lista van artículos con cantidad y caja, y cajas enteras; las zonas del evento se escriben en cada evento; el evento solo lleva nombre; al marcar cargado se resta de la caja y las cajas enteras quedan "en el evento"; de golpe: poner zona a varias líneas, marcar varias como cargadas y añadir muchas cosas (casillas en inicio y búsqueda, pegar texto, copiar de otro evento); al volver, desde la lista eligiendo caja o desde cada caja; administración crea listas y zonas, edición carga y devuelve.
 - Llenado de la caja: tres valores puestos a mano (vacía, a medias, llena); sin elegir no se ve nada; se ve en la caja y en las sugerencias; pantalla "Cajas" con todas por código, sin grupos. Los tres botones grandes ocupaban mucho: se enseñaron 6 versiones (A–F) en la app y eligió la F, pequeños junto al título.
 - Subido: llenado de la caja, pantalla "Cajas" y mensaje de error de Recuperar contraseña.
+- Pruebas automáticas, a petición suya antes de seguir con los eventos ("en otra aplicación tenemos pruebas para asegurar que no rompemos nada"). Eligió todos los bloques y también pruebas de pantalla; se lanzan antes de cada subida. Se instalaron vitest, happy-dom y @testing-library/react con su permiso.
+- Subido: las pruebas automáticas.
