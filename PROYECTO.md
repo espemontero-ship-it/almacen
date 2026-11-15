@@ -7,7 +7,6 @@ Este documento es la fuente de verdad del proyecto: qué es, qué se ha decidido
 - **Solo se hace exactamente lo que ella pide.** Nada más: ni quitar, ni añadir, ni cambiar nada que no haya pedido, aunque parezca que va con lo pedido. Si algo de lo pedido obliga a tocar otra cosa, se le pregunta antes.
 - **No se mete nada sin preguntar. Ante cualquier duda, las decisiones las toma ella, no Claude.**
 - **Antes de subir nada** (commit, push o publicar en Vercel) se le pregunta. Subir a GitHub publica solo en la app.
-- **No se comprueba todo** en cada cambio pequeño: basta con compilar y echar un vistazo. Lo que no se haya comprobado se dice.
 - **Antes de cada subida se lanzan las pruebas** (`npm test`, unos 10 segundos) y se le dice el resultado. Si falla alguna, no se sube. Cada parte nueva lleva sus pruebas.
 - **Cada vez que se sube algo, se apunta aquí en ese mismo momento**: en "Lo que hace" si cambia lo que la app hace, y siempre en el Registro de decisiones.
 
@@ -189,6 +188,38 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 
 ## Qué falta (para recordárselo cuando pregunte)
 
+- **Eventos (aparcado el 2026-11-15, para otro momento).** Todo lo hablado con ella:
+  - **Cómo se trabaja hoy (lo contó ella):** para cada evento se hace una lista de recogida y cada cosa va asignada a una zona del evento. La gente recoge y monta las cajas por zona. Al volver, las cosas se suelen guardar en otras cajas para que no lleve tanto rato. A veces se llevan cajas enteras.
+  - **Por qué lo pide:** poder quitar del almacén lo que se lleva cuando se carga y volver a meterlo al volver; saber si una caja está llena (hecho: llenado de la caja); y ver qué cajas se han ido enteras a un evento.
+  - **Qué va en la lista:** artículos con su cantidad y cajas enteras.
+  - **Evento:** solo nombre. Estado activo o antiguo, que se cambia a mano. Se puede borrar (papelera de 30 días, con Recuperar). El nombre se cambia con doble clic, solo desde la lista de eventos.
+  - **Zonas:** se escriben en cada evento (no hay una lista fija). Se crean, se renombran y se quitan desde la lista de eventos, al desplegar cada evento.
+  - **Entrada:** "Eventos" como enlace junto a Cajas, en la barra del ordenador y en el Menú del móvil. No es un botón en el inicio (se hizo así primero por un malentendido y se corrigió).
+  - **Lista de eventos:** filtros Estado (Activos / Antiguos / Todos) y Buscar por nombre; la ve todo el mundo.
+  - **Permisos:** administración crea eventos y zonas y marca objetos; edición (y administración) marca lo recogido y lo que vuelve; quien solo consulta, ve.
+  - **Marcar objetos para un evento:**
+    - Se hace desde el buscador principal (inicio y búsqueda), no en una pantalla aparte.
+    - Elegido por ella, viéndolo descrito: forma B, un desplegable "Evento: …" en el inicio y en la búsqueda, solo con eventos activos y solo para administración, que activa una casilla en cada objeto. (La forma A, un botón "Añadir objetos" en el evento con un aviso "Añadiendo a…", quedó descartada.)
+    - Al marcar se eligen las unidades con las que entra, y se pueden repartir entre zonas.
+    - No se puede marcar más de lo que hay en el almacén.
+    - Marcar no toca las cajas: las cosas no salen de las cajas hasta que se recogen, y se puede recoger distinto de lo marcado.
+    - Cómo se eligen unidades y zonas al marcar (debajo de la tarjeta o en una ventana): ella quiere verlo antes de decidir.
+  - **Hacer muchas cosas a la vez:** poner la misma zona a varias líneas; marcar varias como recogidas; y añadir muchas cosas de golpe de tres formas: con casillas en el inicio y la búsqueda, pegando una lista de texto (las líneas que no se encuentren se le enseñan para que elija; sin IA) o copiando la lista de otro evento.
+  - **Ver los objetos por zonas:** cada objeto con cuántos se piden y la caja donde está ahora, para que quien recoge lo encuentre.
+  - **Recoger:** al marcar "Recogido", quien recoge pone cuántas coge de cada caja (puede ser distinto de lo marcado y de otra caja), y eso se resta de esas cajas al momento y queda en el historial. Las cajas que se van enteras quedan marcadas "en el evento".
+  - **Si quien recoge se equivoca:** corrige el número con − y +; la diferencia vuelve a esa caja o se resta. Lo pueden hacer los mismos que recogen. Con todo a 0, el objeto se puede desmarcar.
+  - **Al volver:** de las dos formas: desde la lista del evento, eligiendo para cada cosa la caja donde se guarda (la que sea) y cuántas; y desde cada caja, con "Añadir artículo" como ahora. Lo que falte queda pendiente.
+  - **Sin decidir todavía:** si lo añadido desde una caja descuenta de lo pendiente del evento; qué hacer con lo roto o perdido; cuándo se cierra un evento; qué se ve en una caja que se ha ido entera; de qué caja se coge cada cosa al añadir muchas a la vez cuando está en varias.
+  - **Hecho y guardado sin subir** (en el ordenador, en git stash "eventos y cambios locales antes de revertir"): la pantalla de lista de eventos con lo anterior (filtros, crear, renombrar, estado, borrar y recuperar, zonas), el enlace "Eventos", sus datos y sus pruebas.
+  - **Pendiente de esa pantalla:** ella dijo que los botones están desordenados (falta decidir el orden enseñándole opciones en la app) y no ha visto las filas.
+  - **Lo que se hizo mal y se borró:** se construyeron todas las pantallas y las dos formas de marcar sin enseñarle ninguna, con datos de prueba y cambios de tamaño que no pidió; se borró todo.
+  - **Forma de trabajo:** una pantalla cada vez; preguntar qué lleva y cómo se usa, describirla, hacerla con su sí, enseñarla en el panel y seguir.
+- **Diseño (aparcado el 2026-11-15, para otro momento).**
+  - **Guía única:** la guía de diseño tiene tres versiones que se contradicen (la primera con índigo y botones de 48; la versión 3 en negro; lo de la web). Hay que dejar una sola guía completa, que describa la web aprobada sin inventar nada: colores, letra, espacios y estructura, cada componente con sus estados, qué lleva cada pantalla, textos y lo que no se hace. Ella la lee antes de que entre en PROYECTO.md.
+  - **Medidas:** ya se midió la web aprobada en ordenador y móvil (tamaños de letra y altos de cada elemento por pantalla); en el ordenador se midieron también colores, espacios y componentes. Falta el móvil completo.
+  - **Lo que salió mal hoy:** se intentó igualar todas las pantallas al inicio con reglas que afectaban a varias pantallas a la vez; se miraron solo números y se subió; la caja quedó descuadrada al editar y se deshizo. Hay diferencias de tamaño entre pantallas (el comentario de la caja más pequeño, los formularios más altos…) que se quedan como están mientras ella no pida cambiarlas.
+  - **Prueba de diseño:** se probó una prueba automática con un navegador de verdad (Playwright) que mide tamaños; se quitó con la vuelta atrás. Si se recupera, tiene que comprobar también que nada se descuadra, no solo los tamaños.
+  - **Base de datos del ordenador:** se dañó con un corte; la dañada está apartada en la carpeta .pglite-danada y la actual es una copia de la web, más el usuario "prueba" vuelto a crear.
 - **Listas de recogida para eventos**: plan aprobado el 2026-11-15, por partes. Hecha la parte 1 (llenado de la caja). Faltan: 2 eventos y lista con zonas, 3 añadir muchas cosas a la vez, 4 cargar (resta de las cajas), 5 volver. Cada parte se pregunta antes de hacerla.
 - **Desarrollos posteriores**: permisos finos.
 - **Datos definitivos**: cargarlos cuando termine la reorganización del almacén. La carga une la ropa por tallas y reutiliza los nombres ya revisados.
@@ -284,3 +315,5 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - Subido: las pruebas automáticas.
 - Deshecha la subida "tamaños iguales al inicio y prueba de diseño" (447811f): la caja quedó descuadrada al editar, porque se cambiaron los tamaños mirando solo los números sin revisar cómo quedaba. Por decisión suya, la web vuelve a la versión anterior.
 - Subido: vuelta a la versión anterior.
+- Eventos y diseño aparcados para otro momento, con todo lo hablado apuntado en "Qué falta" (ella lo ha revisado: "Está todo"). Quitada de la regla de trabajo la línea "No se comprueba todo en cada cambio pequeño", que ella no había aprobado.
+- Subido: apuntes de eventos y diseño.
