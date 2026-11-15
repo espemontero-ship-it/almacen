@@ -36,6 +36,8 @@ export async function POST(request) {
         return Response.json({ ok: true, nombres: await ed.cambiarNombres(Number(c.id), { idioma: c.idioma, nombre: c.nombre }, quien) });
       case 'sinonimos':
         return Response.json({ ok: true, nombres: await ed.cambiarNombres(Number(c.id), { sinonimos: c.sinonimos }, quien) });
+      case 'llenado':
+        return Response.json({ ok: true, ...(await ed.cambiarLlenado(Number(c.sitioId), c.llenado, quien)) });
       case 'crearCaja':
         return Response.json({ ok: true, caja: await ed.crearCaja(c, quien) });
       default:

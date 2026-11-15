@@ -104,3 +104,5 @@ CREATE TABLE IF NOT EXISTS cambios (
 CREATE INDEX IF NOT EXISTS cambios_cuando ON cambios (cuando DESC);
 CREATE INDEX IF NOT EXISTS cambios_sitio ON cambios (sitio_id, cuando DESC);
 CREATE INDEX IF NOT EXISTS cambios_articulo ON cambios (articulo_id, cuando DESC);
+
+ALTER TABLE sitios ADD COLUMN IF NOT EXISTS llenado TEXT CHECK (llenado IN ('vacia', 'medias', 'llena'));

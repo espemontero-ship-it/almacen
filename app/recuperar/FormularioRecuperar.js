@@ -22,7 +22,7 @@ export default function FormularioRecuperar({ idioma }) {
         body: JSON.stringify({ correo: datos.get('correo') }),
       });
       if (r.ok) setHecho(true);
-      else setError(t.sinConexion);
+      else setError(r.status === 502 ? t.correoNoEnviado : t.errorServidor);
     } catch {
       setError(t.sinConexion);
     }

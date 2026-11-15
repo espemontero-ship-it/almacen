@@ -84,6 +84,7 @@ export default function Buscador({ busqueda = '', idioma }) {
                         <span className="sugerencia-texto">
                           <strong>{s.codigo || s.nombre}</strong>
                           {s.codigo && s.nombre ? ` ${s.nombre}` : ''}
+                          {s.llenado ? ` · ${t.llenado[s.llenado].toLowerCase()}` : ''}
                         </span>
                       </>
                     )}

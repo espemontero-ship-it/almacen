@@ -7,6 +7,7 @@ import { sesionActual } from '../../../lib/sesionActual';
 import Link from 'next/link';
 import CajaEditable from './CajaEditable';
 import Papelera from './Papelera';
+import Llenado from './Llenado';
 import { textosHistorial } from '../../../lib/textosHistorial';
 const { listarEtiquetas, quitados } = require('../../../lib/edicion.cjs');
 const { obtenerSitio } = require('../../../lib/datos.cjs');
@@ -25,14 +26,16 @@ export default async function Sitio({ params }) {
   const puedeEditar = Boolean(sesion && ['admin', 'editor'].includes(sesion.rol));
   const etiquetas = puedeEditar ? await listarEtiquetas(idioma) : [];
   const papelera = puedeEditar ? await quitados(sitio.id) : [];
-  const th = textosHistorial(idioma);
-  return (
+  const th = textosHistorial(idioma);  return (
     <>
       <Cabecera volver idioma={idioma} />
       <main className="contenido reducido pagina-caja">
-        <h1 className="sitio-titulo">
-          <NombreSitio codigo={sitio.codigo} nombre={sitio.nombre} />
-        </h1>
+        <div className="llenado-fila-titulo">
+          <h1 className="sitio-titulo">
+            <NombreSitio codigo={sitio.codigo} nombre={sitio.nombre} />
+          </h1>
+          <Llenado sitioId={sitio.id} llenado={sitio.llenado} idioma={idioma} soloVer={!puedeEditar} />
+        </div>
         <p className="resumen-sitio">
           {t.nArticulos(lineas)} · {t.nUnidades(sitio.unidades)}
         </p>

@@ -46,6 +46,8 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 - **Personas** (solo administración): lista del equipo con su acceso; invitar (nombre, usuario, correo, acceso: administración, edición o solo consulta) da un enlace de 7 días y lo manda por correo; "Nueva contraseña" da un enlace para mandárselo a mano.
 - **Editar las cajas** (quien entra con acceso de edición o administración): cada artículo de la caja enseña foto (con la cámara como icono en su esquina), nombre, etiquetas, cantidad y rotas con − número + (se guarda al momento), una casilla de comentario siempre visible ("Añadir comentario", se guarda con Enter o al salir) y "Quitar" con confirmación. En el ordenador, botón Cuadrícula / Lista como en el inicio: Lista en dos columnas con títulos (Foto · Artículo · Cantidad · Rotas) y Cuadrícula con las tarjetas del inicio; en el móvil, lista con cantidad, rotas y Quitar en una línea bajo cada artículo. Abajo, "Añadir artículo": busca en el catálogo con sugerencias (cantidad y talla si es ropa) o crea uno nuevo (nombre en español e inglés, etiquetas, si es ropa y su talla).
 - **Fotos**: una por artículo. Al editar una caja, cada artículo tiene un botón con icono de cámara: abre la cámara (o la galería), la app reduce la foto (lado máximo 1200 px, JPEG) y la sube a Cloudflare R2. Al tocar una foto se ve en grande. Miniatura en la tabla del inicio, y foto en la ficha y en la caja.
+- **Llenado de la caja** (versión F): junto al título de cada caja, tres botones pequeños "Vacía · A medias · Llena" (como Cuadrícula / Lista); se guarda al pulsar y queda en el historial. Quien solo consulta ve la palabra, o nada si nadie lo ha elegido. Sale también en las sugerencias del buscador ("P14 latex weapons · a medias").
+- **Cajas** (barra de arriba y Menú del móvil, junto a Historial): todas las cajas en una lista por código, con su llenado al lado; cada una lleva a la caja.
 - **Crear caja** (desde el inicio, quien edita): tipo de caja, número propuesto (el siguiente libre) y nombre opcional.
 - **Historial** (lo ve todo el mundo): cada cambio queda apuntado con quién, cuándo y qué (cantidades, rotas, comentarios, añadir, quitar, recuperar, artículo nuevo, caja nueva, fotos, nombres y sinónimos). Botón "Historial" en el inicio con todos los cambios; "Historial de esta caja" al final de cada caja. El enlace "Historial de este artículo" se quitó. Empieza a contar desde el 2026-11-14.
 - **Papelera** (quien edita): al final de cada caja, "Quitado de esta caja (últimos 30 días)", con botón Recuperar que lo devuelve tal como estaba.
@@ -186,15 +188,12 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 
 ## Qué falta (para recordárselo cuando pregunte)
 
-- **Desarrollos posteriores**: guardar lo que vuelve, pickup lists (listas de salida a eventos) y permisos finos.
-- **Mensaje de error en Recuperar contraseña**: si el envío del correo falla, la pantalla dice "No hay conexión"; debería decir que no se ha podido enviar el correo.
+- **Listas de recogida para eventos**: plan aprobado el 2026-11-15, por partes. Hecha la parte 1 (llenado de la caja). Faltan: 2 eventos y lista con zonas, 3 añadir muchas cosas a la vez, 4 cargar (resta de las cajas), 5 volver. Cada parte se pregunta antes de hacerla.
+- **Desarrollos posteriores**: permisos finos.
 - **Datos definitivos**: cargarlos cuando termine la reorganización del almacén. La carga une la ropa por tallas y reutiliza los nombres ya revisados.
 - **9 artículos sin traducir**: no se sabe qué son; tienen el nombre original en los dos idiomas.
 - **Revisión de pantallas**: terminada el 2026-11-14 (inicio, búsqueda, caja, historial, Crear caja, Personas, Entrar, Recuperar y ficha del artículo).
-- **Unidades en la caja** ("14 artículos · 74 unidades"): preguntó qué pintan; sin resolver.
-- **En el móvil**, a la ficha del artículo solo se llega desde las sugerencias del buscador.
 - **Sinónimos**: la lista no tiene las palabras en inglés; se hizo mal. Aparcado por decisión suya.
-- **Borrar 2 archivos de prueba** de la carpeta "prueba/" de las fotos en Cloudflare.
 
 ## Pendiente de decidir
 
@@ -269,3 +268,7 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - Subido: el móvil con el diseño aprobado.
 - Móvil: los filtros y botones ocupaban media pantalla y el menú estaba repartido. Elegida la versión 1: "Almacén" y "Menú" arriba, buscador, y "Filtros" con Cuadrícula / Lista en una fila. Las opciones se enseñaron con enlaces separados, sin franjas amarillas, que ensuciaban la comparación.
 - Subido: cabecera y filtros del móvil.
+- Recuperar contraseña: si el correo no se puede enviar, ahora lo dice ("No se ha podido enviar el correo…") en vez de "No hay conexión". Borrados los 2 archivos de prueba de la carpeta "prueba/" de Cloudflare. Quitados de pendientes, por decisión suya, "Unidades en la caja" y la ficha en el móvil. Comprobado por ella: guardar sinónimos funciona.
+- Listas de recogida para eventos (decidido por ella): en la lista van artículos con cantidad y caja, y cajas enteras; las zonas del evento se escriben en cada evento; el evento solo lleva nombre; al marcar cargado se resta de la caja y las cajas enteras quedan "en el evento"; de golpe: poner zona a varias líneas, marcar varias como cargadas y añadir muchas cosas (casillas en inicio y búsqueda, pegar texto, copiar de otro evento); al volver, desde la lista eligiendo caja o desde cada caja; administración crea listas y zonas, edición carga y devuelve.
+- Llenado de la caja: tres valores puestos a mano (vacía, a medias, llena); sin elegir no se ve nada; se ve en la caja y en las sugerencias; pantalla "Cajas" con todas por código, sin grupos. Los tres botones grandes ocupaban mucho: se enseñaron 6 versiones (A–F) en la app y eligió la F, pequeños junto al título.
+- Subido: llenado de la caja, pantalla "Cajas" y mensaje de error de Recuperar contraseña.

@@ -14,7 +14,7 @@ export default async function Cabecera({ busqueda = '', volver = false, idioma, 
   return (
     <>
       {!soloEscritorio && (
-        <CabeceraMovil idioma={idioma} busqueda={busqueda} textos={{ titulo: t.titulo, personas: t.personas, salir: t.salir, entrar: t.entrar }} puedeEditar={puedeEditar} esAdmin={sesion?.rol === 'admin'} haySesion={Boolean(sesion)} />
+        <CabeceraMovil idioma={idioma} busqueda={busqueda} textos={{ titulo: t.titulo, personas: t.personas, salir: t.salir, entrar: t.entrar, cajas: t.cajasTitulo }} puedeEditar={puedeEditar} esAdmin={sesion?.rol === 'admin'} haySesion={Boolean(sesion)} />
       )}
       {!sinBarraEscritorio && <BarraOpciones>
         <header className="esc-barra">
@@ -22,6 +22,7 @@ export default async function Cabecera({ busqueda = '', volver = false, idioma, 
           <div className="esc-buscador"><Buscador key={busqueda} busqueda={busqueda} idioma={idioma} /></div>
           <nav className="esc-nav">
             <Link href="/historial" className="esc-accion">{en ? 'History' : 'Historial'}</Link>
+            <Link href="/cajas" className="esc-accion">{t.cajasTitulo}</Link>
             {puedeEditar && <Link href="/caja-nueva" className="esc-accion esc-accion-crear">{en ? '+ New box' : '+ Crear caja'}</Link>}
             {sesion?.rol === 'admin' && <Link href="/personas" className="esc-accion">{t.personas}</Link>}
             {sesion ? (

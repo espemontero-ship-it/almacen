@@ -7,7 +7,12 @@ export async function POST(request) {
   if (u) {
     const token = await crearEnlace(u.id, 2);
     const enlace = `${new URL(request.url).origin}/invitacion/${token}`;
-    await enviarRecuperacion(u.correo, { nombre: u.nombre, enlace });
+    try {
+      await enviarRecuperacion(u.correo, { nombre: u.nombre, enlace });
+    } catch (error) {
+      console.error('No se ha podido enviar el correo de recuperación:', error.message);
+      return Response.json({ error: 'correo' }, { status: 502 });
+    }
   }
   return Response.json({ ok: true });
 }

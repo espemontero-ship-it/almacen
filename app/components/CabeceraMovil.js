@@ -23,6 +23,7 @@ export default function CabeceraMovil({ idioma, busqueda, textos: t, puedeEditar
       {abierto && (
         <nav className="cm-desplegable">
           <Link href="/historial" className="cm-enlace">{en ? 'History' : 'Historial'}</Link>
+          <Link href="/cajas" className="cm-enlace">{t.cajas}</Link>
           {puedeEditar && <Link href="/caja-nueva" className="cm-enlace">{en ? '+ New box' : '+ Crear caja'}</Link>}
           {esAdmin && <Link href="/personas" className="cm-enlace">{t.personas}</Link>}
           {haySesion ? (
