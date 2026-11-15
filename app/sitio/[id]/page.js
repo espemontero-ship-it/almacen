@@ -9,7 +9,7 @@ import CajaEditable from './CajaEditable';
 import Papelera from './Papelera';
 import Llenado from './Llenado';
 import { textosHistorial } from '../../../lib/textosHistorial';
-const { listarEtiquetas, quitados } = require('../../../lib/edicion.cjs');
+const { listarEtiquetas, quitados, ultimaRevision } = require('../../../lib/edicion.cjs');
 const { obtenerSitio } = require('../../../lib/datos.cjs');
 
 export const dynamic = 'force-dynamic';
@@ -26,20 +26,28 @@ export default async function Sitio({ params }) {
   const puedeEditar = Boolean(sesion && ['admin', 'editor'].includes(sesion.rol));
   const etiquetas = puedeEditar ? await listarEtiquetas(idioma) : [];
   const papelera = puedeEditar ? await quitados(sitio.id) : [];
-  const th = textosHistorial(idioma);  return (
+  const th = textosHistorial(idioma);
+  // Inventario: junto al título, cuándo se revisó la caja por última vez y quién.
+  const revisada = await ultimaRevision(sitio.id);
+  const en = idioma === 'en';
+  const fecha = revisada
+    ? new Intl.DateTimeFormat(en ? 'en-GB' : 'es-ES', { timeZone: 'Europe/Madrid', day: 'numeric', month: 'short' }).format(new Date(revisada.cuando))
+    : null;
+  const quien = revisada?.usuario_nombre ? (en ? ` by ${revisada.usuario_nombre}` : ` por ${revisada.usuario_nombre}`) : '';
+  const textoRevision = revisada ? (en ? `Checked on ${fecha}${quien}` : `Revisada el ${fecha}${quien}`) : (en ? 'Not checked' : 'Sin revisar');
+  return (
     <>
       <Cabecera volver idioma={idioma} />
       <main className="contenido reducido pagina-caja">
-        <div className="llenado-fila-titulo">
-          <h1 className="sitio-titulo">
-            <NombreSitio codigo={sitio.codigo} nombre={sitio.nombre} />
-          </h1>
-          <Llenado sitioId={sitio.id} llenado={sitio.llenado} idioma={idioma} soloVer={!puedeEditar} />
-        </div>
-        <p className="resumen-sitio">
-          {t.nArticulos(lineas)} · {t.nUnidades(sitio.unidades)}
-        </p>
-        <CajaEditable sitioId={sitio.id} contenido={sitio.contenido} etiquetas={etiquetas} idioma={idioma} soloVer={!puedeEditar} />
+        <CajaEditable sitioId={sitio.id} contenido={sitio.contenido} etiquetas={etiquetas} idioma={idioma} soloVer={!puedeEditar} codigo={sitio.codigo || sitio.nombre} llenado={sitio.llenado}
+          titulo={(
+            <>
+              <h1 className="sitio-titulo"><NombreSitio codigo={sitio.codigo} nombre={sitio.nombre} /></h1>
+              <Llenado sitioId={sitio.id} llenado={sitio.llenado} idioma={idioma} soloVer={!puedeEditar} />
+              <span className="revision-texto">{textoRevision}</span>
+            </>
+          )}
+          resumen={`${t.nArticulos(lineas)} · ${t.nUnidades(sitio.unidades)}`} />
         {puedeEditar && <Papelera lineas={papelera} titulo={th.papelera} textoRecuperar={th.recuperar} idioma={idioma} />}
         <p className="enlace-historial">
           <Link href={`/historial?caja=${sitio.id}`} className="enlace-volver">{th.verHistorialCaja}</Link>

@@ -2,7 +2,8 @@ import Cabecera from '../components/Cabecera';
 import ListaHistorial from '../components/ListaHistorial';
 import { idiomaActual } from '../../lib/idioma';
 import { textosHistorial } from '../../lib/textosHistorial';
-const { historial } = require('../../lib/edicion.cjs');
+import { sesionActual } from '../../lib/sesionActual';
+const { historial, purgarCajas } = require('../../lib/edicion.cjs');
 const { query } = require('../../lib/db.cjs');
 
 export const dynamic = 'force-dynamic';
@@ -24,13 +25,16 @@ export default async function Historial({ searchParams }) {
     if (a.rows[0]) titulo = t.deArticulo(a.rows[0].nombre);
   }
 
+  const sesion = await sesionActual();
+  const puedeEditar = Boolean(sesion && ['admin', 'editor'].includes(sesion.rol));
+  await purgarCajas();
   const cambios = await historial({ sitioId, articuloId, idioma });
   return (
     <>
       <Cabecera volver idioma={idioma} />
       <main className="contenido reducido">
         <h1 className="sitio-titulo">{titulo}</h1>
-        <ListaHistorial cambios={cambios} idioma={idioma} mostrarCaja={!sitioId} />
+        <ListaHistorial cambios={cambios} idioma={idioma} mostrarCaja={!sitioId} puedeEditar={puedeEditar} />
       </main>
     </>
   );

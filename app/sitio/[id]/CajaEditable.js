@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Foto from '../../components/Foto';
 import BotonFoto from '../../components/BotonFoto';
 import NombreEditable from '../../components/NombreEditable';
+import BorrarCaja from '../../components/BorrarCaja';
 import { textos } from '../../../lib/textos';
 import { ordenarTallas } from '../../../lib/tallas.cjs';
 
@@ -113,24 +114,7 @@ function FotoCamara({ c, x, actualizar, soloVer }) {
 }
 
 // Títulos de columna de las tablas (versiones 1 y 2), una sola vez arriba.
-function CabeceraTabla({ version, idioma }) {
-  const x = T[idioma === 'en' ? 'en' : 'es'];
-  const y = T2[idioma === 'en' ? 'en' : 'es'];
-  return (
-    <li className={`cx-cab cx-cab-${version}`} aria-hidden="true">
-      <span>{y.foto}</span>
-      <span>{y.articulo}</span>
-      <span className="cx-num">{x.cantidad}</span>
-      <span className="cx-num">{x.rotas}</span>
-      {version === '1' && <span>{y.comentario}</span>}
-      {version === '1' && <span>{y.etiquetas}</span>}
-      <span />
-    </li>
-  );
-}
-
-// Una línea de la caja: solo datos; cantidad, rotas y comentario se cambian con doble clic.
-// version: '1' tabla compacta, '2' tabla con foto grande, '3' tarjeta.
+// version: 'fila' (Lista, como la del inicio) o 'tarjeta' (Cuadrícula).
 // Cantidad y rotas: − número +. Cada pulsación se guarda al momento.
 function Numero({ valor, min = 0, max, onCambio, etiqueta, className = '' }) {
   const limitar = n => Math.max(min, max != null ? Math.min(max, n) : n);
@@ -167,7 +151,40 @@ function CampoComentario({ valor, onGuardar, pista, etiqueta }) {
   );
 }
 
-function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false }) {
+// Inventario: lo que se añade a cada artículo mientras se revisa la caja.
+const R = {
+  es: {
+    hacer: 'Hacer inventario', revisando: (c, n, t) => `Revisando ${c} · Quedan ${t - n} de ${t}`, todoBien: 'Todo está bien', leyenda: 'Haz click para marcarlo como revisado o pulsa Caja revisada si la caja está correcta', estanBien: 'Están bien',
+    esta: '✓ Está', comprobado: '✓ Comprobado', noEsta: 'No está', faltaFoto: 'Falta foto', hacerFoto: 'Hacer foto', saltar: 'Saltar',
+    comoEsta: '¿Cómo está la caja?', revisada: 'Caja revisada', quedan: n => `Quedan ${n} sin comprobar.`, quitarlos: 'Quitarlos', volver: 'Volver',
+    hecha: 'Caja revisada. Gracias.', siguiente: 'Siguiente caja sin revisar', visto: '✓ Visto', marcarVisto: 'Marcar visto', revisandoSolo: c => `Revisando ${c}`, revisadosTitulo: n => `Revisados (${n})`, quitar: 'Quitar', comentario: '+ Comentario', porRevisarTitulo: n => `Por revisar (${n})`, verRevisados: n => `Ver revisados (${n})`, ocultarRevisados: n => `Ocultar revisados (${n})`,
+  },
+  en: {
+    hacer: 'Take inventory', revisando: (c, n, t) => `Checking ${c} · ${t - n} of ${t} left`, todoBien: 'All is fine', leyenda: 'Click an item to mark it as checked, or press Box checked if the box is correct', estanBien: 'They are fine',
+    esta: '✓ It is here', comprobado: '✓ Checked', noEsta: 'Not here', faltaFoto: 'Missing photo', hacerFoto: 'Take photo', saltar: 'Skip',
+    comoEsta: 'How full is the box?', revisada: 'Box checked', quedan: n => `${n} still unchecked.`, quitarlos: 'Remove them', volver: 'Back',
+    hecha: 'Box checked. Thanks.', siguiente: 'Next unchecked box', visto: '✓ Seen', marcarVisto: 'Mark as seen', revisandoSolo: c => `Checking ${c}`, revisadosTitulo: n => `Checked (${n})`, quitar: 'Remove', comentario: '+ Comment', porRevisarTitulo: n => `To check (${n})`, verRevisados: n => `Show checked (${n})`, ocultarRevisados: n => `Hide checked (${n})`,
+  },
+};
+
+// Inventario: el ✕ para quitar, "Falta foto · Hacer foto · Saltar" al marcar un artículo sin foto.
+function Aspa({ c, r, onClick }) {
+  return <button type="button" className="inv-aspa" aria-label={`${r.quitar}: ${c.nombre}`} title={r.quitar} onClick={onClick}>✕</button>;
+}
+
+function PideFoto({ c, r, revision, actualizar }) {
+  if (!revision.comprobados.has(c.id) || c.foto_url || revision.saltadas.has(c.id)) return null;
+  return (
+    <span className="inv-pide-foto">
+      <span>{r.faltaFoto}</span>
+      <span className="inv-pide-foto-camara"><BotonFoto articuloId={c.articulo_id} etiqueta={r.hacerFoto} onSubida={url => actualizar(c.id, { foto_url: url })} /></span>
+      <button type="button" className="boton-texto" onClick={() => revision.saltar(c.id)}>{r.saltar}</button>
+    </span>
+  );
+}
+
+function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, revision = null }) {
+  const r = R[idioma === 'en' ? 'en' : 'es'];
   const t = textos(idioma);
   const x = T[idioma === 'en' ? 'en' : 'es'];
   const y = T2[idioma === 'en' ? 'en' : 'es'];
@@ -230,6 +247,15 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false }) {
   const botonQuitar = soloVer ? null : (
     <button type="button" className="cx-quitar" onClick={() => setConfirmar(true)}>{y.quitarCorto}</button>
   );
+  const enRevision = revision && !soloVer ? <PideFoto c={c} r={r} revision={revision} actualizar={actualizar} /> : null;
+  // Inventario (A): se marca tocando el artículo en una zona libre (no foto, números, comentario, botones ni campos).
+  const tocar = revision && !soloVer ? e => {
+    if (e.target.closest('button, input, textarea, select, a, label, .cx-foto, .boton-foto-envoltura')) return;
+    revision.alternar(c.id);
+  } : undefined;
+  // Quitar: aspa arriba a la derecha del artículo, siempre (con y sin inventario), en lugar del "Quitar" de antes.
+  const aspa = !soloVer ? <Aspa c={c} r={r} onClick={() => setConfirmar(true)} /> : null;
+  const quitarOAspa = aspa ? null : botonQuitar;
   const extras = (
     <>
       {aviso && <p className="aviso cx-aviso">{aviso}</p>}
@@ -247,46 +273,53 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false }) {
     </>
   );
 
+  if (version === 'fila') {
+    // Igual que una fila de la Lista del inicio (Escritorio.js), con − + en Total y Rotas, Comentario y ✕.
+    return (
+      <tr className={tocar ? 'inv-tocable' : undefined} onClick={tocar}>
+        <td className="esc-c-foto">
+          {c.foto_url ? (
+            <span className="esc-foto esc-foto-40"><img src={c.foto_url} alt={c.nombre} loading="lazy" /></span>
+          ) : (
+            <span className="esc-foto esc-foto-vacia esc-foto-40" aria-hidden="true" />
+          )}
+        </td>
+        <td>
+          <span className="esc-flecha" />
+          <NombreEditable articuloId={c.articulo_id} nombre={c.nombre} sinonimos={c.sinonimos} idioma={idioma} puedeEditar={!soloVer} className="esc-nombre" />
+          {talla && <span className="esc-sub">{talla}</span>}
+          {enRevision}
+          {extras}
+        </td>
+        <td className="esc-num">{cantidad}</td>
+        <td className="esc-num">{rotas}</td>
+        <td className="esc-gris">{comentario}</td>
+        <td className="cx-td-aspa">{aspa}</td>
+      </tr>
+    );
+  }
+
   if (version === 'tarjeta') {
     // Misma tarjeta que el inicio (Cuadrícula), con los datos editables con doble clic.
     return (
       <li>
-        <div className="esc-tarjeta cx-tarjeta">
+        <div className={tocar ? 'esc-tarjeta cx-tarjeta tarjeta-con-aspa inv-tocable' : 'esc-tarjeta cx-tarjeta tarjeta-con-aspa'} onClick={tocar}>
+          {/* ✕ en la esquina de la tarjeta, montado sobre su borde (fuera de la foto) */}
+          {aspa && <span className="aspa-esquina-tarjeta">{aspa}</span>}
           <FotoCamara c={c} x={x} actualizar={actualizar} soloVer={soloVer} />
           <NombreEditable articuloId={c.articulo_id} nombre={c.nombre} sinonimos={c.sinonimos} idioma={idioma} puedeEditar={!soloVer} className="esc-nombre" />
           {(talla || etiquetasTexto) && <span className="esc-gris">{[talla, etiquetasTexto].filter(Boolean).join(' · ')}</span>}
           <span className="esc-gris cx-pares"><span className="cx-par">{y.cant} {cantidad}</span><span className="cx-par">{x.rotas} {rotas}</span></span>
           <span className="esc-gris">{comentario}</span>
-          <span>{botonQuitar}</span>
+          {enRevision}
+          {quitarOAspa && <span>{quitarOAspa}</span>}
         </div>
         {extras}
       </li>
     );
   }
 
-  return (
-    <li className={`cx-t cx-t${version}`}>
-      <FotoCamara c={c} x={x} actualizar={actualizar} soloVer={soloVer} />
-      <div className="cx-datos">
-        {nombre}
-        {(version === '2' || talla) && (
-          <span className="cx-meta cx-meta-movil">{[talla, etiquetasTexto].filter(Boolean).join(' · ')}</span>
-        )}
-        <span className={version === '2' ? 'cx-coment-linea' : 'cx-coment-linea cx-solo-movil'}>{comentario}</span>
-      </div>
-      <div className="cx-solo-movil cx-numeros-movil">
-        <span className="cx-num-movil"><span className="cx-rotulo">{x.cantidad}</span>{cantidad}</span>
-        <span className="cx-num-movil"><span className="cx-rotulo">{x.rotas}</span>{rotas}</span>
-        {botonQuitar}
-      </div>
-      <span className="cx-num cx-col-cantidad cx-solo-escritorio">{cantidad}</span>
-      <span className="cx-num cx-col-rotas cx-solo-escritorio">{rotas}</span>
-      {version === '1' && <span className="cx-col-comentario cx-solo-escritorio">{comentario}</span>}
-      {version === '1' && <span className="cx-col-etiquetas cx-solo-escritorio">{etiquetasTexto}</span>}
-      <span className="cx-col-quitar cx-solo-escritorio">{botonQuitar}</span>
-      {extras}
-    </li>
-  );
+  return null;
 }
 
 function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho }) {
@@ -351,7 +384,7 @@ function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho }) {
 
   if (!abierto) {
     return (
-      <button type="button" className="boton-principal boton-ancho" onClick={() => setAbierto(true)}>
+      <button type="button" className="boton-secundario" onClick={() => setAbierto(true)}>
         {x.anadir}
       </button>
     );
@@ -461,16 +494,109 @@ function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho }) {
 // Caja: igual que el inicio, con botón Cuadrícula / Lista en el ordenador.
 // Lista: una fila por artículo (dos columnas en el ordenador). Cuadrícula: las tarjetas del inicio.
 // En el móvil, solo la lista.
-export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, soloVer = false }) {
+export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, soloVer = false, codigo = '', llenado = null, titulo = null, resumen = '' }) {
   const router = useRouter();
   const en = idioma === 'en';
+  const r = R[en ? 'en' : 'es'];
   const [lineas, setLineas] = useState(contenido);
   const [vista, setVista] = useState('lista');
+  // Inventario de la caja: se guarda en este navegador para no perder lo comprobado si se recarga.
+  const claveRevision = `revision-caja-${sitioId}`;
+  const [revisando, setRevisando] = useState(false);
+  const [comprobados, setComprobados] = useState(() => new Set());
+  const [saltadas, setSaltadas] = useState(() => new Set());
+  const [quedanPorQuitar, setQuedanPorQuitar] = useState(null);
+  const [terminada, setTerminada] = useState(null);
+  const [errorRevision, setErrorRevision] = useState('');
   useEffect(() => setLineas(contenido), [contenido]);
   useEffect(() => {
     const guardada = window.localStorage.getItem('caja-vista');
     if (guardada === 'lista' || guardada === 'cuadricula') setVista(guardada);
-  }, []);
+    try {
+      const r0 = JSON.parse(window.localStorage.getItem(claveRevision) || 'null');
+      if (r0 && r0.activo) {
+        setRevisando(true);
+        setComprobados(new Set(r0.comprobados || []));
+        setSaltadas(new Set(r0.saltadas || []));
+      }
+    } catch {}
+  }, [claveRevision]);
+
+  function guardarRevision(activo, comp, salt) {
+    if (activo) window.localStorage.setItem(claveRevision, JSON.stringify({ activo: true, comprobados: [...comp], saltadas: [...salt] }));
+    else window.localStorage.removeItem(claveRevision);
+  }
+
+  function empezar() {
+    setRevisando(true);
+    setTerminada(null);
+    setComprobados(new Set());
+    setSaltadas(new Set());
+    guardarRevision(true, new Set(), new Set());
+  }
+
+  function alternar(id) {
+    const n = new Set(comprobados);
+    if (n.has(id)) n.delete(id);
+    else n.add(id);
+    setComprobados(n);
+    guardarRevision(true, n, saltadas);
+  }
+
+  // "Todo está bien": marca todos los artículos como revisados y termina el inventario de la caja (lo guarda).
+  function todoBien() {
+    const n = new Set(lineas.map(l => l.id));
+    setComprobados(n);
+    guardarRevision(true, n, saltadas);
+    terminar();
+  }
+
+  function saltar(id) {
+    const n = new Set(saltadas);
+    n.add(id);
+    setSaltadas(n);
+    guardarRevision(true, comprobados, n);
+  }
+
+  async function terminar() {
+    setErrorRevision('');
+    try {
+      const d = await editar({ accion: 'revisarCaja', sitioId });
+      setRevisando(false);
+      setQuedanPorQuitar(null);
+      guardarRevision(false);
+      setTerminada({ siguiente: d.siguiente || null });
+      router.refresh();
+    } catch (err) {
+      setErrorRevision(err.message || T[en ? 'en' : 'es'].error);
+    }
+  }
+
+  function cajaRevisada() {
+    const sinComprobar = lineas.filter(l => !comprobados.has(l.id));
+    if (sinComprobar.length) setQuedanPorQuitar(sinComprobar);
+    else terminar();
+  }
+
+  async function quitarSinComprobar() {
+    setErrorRevision('');
+    try {
+      for (const l of quedanPorQuitar) await editar({ accion: 'quitar', id: l.id });
+      const ids = new Set(quedanPorQuitar.map(l => l.id));
+      setLineas(ls => ls.filter(l => !ids.has(l.id)));
+      await terminar();
+    } catch (err) {
+      setQuedanPorQuitar(null);
+      setErrorRevision(err.message || T[en ? 'en' : 'es'].error);
+    }
+  }
+
+  const revision = revisando ? { comprobados, saltadas, alternar, saltar } : null;
+  const pendientes = revisando ? lineas.filter(l => !comprobados.has(l.id)) : lineas;
+  const revisados = revisando ? lineas.filter(l => comprobados.has(l.id)) : [];
+  // Durante el inventario, en lugar del estado de revisión y el recuento: "Quedan X de Y".
+  const quedanN = lineas.filter(l => !comprobados.has(l.id)).length;
+  const resumenVisto = revisando ? (en ? `${quedanN} of ${lineas.length} left` : `Quedan ${quedanN} de ${lineas.length}`) : resumen;
 
   function elegir(v) {
     setVista(v);
@@ -485,29 +611,85 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
     setLineas(l => l.filter(v => v.id !== id));
   }
 
-  const comunes = { idioma, actualizar, onQuitada: quitada, soloVer };
+  const comunes = { idioma, actualizar, onQuitada: quitada, soloVer, revision };
 
   return (
     <>
-      <div className="esc solo-escritorio cx-barra-vistas">
-        <span className="esc-vistas">
-          <button type="button" className={vista === 'cuadricula' ? 'esc-vista-activa' : ''} onClick={() => elegir('cuadricula')}>{en ? 'Grid' : 'Cuadrícula'}</button>
-          <button type="button" className={vista === 'lista' ? 'esc-vista-activa' : ''} onClick={() => elegir('lista')}>{en ? 'List' : 'Lista'}</button>
+      <div className="cx-barra-caja cab-barra cab-op2">
+        <span className={'cab-linea cab-izq' + (revisando ? ' cab-inv' : '')}>{titulo}<span className="cab-gris">{resumenVisto}</span></span>
+        {!soloVer && <AnadirArticulo sitioId={sitioId} etiquetas={etiquetas} idioma={idioma} onHecho={() => router.refresh()} />}
+        {!soloVer && !revisando && !terminada && <button type="button" className="boton-secundario" onClick={empezar}>{r.hacer}</button>}
+        {!soloVer && revisando && <button type="button" className="boton-secundario" onClick={cajaRevisada}>{r.revisada}</button>}
+        {!soloVer && terminada?.siguiente && <a href={`/sitio/${terminada.siguiente}`} className="boton-secundario">{r.siguiente}</a>}
+        <span className="esc solo-escritorio cx-barra-vistas">
+          <span className="esc-vistas">
+            <button type="button" className={vista === 'cuadricula' ? 'esc-vista-activa' : ''} onClick={() => elegir('cuadricula')}>{en ? 'Grid' : 'Cuadrícula'}</button>
+            <button type="button" className={vista === 'lista' ? 'esc-vista-activa' : ''} onClick={() => elegir('lista')}>{en ? 'List' : 'Lista'}</button>
+          </span>
         </span>
+        {(
+          <span className="esc solo-movil cx-vistas-movil">
+            <span className="esc-vistas">
+              <button type="button" aria-label={en ? 'Grid' : 'Cuadrícula'} className={vista === 'cuadricula' ? 'esc-vista-activa' : ''} onClick={() => elegir('cuadricula')}>▦</button>
+              <button type="button" aria-label={en ? 'List' : 'Lista'} className={vista === 'lista' ? 'esc-vista-activa' : ''} onClick={() => elegir('lista')}>☰</button>
+            </span>
+          </span>
+        )}
+        {!soloVer && <span className="cx-borrar-caja"><BorrarCaja sitioId={sitioId} codigo={codigo} idioma={idioma} alBorrar="/cajas" /></span>}
       </div>
-      {vista === 'cuadricula' && (
-        <ul className="esc-cuadricula cx-cuadricula solo-escritorio">
-          {lineas.map(c => <Linea key={c.id} c={c} version="tarjeta" {...comunes} />)}
-        </ul>
-      )}
-      <ul className={vista === 'cuadricula' ? 'lista cx-lista cx-lista-2 solo-movil' : 'lista cx-lista cx-lista-2 cx-dos-columnas'}>
-        <CabeceraTabla version="2" idioma={idioma} />
-        <CabeceraTabla version="2" idioma={idioma} />
-        {lineas.map(c => <Linea key={c.id} c={c} version="2" {...comunes} />)}
-      </ul>
-      {!soloVer && (
-        <div className="pie-edicion">
-          <AnadirArticulo sitioId={sitioId} etiquetas={etiquetas} idioma={idioma} onHecho={() => router.refresh()} />
+      {!soloVer && revisando && <p className="inv-leyenda cx-leyenda-caja">{r.leyenda}</p>}
+      {!soloVer && terminada && <p className="inv-leyenda cx-leyenda-caja">{r.hecha}</p>}
+      {errorRevision && <p className="error cx-leyenda-caja">{errorRevision}</p>}
+      {[{ grupo: pendientes, titulo: null }, ...(revisados.length ? [{ grupo: revisados, titulo: r.revisadosTitulo(revisados.length), esRevisados: true }] : [])].map(({ grupo, titulo, esRevisados }) => {
+        return (
+          <div key={esRevisados ? 'revisados' : 'pendientes'} className={esRevisados ? 'inv-bloque-revisados' : undefined}>
+            {titulo && <h2 className="inv-apartado">{titulo}</h2>}
+            {vista === 'cuadricula' ? (
+                <ul className="esc-cuadricula cx-cuadricula cx-cuadricula-siempre">
+                  {grupo.map(c => <Linea key={c.id} c={c} version="tarjeta" {...comunes} />)}
+                </ul>
+              ) : (
+                <div className="esc cx-tabla-envoltura">
+                  {[
+                    { clase: 'solo-escritorio cx-tabla-dos', partes: [grupo.filter((_, k) => k % 2 === 0), grupo.filter((_, k) => k % 2 === 1)] },
+                    { clase: 'solo-movil', partes: [grupo] },
+                  ].map(({ clase, partes }) => (
+                    <div key={clase} className={clase}>
+                      {partes.filter(parte => parte.length).map((parte, k) => (
+                        <table key={k} className="esc-tabla esc-lista-B cx-tabla-caja">
+                          <thead>
+                            <tr>
+                              <th className="esc-c-foto" />
+                              <th>{en ? 'Item' : 'Artículo'}</th>
+                              <th className="esc-num">{en ? 'Total' : 'Total'}</th>
+                              <th className="esc-num">{en ? 'Broken' : 'Rotas'}</th>
+                              <th>{en ? 'Comment' : 'Comentario'}</th>
+                              <th className="cx-td-aspa" />
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {parte.map(c => <Linea key={c.id} c={c} version="fila" {...comunes} />)}
+                          </tbody>
+                        </table>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )
+            }
+          </div>
+        );
+      })}
+      {quedanPorQuitar && (
+        <div className="dialogo-fondo" role="dialog" aria-modal="true">
+          <div className="dialogo">
+            <p>{r.quedan(quedanPorQuitar.length)}</p>
+            <div className="revision-botones">
+              <button type="button" className="boton-secundario" onClick={() => { setQuedanPorQuitar(null); todoBien(); }}>{r.estanBien}</button>
+              <button type="button" className="boton-principal" onClick={quitarSinComprobar}>{r.quitarlos}</button>
+              <button type="button" className="boton-secundario" onClick={() => setQuedanPorQuitar(null)}>{r.volver}</button>
+            </div>
+          </div>
         </div>
       )}
     </>

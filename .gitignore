@@ -9,3 +9,7 @@ node_modules/
 .vercel
 .env*
 revision/
+.next-comparar/
+comparacion-aprobado/
+.pglite-danada/
+.next-diseno/

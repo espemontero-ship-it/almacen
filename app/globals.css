@@ -1469,3 +1469,125 @@ html body .llenado.esc .esc-vistas button { font-size: 13px; padding: 0 8px; }
   html body .llenado.esc .esc-vistas { height: 32px; }
   html body .llenado.esc .esc-vistas button { font-size: 14px; }
 }
+
+/* Inventario de una caja (modo revisión), tal como se aprobó. Usa los botones que ya hay, sin cambiar lo existente. */
+.revision-texto { color: var(--secundario); }
+.cx-inventario { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; }
+.cx-inventario-texto { color: var(--secundario); }
+.cx-inventario .boton-secundario { display: inline-flex; align-items: center; text-decoration: none; color: var(--texto); }
+.cx-revision { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.cx-revision-botones { display: flex; gap: 8px; flex-wrap: nowrap; }
+.cx-comprobado { background: var(--texto); color: var(--fondo); border-color: var(--texto); }
+.cx-revision-foto { display: flex; align-items: center; gap: 12px; flex-wrap: nowrap; color: var(--secundario); }
+.cx-revision-camara { display: inline-flex; align-items: center; gap: 6px; color: var(--texto); }
+.cx-inventario-fin { display: flex; flex-direction: column; gap: 12px; padding: 0 0 24px; }
+.cx-inventario-llenado { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* Inventario: ✕, "Falta foto", apartado "Revisados" */
+.inv-aspa { width: 32px; height: 32px; min-height: 0; padding: 0; flex: none; border: 1px solid var(--borde, #d6d6d6); border-radius: 0; background: var(--fondo); color: var(--texto); font-size: 16px; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.inv-pide-foto { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--secundario); font-size: 13px; }
+.inv-pide-foto-camara { display: inline-flex; align-items: center; color: var(--texto); }
+.inv-pide-foto-camara .boton-foto { width: 30px; height: 30px; min-height: 0; padding: 0; }
+.inv-pide-foto-camara .estado { display: none; }
+.inv-apartado { font-size: 15px; font-weight: normal; color: var(--secundario); margin: 20px 0 8px; padding-top: 12px; border-top: 1px solid #d6d6d6; }
+.inv-ver-revisados { margin: 4px 0 16px; }
+
+/* Opción A del aspa: arriba a la derecha del artículo (fila de Lista y tarjeta de Cuadrícula), separada de la foto. */
+.inv-con-aspa { position: relative; }
+.inv-aspa-esquina { position: absolute; top: 8px; right: 0; }
+.inv-tarjeta-arriba { display: flex; justify-content: flex-end; margin-bottom: 4px; }
+@media (max-width: 899px) { .inv-con-aspa > .cx-datos { padding-right: 40px; } }
+.inv-tocable { cursor: pointer; }
+.inv-leyenda { flex-basis: 100%; margin: 0; color: var(--secundario); }
+.cx-anadir-arriba { padding: 0 0 16px; }
+/* Caja: una sola fila de botones encima de la lista; Cuadrícula / Lista a la derecha. */
+.cx-barra-caja { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; }
+.cx-barra-caja .cx-barra-vistas { margin: 0 0 0 auto; }
+.cx-barra-caja > .anadir { flex-basis: 100%; order: 10; }
+.cx-leyenda-caja { margin: 0 0 12px; }
+.cx-barra-caja { flex-wrap: nowrap; } .cx-barra-caja > * { flex: none; }
+.cx-barra-caja:has(> .anadir) { flex-wrap: wrap; } .cx-barra-caja > .anadir { flex: 1 1 100%; }
+
+/* Caja: arriba, título, llenado, revisión, recuento y botones en una línea */
+.cab-linea { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 16px 0 12px; }
+.cab-linea .sitio-titulo { margin: 0; padding: 0; }
+.cab-gris { color: var(--secundario); }
+.cab-barra .boton-secundario { min-height: 34px; height: 34px; padding: 0 12px; font-size: 14px; display: inline-flex; align-items: center; }
+.cab-barra.cx-barra-caja { flex-wrap: wrap; }
+.cab-op2 .cab-izq { margin: 0 8px 0 0; }
+@media (max-width: 899px) { .cab-barra .boton-secundario { min-height: 40px; height: 40px; } .cab-op2 .cab-izq { flex-basis: 100%; } .cab-op3 > .cab-gris { flex-basis: 100%; } }
+.cab-oculta { visibility: hidden; }
+.cab-inv .revision-texto { display: none; }
+.llenado-selector { display: inline-flex; margin: 0; padding: 0; }
+/* Cajas: selector de llenado y aspa para borrar en cada fila (edición y administración). */
+.lista-cajas-nombre { flex: 1; min-width: 0; color: var(--texto); text-decoration: none; }
+.lista-cajas-acciones { display: inline-flex; align-items: center; gap: 12px; }
+.lista-cajas-acciones .llenado-selector select, .cx-barra-caja .llenado-selector select { margin: 0; }
+.historial-recuperar { min-height: 0; height: 28px; padding: 0 10px; margin-left: 8px; font-size: 13px; }
+@media (max-width: 899px) { .cab-op2 > * { order: 2; } .cab-op2 > .cab-izq { order: 0; flex: 1 1 calc(100% - 52px); } .cab-op2 > .cx-borrar-caja { order: 1; margin-left: auto; } }
+
+/* Lista de la caja: Lista de la caja = Lista del inicio (esc-tabla esc-lista-B). Solo cambian los anchos de las columnas
+   nuevas (Total y Rotas con − +, Comentario, ✕) y se anula el zoom de la caja para que mida igual que el inicio. */
+.cx-tabla-caja th:nth-child(3), .cx-tabla-caja th:nth-child(4) { width: 132px; }
+.cx-tabla-caja th:nth-child(5) { width: 260px; }
+.cx-tabla-caja th:nth-child(6) { width: 44px; }
+.cx-tabla-caja .num-pasos { justify-content: flex-end; }
+.cx-tabla-caja .num-casilla { width: 3em; height: 30px; min-height: 30px; }
+.cx-tabla-caja .num-boton { width: 28px; height: 30px; }
+.cx-tabla-caja .cx-coment-campo { height: 30px; min-height: 30px; margin: 0; }
+.cx-tabla-caja .inv-aspa { width: 30px; height: 30px; }
+.cx-cuadricula-siempre { display: grid; }
+@media (min-width: 900px) { .cx-tabla-envoltura { zoom: calc(1 / 0.83); } }
+@media (max-width: 899px) {
+  .cx-cuadricula.cx-cuadricula-siempre { display: grid; }
+  .cx-vistas-movil { margin-left: auto; }
+  .cx-tabla-caja th:nth-child(5), .cx-tabla-caja td:nth-child(5) { display: none; }
+  .cx-tabla-caja th:nth-child(6), .cx-tabla-caja td:nth-child(6) { display: table-cell; }
+}
+/* Lista de la caja: − +, comentario y ✕ a la altura de la fila del inicio y con su misma letra */
+.cx-tabla-caja .num-casilla, .cx-tabla-caja .num-boton, .cx-tabla-caja .num-valor { height: 22px; min-height: 22px; font-size: 13px; }
+.cx-tabla-caja .num-boton { width: 22px; }
+.cx-tabla-caja .cx-coment-campo { height: 22px; min-height: 22px; font-size: 13px; padding: 0 6px; }
+.cx-tabla-caja .inv-aspa { width: 22px; height: 22px; font-size: 13px; }
+@media (max-width: 899px) { .cx-tabla-caja .num-casilla, .cx-tabla-caja .num-boton, .cx-tabla-caja .num-valor { height: 32px; min-height: 32px; } .cx-tabla-caja .num-boton { width: 30px; } .cx-tabla-caja .inv-aspa { width: 30px; height: 30px; } }
+.cx-tabla-caja .cx-coment-campo::placeholder { color: transparent; }
+.cx-coment-campo::placeholder { color: transparent; }
+/* Lista de la caja, móvil: la fila cabe entera (foto, artículo, Total, Rotas y ✕) */
+@media (max-width: 899px) {
+  .cx-tabla-caja td, .cx-tabla-caja th { padding-left: 3px; padding-right: 3px; }
+  .cx-tabla-caja td:nth-child(2) { padding-left: 6px; }
+  .cx-tabla-caja td:nth-child(2) .esc-flecha { display: none; }
+  .cx-tabla-caja .esc-nombre { font-size: 14px; }
+  .cx-tabla-caja .num-boton { width: 28px; }
+  .cx-tabla-caja .num-casilla, .cx-tabla-caja .num-valor { width: 2.2em; min-width: 2.2em; padding: 0 2px; }
+  .cab-op2 > .cx-borrar-caja { align-self: flex-start; }
+}
+/* Lista de la caja: sin recuadros en − +, número, comentario, ✕ y foto */
+.cx-tabla-caja .num-boton, .cx-tabla-caja .num-casilla, .cx-tabla-caja .num-valor, .cx-tabla-caja .num-pasos .num-casilla,
+.cx-tabla-caja .cx-coment-campo, .cx-tabla-caja .inv-aspa, .cx-tabla-caja .esc-foto { border: none; }
+.cx-tabla-caja .num-boton:disabled { border: none; }
+.cx-tabla-caja .cx-coment-campo { border: 1px solid var(--linea); } .cx-tabla-caja .esc-foto { border: 1px solid var(--linea); }
+/* Lista de la caja: cuadrar la tabla con la barra de arriba y las cabeceras con su contenido */
+@media (min-width: 900px) {
+  .cx-tabla-caja { width: 100%; table-layout: fixed; }
+  .cx-tabla-caja th:nth-child(5) { width: auto; }
+}
+.cx-tabla-caja th:nth-child(2) { padding-left: 22px; }
+.cx-tabla-caja th:nth-child(3), .cx-tabla-caja th:nth-child(4), .cx-tabla-caja td:nth-child(3), .cx-tabla-caja td:nth-child(4) { text-align: center; }
+.cx-tabla-caja td:nth-child(3) .num-pasos, .cx-tabla-caja td:nth-child(4) .num-pasos { justify-content: center; }
+.cx-tabla-caja td:nth-child(6), .cx-tabla-caja th:nth-child(6) { text-align: right; padding-right: 0; }
+@media (max-width: 899px) { .cx-tabla-caja .num-boton { width: 24px; } .cx-tabla-caja .num-casilla, .cx-tabla-caja .num-valor { width: 1.9em; min-width: 1.9em; } .cx-tabla-caja .esc-foto-40 { width: 34px; height: 34px; } .cx-tabla-caja td:nth-child(6), .cx-tabla-caja th:nth-child(6) { padding-right: 0; } }
+/* Lista de la caja: dos columnas en el portátil (como la caja aprobada: un artículo a la izquierda, el siguiente a la derecha) */
+@media (min-width: 900px) {
+  .cx-tabla-dos.solo-escritorio { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; align-items: start; }
+  .cx-tabla-dos .cx-tabla-caja th:nth-child(2) { width: auto; }
+  .cx-tabla-dos .cx-tabla-caja th:nth-child(3), .cx-tabla-dos .cx-tabla-caja th:nth-child(4) { width: 92px; }
+  .cx-tabla-dos .cx-tabla-caja th:nth-child(5) { width: 150px; }
+}
+/* Cuadrícula de la caja: Cant., Rotas y comentario a la misma altura en todas las tarjetas */
+.cx-tarjeta .cx-pares { margin-top: auto; }
+/* Cuadrícula: ✕ en la esquina de la tarjeta, montado sobre su borde (fuera de la foto) */
+.tarjeta-con-aspa { position: relative; overflow: visible; }
+.aspa-esquina-tarjeta { position: absolute; top: -9px; right: -9px; z-index: 2; }
+.aspa-esquina-tarjeta .inv-aspa { width: 22px; height: 22px; font-size: 12px; background: var(--fondo); border: 1px solid var(--texto); border-radius: 0; }
+.tarjeta-con-aspa .cx-foto .foto { border: 1px solid var(--linea); }

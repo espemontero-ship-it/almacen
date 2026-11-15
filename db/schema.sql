@@ -106,3 +106,31 @@ CREATE INDEX IF NOT EXISTS cambios_sitio ON cambios (sitio_id, cuando DESC);
 CREATE INDEX IF NOT EXISTS cambios_articulo ON cambios (articulo_id, cuando DESC);
 
 ALTER TABLE sitios ADD COLUMN IF NOT EXISTS llenado TEXT CHECK (llenado IN ('vacia', 'medias', 'llena'));
+
+CREATE TABLE IF NOT EXISTS inventarios (
+  id SERIAL PRIMARY KEY,
+  tipo TEXT NOT NULL CHECK (tipo IN ('general', 'parcial')),
+  abierto TIMESTAMPTZ NOT NULL DEFAULT now(),
+  cerrado TIMESTAMPTZ,
+  abierto_por TEXT
+);
+
+CREATE TABLE IF NOT EXISTS inventario_cajas (
+  inventario_id INTEGER NOT NULL REFERENCES inventarios(id) ON DELETE CASCADE,
+  sitio_id INTEGER NOT NULL REFERENCES sitios(id) ON DELETE CASCADE,
+  PRIMARY KEY (inventario_id, sitio_id)
+);
+
+CREATE TABLE IF NOT EXISTS revisiones (
+  id SERIAL PRIMARY KEY,
+  sitio_id INTEGER NOT NULL REFERENCES sitios(id) ON DELETE CASCADE,
+  inventario_id INTEGER REFERENCES inventarios(id) ON DELETE SET NULL,
+  usuario_id INTEGER,
+  usuario_nombre TEXT,
+  cuando TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS revisiones_sitio ON revisiones (sitio_id, cuando DESC);
+
+-- Borrar caja: queda 30 días en el Historial con "Recuperar"; después se borra del todo.
+ALTER TABLE sitios ADD COLUMN IF NOT EXISTS borrado TIMESTAMPTZ;
