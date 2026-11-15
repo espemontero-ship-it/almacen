@@ -1469,3 +1469,45 @@ html body .llenado.esc .esc-vistas button { font-size: 13px; padding: 0 8px; }
   html body .llenado.esc .esc-vistas { height: 32px; }
   html body .llenado.esc .esc-vistas button { font-size: 14px; }
 }
+
+/* Igualar al inicio (guía maestra), 2026-11-15. En el ordenador, la caja, los formularios, Entrar y Recuperar van
+   reducidos (zoom 0.83): por eso aquí 15.66 px y 41 px quedan en 13 px y 34 px, como la barra y los filtros del inicio. */
+@media (min-width: 900px) {
+  html body .contenido.reducido input:not([type="checkbox"]):not([type="file"]):not([type="radio"]),
+  html body .contenido.reducido select,
+  html body .contenido.reducido .boton-principal,
+  html body .contenido.reducido .boton-secundario,
+  html body .pantalla-entrada input:not([type="checkbox"]),
+  html body .pantalla-entrada .boton-principal { height: 41px; min-height: 41px; font-size: 15.66px; }
+  html body .contenido.reducido .cx-tarjeta .cx-coment-campo { height: 41px; min-height: 41px; font-size: 15.66px; }
+  html body .contenido.reducido .esc.esc .esc-vistas,
+  html body .contenido.reducido .llenado.esc .esc-vistas { height: 41px; }
+  html body .contenido.reducido .esc.esc .esc-vistas button,
+  html body .contenido.reducido .llenado.esc .esc-vistas button { font-size: 15.66px; padding: 0 14px; }
+  html body .contenido.reducido .num-boton { height: 41px; width: 41px; }
+  html body .contenido.reducido .cx-cab { font-size: 14.46px; }
+  html body .pantalla-entrada .titulo-app, html body .contenido.reducido .grupo-titulo { font-size: 24px; font-weight: 400; }
+}
+/* En el móvil: botones, casillas y desplegables a 44 de alto, como en el inicio; la letra de las casillas como el buscador. */
+@media (max-width: 899px) {
+  html body .contenido input:not([type="checkbox"]):not([type="file"]):not([type="radio"]),
+  html body .contenido select,
+  html body .contenido .boton-principal,
+  html body .contenido .boton-secundario,
+  html body .pantalla-entrada input:not([type="checkbox"]),
+  html body .pantalla-entrada .boton-principal { height: 44px; min-height: 44px; }
+  html body .contenido .cx-coment-campo { font-size: 16px; }
+  html body .llenado.esc .esc-vistas { height: 44px; }
+  html body .llenado.esc .esc-vistas button { font-size: 15px; padding: 0 14px; }
+  html body .contenido .cx-cab { font-size: 14px; }
+  html body .pantalla-entrada .titulo-app, html body .contenido .grupo-titulo, html body .esc.esc .ev .sitio-titulo { font-size: 24px; font-weight: 400; }
+  html body .esc.esc .esc-m-fila .esc-contador { font-size: 14px; }
+}
+@media (min-width: 900px) { html body .contenido.reducido .cx-meta { font-size: 14.46px; } }
+@media (max-width: 899px) { html body .contenido .cx-rotulo { font-size: 14px; } }
+/* Comentario de la caja para quien solo consulta: como el gris de las tarjetas del inicio. Botones de talla de la ficha: alto del inicio. */
+@media (min-width: 900px) { html body .contenido.reducido .cx-comentario-solo { font-size: 14.46px; } }
+@media (max-width: 899px) {
+  html body .contenido .cx-comentario-solo { font-size: 14px; }
+  html body .contenido .fx-talla { height: 44px; min-height: 44px; }
+}

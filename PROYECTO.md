@@ -8,7 +8,7 @@ Este documento es la fuente de verdad del proyecto: qué es, qué se ha decidido
 - **No se mete nada sin preguntar. Ante cualquier duda, las decisiones las toma ella, no Claude.**
 - **Antes de subir nada** (commit, push o publicar en Vercel) se le pregunta. Subir a GitHub publica solo en la app.
 - **No se comprueba todo** en cada cambio pequeño: basta con compilar y echar un vistazo. Lo que no se haya comprobado se dice.
-- **Antes de cada subida se lanzan las pruebas** (`npm test`, unos 10 segundos) y se le dice el resultado. Si falla alguna, no se sube. Cada parte nueva lleva sus pruebas.
+- **Antes de subir, las pruebas tienen que haber pasado después del último cambio de código** (`npm test`, alrededor de un minuto, con la prueba de diseño) y se le dice el resultado. Si ya pasaron después del último cambio, no se repiten. Si falla alguna, no se sube. Cada parte nueva lleva sus pruebas.
 - **Cada vez que se sube algo, se apunta aquí en ese mismo momento**: en "Lo que hace" si cambia lo que la app hace, y siempre en el Registro de decisiones.
 
 ## Qué es y para quién
@@ -184,13 +184,31 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
   - **Sin morado**: todos los botones principales (Buscar, Guardar, Añadir, Entrar…) en negro. El color de acento pasa a ser negro.
   - **Letra**: 16 en el móvil (más grande que en el ordenador, para leer en el almacén) y 13 en el ordenador.
   - **Negrita solo** en nombres de artículo, totales y rotas. Todo lo demás, con grosor normal.
-  - **Botones en el móvil**: siguen del tamaño de un dedo (48 de alto), con el estilo de la versión 3.
+  - **Botones en el móvil**: del tamaño de un dedo (44 de alto, como el inicio), con el estilo de la versión 3.
   - **Enlaces** como texto, sin subrayar.
+
+### Medidas: el inicio es la guía maestra (decisión suya, 2026-11-15)
+
+Todas las pantallas usan las medidas del inicio. Lo que el inicio no tiene se iguala a lo más parecido que sí tiene.
+
+| Qué | Ordenador | Móvil |
+|---|---|---|
+| Botones, casillas, desplegables y grupos de botones: alto | 34 | 44 |
+| Botones, casillas, desplegables: letra | 13 | 15-16 (Menú y Filtros 15; buscador y Buscar 16) |
+| Título de pantalla | 20, sin negrita | 24, sin negrita |
+| Texto más pequeño permitido (el gris de las tarjetas del inicio) | 12 | 14 |
+| Negrita | solo nombres de artículo, totales y rotas | igual |
+
+- En el ordenador, las pantallas de caja, ficha, historial, Cajas, Crear caja, Personas, Entrar y Recuperar van reducidas (al 83 %); sus medidas se ajustan para que en pantalla queden como en el inicio.
+- **Prueba de diseño**: comprueba estas medidas en todas las pantallas, en ordenador y móvil, con sesión de administración y sin entrar. Si algo no las cumple, falla y no se sube.
 
 ## Qué falta (para recordárselo cuando pregunte)
 
 - **Listas de recogida para eventos**: plan aprobado el 2026-11-15, por partes. Hecha la parte 1 (llenado de la caja). Faltan: 2 eventos y lista con zonas, 3 añadir muchas cosas a la vez, 4 cargar (resta de las cajas), 5 volver. Cada parte se pregunta antes de hacerla.
 - **Desarrollos posteriores**: permisos finos.
+- **Lista de eventos (pantalla 1 de eventos)**: hecha en el ordenador y apartada sin subir (lista con filtros Estado y Buscar, crear, renombrar con doble clic, Activo / Antiguo, borrar a la papelera, zonas al desplegar; "Eventos" junto a Cajas en la barra y el Menú). Le pareció que los botones están desordenados; falta decidir el orden y que vea las filas.
+- **Sesión con tildes o ñ**: si el nombre de la persona lleva tilde o ñ (José, Begoña), al entrar la sesión no se guarda en el navegador y la app la trata como si no hubiera entrado. Lo encontró la prueba de diseño. Sin arreglar; pendiente de que ella decida.
+- **Entrar y Recuperar en el móvil**: no tienen el buscador arriba, y la guía dice que tiene que estar en todas las pantallas. Sin tocar.
 - **Datos definitivos**: cargarlos cuando termine la reorganización del almacén. La carga une la ropa por tallas y reutiliza los nombres ya revisados.
 - **9 artículos sin traducir**: no se sabe qué son; tienen el nombre original en los dos idiomas.
 - **Revisión de pantallas**: terminada el 2026-11-14 (inicio, búsqueda, caja, historial, Crear caja, Personas, Entrar, Recuperar y ficha del artículo).
@@ -202,6 +220,7 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - **De lo que hace la app (29):** buscar (español, inglés, etiqueta, tallas, código de caja, sugerencias, erratas, lo quitado no cuenta); editar una caja (cantidad, rotas, comentario, quitar y recuperar, añadir, artículo nuevo, llenado, historial); cajas (número siguiente, sin repetir, orden de "Cajas"); nombres y sinónimos; usuarios (entrar, enlace de un solo uso, sesión manipulada) y permisos (consulta no edita, Personas solo administración).
 - **De pantalla (23):** inicio y búsqueda (tarjetas, Lista, filtros, inglés), caja (sin usuario no hay botones; +, Quitar con confirmación, error vuelve al valor de antes), llenado, ficha (tallas), historial, menú del móvil y buscador.
 - **No cubren** cómo se pintan las pantallas que leen directamente de la base de datos ("Cajas", Personas y la página de la caja entera); lo que hay detrás sí está probado.
+- **De diseño (4):** arranca la app con datos inventados y la abre en un navegador de verdad (Chromium, con Playwright) en ordenador y móvil, con sesión de administración y sin entrar. Comprueba en inicio, búsqueda, caja, ficha, historial, Cajas, Crear caja, Personas, Recuperar y Entrar las medidas de la tabla "Medidas: el inicio es la guía maestra". Usa su propia copia de la app (carpeta .next-diseno) para no chocar con la que esté abierta.
 
 ## Pendiente de decidir
 
@@ -282,3 +301,7 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - Subido: llenado de la caja, pantalla "Cajas" y mensaje de error de Recuperar contraseña.
 - Pruebas automáticas, a petición suya antes de seguir con los eventos ("en otra aplicación tenemos pruebas para asegurar que no rompemos nada"). Eligió todos los bloques y también pruebas de pantalla; se lanzan antes de cada subida. Se instalaron vitest, happy-dom y @testing-library/react con su permiso.
 - Subido: las pruebas automáticas.
+- Tamaños: el inicio es la guía maestra. Se midieron las 11 pantallas en ordenador y móvil; las que no coincidían con el inicio se igualaron con una sola versión, sin opciones, y se le enseñó el antes y el después de cada una ("Está bien"): caja ("Añadir comentario", Vacía / A medias / Llena, Cuadrícula / Lista, Añadir artículo, − +, títulos de columna), Entrar, Recuperar, Crear caja, Personas, título de Eventos y "N artículos" de la búsqueda en el móvil. La guía apunta ahora todas las medidas.
+- Prueba de diseño, a petición suya ("añade prueba específica de que se cumple el diseño"), con Playwright y Chromium instalados con su permiso. Encontró dos cosas más que se igualaron con su sí: el comentario de la caja para quien solo consulta y los botones de talla de la ficha en el móvil. También encontró el fallo de la sesión con tildes.
+- La base de datos del ordenador se dañó con un corte de sesión; se apartó (carpeta .pglite-danada, sin borrar) y se hizo una nueva copiando la de la web, con su permiso.
+- Subido: tamaños iguales al inicio, los dos arreglos y la prueba de diseño.
