@@ -4,7 +4,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     include: ['pruebas/**/*.test.js'],
-    exclude: ['pruebas/**/*-pantalla.test.js', 'pruebas/diseno/**'],
+    exclude: ['pruebas/**/*-pantalla.test.js'],
     setupFiles: ['./pruebas/preparar.js'],
     testTimeout: 20000,
     hookTimeout: 30000,
