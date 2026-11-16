@@ -56,6 +56,54 @@ La usan **varias personas a la vez**, **desde el móvil**, **dentro del almacén
 - **Historial de cambios**: quién cambió qué y cuándo.
 - **Papelera**: lo borrado se puede recuperar durante un tiempo.
 
+## Inventario: resumen de todo
+
+**Para qué sirve.** Abrir cada caja, comprobar lo que hay, añadir lo que falta en la app y quitar lo que ya no está, de forma rápida y entre varias personas a la vez.
+
+**Quién puede hacer qué**
+- **Administración:** abre y cierra inventarios (pantalla "Inventario"), revisa cajas y borra cajas.
+- **Edición:** revisa cajas (también sueltas, con "Hacer inventario") y borra cajas.
+- **Solo consulta:** ve "Revisada el … por …" o "Sin revisar" junto al título de cada caja y "Revisada el …" en Cajas; no revisa ni borra.
+
+**1. Abrir un inventario** (pantalla "Inventario", enlace junto a Historial y Cajas en la barra y en el Menú del móvil, solo administración)
+- "Abrir inventario" y se elige una forma: **General** (todas las cajas), **Por tipo de caja** (casillas con cada tipo y cuántas cajas tiene: P, C, O, M, L, D, A, U, R y Otros sitios) o **Cajas individuales** (lista de cajas con casilla). Después, "Abrir".
+- Solo puede haber un inventario abierto a la vez. Una caja creada con el inventario ya abierto no entra en él.
+
+**2. Mientras está abierto**
+- La pantalla "Inventario" enseña qué es y quién lo abrió, "32 de 171 revisadas" y las cajas revisadas con quién y cuándo (cada una lleva a su caja).
+- Las cajas del inventario que aún no están revisadas en él **entran solas en modo inventario** al abrirlas.
+
+**3. Revisar una caja**
+- Con un inventario abierto, la caja ya está en modo inventario; si no, quien edita pulsa "Hacer inventario" (inventario suelto de una caja; cuenta igual para el inventario abierto si lo incluye).
+- Arriba: "Quedan X de Y" (en lugar del recuento), "Caja revisada" y la leyenda "Haz click para marcarlo como revisado o pulsa Caja revisada si la caja está correcta".
+- **Marcar:** tocar un artículo (fuera de la foto, los − +, el comentario y el ✕) lo marca; baja a "Revisados (n)" con quién lo marcó ("✓ Ana"). Tocarlo otra vez lo desmarca.
+- **Foto:** si el artículo no tiene foto, al marcarlo sale "Falta foto · cámara · Saltar".
+- **Corregir** lo que no cuadra: − + de Total y Rotas, comentario, "Añadir artículo" para lo que no está en la app, y el ✕ (con confirmación) para quitar lo que ya no está.
+- **Terminar:** "Caja revisada". Si quedan artículos sin marcar pregunta "Quedan N sin comprobar" con "Están bien" (los da por buenos), "Quitarlos" o "Volver". Al terminar se apunta quién y cuándo (también en el Historial: "Caja revisada (inventario)"), sale "Caja revisada. Gracias." y, si hay un inventario abierto, "Siguiente caja sin revisar".
+- **Llenado:** junto al título, el selector Vacía · A medias · Llena.
+
+**4. Varias personas a la vez**
+- Lo marcado se guarda en la base de datos al momento; cualquiera que abra la caja, desde cualquier aparato, ve lo mismo.
+- La caja se actualiza sola cada 5 segundos mientras está en inventario y la pantalla está a la vista.
+- Arriba sale "Ana también está revisando esta caja" mientras otra persona la tiene abierta en inventario (se quita unos 15 segundos después de que salga).
+- Si dos personas tocan el mismo artículo, vale el último toque. "Caja revisada" termina la revisión para todos, sin preguntar si hay alguien dentro.
+
+**5. Cerrar el inventario** (administración)
+- "Cerrar inventario" pregunta cuántas cajas quedan sin revisar; se puede cerrar igualmente.
+- Lleva al resumen: cajas revisadas (quién y cuándo) y las que quedaron sin revisar. Pasa a "Inventarios anteriores", donde se puede volver a ver. Las cajas que estaban en modo inventario por él dejan de estarlo.
+- Abrir y cerrar un inventario no se apuntan en el Historial.
+
+**6. Si falta una caja entera: borrarla**
+- Con el ✕ de la caja (arriba a la derecha) o el de su fila en Cajas, tras "¿Borrar la caja … y todo lo que tiene?". Desaparece de Cajas, del inicio y de las búsquedas.
+- En el Historial queda "Caja borrada" con "Recuperar" durante 30 días (vuelve con todo lo que tenía); después se borra del todo. Mientras se pueda recuperar no se puede crear otra caja con el mismo código.
+
+**Dónde se ve que una caja está revisada**
+- Junto al título de la caja: "Revisada el 15 nov por Ana" o "Sin revisar".
+- En Cajas: "Revisada el 15 nov" en gris.
+- En la pantalla Inventario y en los resúmenes de los anteriores.
+
+**Coste**: actualizar cada 5 segundos mantiene despierta la base de datos (Neon, plan gratis: 100 horas de cómputo al mes); un día de inventario de 8 horas gasta unas 2.
+
 ## Cómo se organizan los datos
 
 - **Tipos**: P, C, O, M, L, D, A, U y R.
@@ -335,3 +383,5 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - Subido: inventario compartido y `CLAUDE.md`.
 - Pantalla "Inventario" (decidido por ella): solo administración; sin inventario abierto, el botón para abrir y los anteriores; abrir general, por tipo (con casillas) o cajas individuales (con casillas); con uno abierto, "32 de 171 revisadas" y las revisadas con quién y cuándo (sin lista de las que faltan); al cerrar, nada más que las que quedaron sin revisar. En Cajas, "Revisada el …" en cada caja revisada.
 - Subido: pantalla "Inventario", enlace "Inventario" y "Revisada el …" en Cajas. Con esto el inventario queda terminado.
+- Resumen único del inventario en este documento (apartado "Inventario: resumen de todo"), a petición suya.
+- Subido: resumen del inventario.
