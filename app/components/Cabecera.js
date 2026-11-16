@@ -21,10 +21,11 @@ export default async function Cabecera({ busqueda = '', volver = false, idioma, 
           <Link href="/" className="esc-titulo">{t.titulo}</Link>
           <div className="esc-buscador"><Buscador key={busqueda} busqueda={busqueda} idioma={idioma} /></div>
           <nav className="esc-nav">
-            <Link href="/historial" className="esc-accion">{en ? 'History' : 'Historial'}</Link>
+            {/* Orden: Artículos (el inicio) · Cajas · Inventario · Historial · Usuarios · Salir / Entrar; después ES / EN */}
+            <Link href="/" className="esc-accion">{en ? 'Items' : 'Artículos'}</Link>
             <Link href="/cajas" className="esc-accion">{t.cajasTitulo}</Link>
             {sesion?.rol === 'admin' && <Link href="/inventario" className="esc-accion">{en ? 'Inventory' : 'Inventario'}</Link>}
-            {puedeEditar && <Link href="/caja-nueva" className="esc-accion esc-accion-crear">{en ? '+ New box' : '+ Crear caja'}</Link>}
+            <Link href="/historial" className="esc-accion">{en ? 'History' : 'Historial'}</Link>
             {sesion?.rol === 'admin' && <Link href="/personas" className="esc-accion">{t.personas}</Link>}
             {sesion ? (
               <form action="/api/logout" method="post">

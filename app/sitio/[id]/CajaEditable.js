@@ -6,6 +6,15 @@ import Foto from '../../components/Foto';
 import BotonFoto from '../../components/BotonFoto';
 import NombreEditable from '../../components/NombreEditable';
 import BorrarCaja from '../../components/BorrarCaja';
+import { useOrden } from '../../components/Ordenar';
+
+// Lista de la caja: columnas que se ordenan tocando su título.
+const CLAVES_CAJA = {
+  articulo: c => c.nombre,
+  total: c => c.cantidad,
+  rotas: c => c.rotos,
+  comentario: c => c.comentarios || '',
+};
 import { textos } from '../../../lib/textos';
 import { ordenarTallas } from '../../../lib/tallas.cjs';
 
@@ -337,9 +346,11 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, rev
   return null;
 }
 
-function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho }) {
+// "Añadir artículo". En la caja va con su caja; en el inicio se abre ya desplegado, con el selector de caja
+// arriba (antesDelBuscador) y alCerrar para volver al botón.
+export function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho, abiertoInicial = false, alCerrar = null, antesDelBuscador = null }) {
   const x = T[idioma === 'en' ? 'en' : 'es'];
-  const [abierto, setAbierto] = useState(false);
+  const [abierto, setAbierto] = useState(abiertoInicial);
   const [texto, setTexto] = useState('');
   const [sugerencias, setSugerencias] = useState([]);
   const [elegido, setElegido] = useState(null);
@@ -377,6 +388,7 @@ function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho }) {
 
   async function anadir() {
     setError('');
+    if (!sitioId) { setError(idioma === 'en' ? 'Choose the box.' : 'Elige la caja.'); return; }
     try {
       await editar({ accion: 'anadir', sitioId, articuloId: elegido.id, cantidad, talla });
       reiniciar();
@@ -388,6 +400,7 @@ function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho }) {
 
   async function crear() {
     setError('');
+    if (!sitioId) { setError(idioma === 'en' ? 'Choose the box.' : 'Elige la caja.'); return; }
     try {
       await editar({ accion: 'crearArticulo', sitioId, cantidad, talla, ...nuevo });
       reiniciar();
@@ -422,8 +435,9 @@ function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho }) {
     <div className="anadir">
       <div className="anadir-cabecera">
         <h2 className="grupo-titulo">{x.anadir}</h2>
-        <button type="button" className="boton-texto" onClick={() => { reiniciar(); setAbierto(false); }}>{x.cerrar}</button>
+        <button type="button" className="boton-texto" onClick={() => { reiniciar(); setAbierto(false); if (alCerrar) alCerrar(); }}>{x.cerrar}</button>
       </div>
+      {antesDelBuscador}
       <input value={texto} onChange={e => buscar(e.target.value)} placeholder={x.buscarArticulo} autoComplete="off" />
       {!elegido && !creando && texto.trim().length >= 2 && (
         <ul className="lista">
@@ -642,8 +656,9 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
   }
 
   const revision = revisando ? { comprobados, saltadas, alternar, saltar } : null;
-  const pendientes = revisando ? lineas.filter(l => !comprobados.has(l.id)) : lineas;
-  const revisados = revisando ? lineas.filter(l => comprobados.has(l.id)) : [];
+  const { ordenados, titulo: tituloOrden } = useOrden(lineas, CLAVES_CAJA);
+  const pendientes = revisando ? ordenados.filter(l => !comprobados.has(l.id)) : ordenados;
+  const revisados = revisando ? ordenados.filter(l => comprobados.has(l.id)) : [];
   // Durante el inventario, en lugar del estado de revisión y el recuento: "Quedan X de Y".
   const quedanN = lineas.filter(l => !comprobados.has(l.id)).length;
   const resumenVisto = revisando ? (en ? `${quedanN} of ${lineas.length} left` : `Quedan ${quedanN} de ${lineas.length}`) : resumen;
@@ -711,10 +726,10 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
                           <thead>
                             <tr>
                               <th className="esc-c-foto" />
-                              <th>{en ? 'Item' : 'Artículo'}</th>
-                              <th className="esc-num">{en ? 'Total' : 'Total'}</th>
-                              <th className="esc-num">{en ? 'Broken' : 'Rotas'}</th>
-                              <th>{en ? 'Comment' : 'Comentario'}</th>
+                              <th>{tituloOrden('articulo', en ? 'Item' : 'Artículo')}</th>
+                              <th className="esc-num">{tituloOrden('total', 'Total')}</th>
+                              <th className="esc-num">{tituloOrden('rotas', en ? 'Broken' : 'Rotas')}</th>
+                              <th>{tituloOrden('comentario', en ? 'Comment' : 'Comentario')}</th>
                               <th className="cx-td-aspa" />
                             </tr>
                           </thead>

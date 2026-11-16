@@ -5,6 +5,18 @@ import Link from 'next/link';
 import { textos } from '../../lib/textos';
 import { ordenarTallas } from '../../lib/tallas.cjs';
 import NombreEditable from './NombreEditable';
+import EnlacesCajas from './EnlacesCajas';
+import { useOrden } from './Ordenar';
+import { BotonesInicio, AnadirDesdeInicio } from './AccionesInicio';
+
+// Lista: columnas que se ordenan tocando su título.
+const CLAVES_LISTA = {
+  articulo: a => a.nombre,
+  total: a => a.total,
+  cajas: a => a.textoCajas,
+  estado: a => a.rotos,
+  etiquetas: a => a.etiquetas.join(' · '),
+};
 
 function agrupar(filas) {
   const porId = new Map();
@@ -34,7 +46,7 @@ function Img({ url, nombre, clase }) {
   );
 }
 
-export default function Escritorio({ filas, idioma, conFiltros = true, orden = null, aviso = null, puedeEditar = false, conAcciones = false }) {
+export default function Escritorio({ filas, idioma, conFiltros = true, orden = null, aviso = null, puedeEditar = false, conAcciones = false, cajasAnadir = [], etiquetasAnadir = [] }) {
   const t = textos(idioma);
   const en = idioma === 'en';
   const [etiqueta, setEtiqueta] = useState('');
@@ -43,6 +55,9 @@ export default function Escritorio({ filas, idioma, conFiltros = true, orden = n
   const [vista, setVista] = useState('cuadricula');
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
   const [abiertos, setAbiertos] = useState(() => new Set());
+  // Inicio, quien edita: "Añadir artículo" abre el formulario de la caja con un selector de caja.
+  const [anadiendo, setAnadiendo] = useState(false);
+  const conBotones = conAcciones && puedeEditar;
 
   const todos = useMemo(() => {
     const lista = agrupar(filas);
@@ -61,6 +76,8 @@ export default function Escritorio({ filas, idioma, conFiltros = true, orden = n
     if (conFoto && !a.foto_url) return false;
     return true;
   });
+
+  const { ordenados: articulosLista, titulo } = useOrden(articulos, CLAVES_LISTA);
 
   const estadoTexto = a => (a.rotos > 0 ? t.buenasRotas(a.total - a.rotos, a.rotos) : t.bueno);
   const tallasTexto = a => (a.tallas.length ? a.tallas.map(s => `${s} ${a.porTalla[s]}`).join(' · ') : null);
@@ -112,6 +129,7 @@ export default function Escritorio({ filas, idioma, conFiltros = true, orden = n
               <button type="button" aria-label={en ? 'List' : 'Lista'} className={vista === 'lista' ? 'esc-vista-activa' : ''} onClick={() => setVista('lista')}>☰</button>
             </span>
           </div>
+          {conBotones && <div className="esc-m-fila"><BotonesInicio idioma={idioma} alAnadir={() => setAnadiendo(true)} /></div>}
           {conFiltros && filtrosAbiertos && (
             <div className="esc-m-fila esc-m-panel">
               {selectEtiqueta}
@@ -144,11 +162,14 @@ export default function Escritorio({ filas, idioma, conFiltros = true, orden = n
           </label>
           </>)}
           <span className="esc-contador">{t.nArticulos(articulos.length)}</span>
+          {conBotones && <BotonesInicio idioma={idioma} alAnadir={() => setAnadiendo(true)} />}
           <span className="esc-vistas">
             <button type="button" className={vista === 'cuadricula' ? 'esc-vista-activa' : ''} onClick={() => setVista('cuadricula')}>{en ? 'Grid' : 'Cuadrícula'}</button>
             <button type="button" className={vista === 'lista' ? 'esc-vista-activa' : ''} onClick={() => setVista('lista')}>{en ? 'List' : 'Lista'}</button>
           </span>
         </div>
+
+        {conBotones && anadiendo && <AnadirDesdeInicio idioma={idioma} cajas={cajasAnadir} etiquetas={etiquetasAnadir} alCerrar={() => setAnadiendo(false)} />}
 
         {vista === 'cuadricula' ? (
           <ul className="esc-cuadricula">
@@ -160,7 +181,7 @@ export default function Escritorio({ filas, idioma, conFiltros = true, orden = n
                   <span className="esc-gris">{a.etiquetas.join(' · ')}</span>
                   {a.rotos > 0 && <span className="estado-roto">{estadoTexto(a)}</span>}
                   {tallasTexto(a) && <span className="esc-gris">{tallasTexto(a)}</span>}
-                  <span><strong>{a.total}</strong> <span className="esc-gris">{t.enTotal} · {a.textoCajas}</span></span>
+                  <span><strong>{a.total}</strong> <span className="esc-gris">{t.enTotal} · <EnlacesCajas cajas={a.cajas} dentroDeEnlace /></span></span>
                 </Link>
               </li>
             ))}
@@ -170,15 +191,15 @@ export default function Escritorio({ filas, idioma, conFiltros = true, orden = n
             <thead>
               <tr>
                 <th className="esc-c-foto" />
-                <th>{t.articulo}</th>
-                <th className="esc-num">{t.total}</th>
-                <th>{t.cajas}</th>
-                <th>{t.estado}</th>
-                <th>{t.etiquetas}</th>
+                <th>{titulo('articulo', t.articulo)}</th>
+                <th className="esc-num">{titulo('total', t.total)}</th>
+                <th>{titulo('cajas', t.cajas)}</th>
+                <th>{titulo('estado', t.estado)}</th>
+                <th>{titulo('etiquetas', t.etiquetas)}</th>
               </tr>
             </thead>
             <tbody>
-              {articulos.map(a => {
+              {articulosLista.map(a => {
                 const desplegable = a.cajas.length > 1 || a.tallas.length > 1;
                 const abierto = abiertos.has(a.id);
                 return (
@@ -195,7 +216,7 @@ export default function Escritorio({ filas, idioma, conFiltros = true, orden = n
                         {tallasTexto(a) && <span className="esc-sub">{tallasTexto(a)}</span>}
                       </td>
                       <td className="esc-num"><strong>{a.total}</strong></td>
-                      <td className="esc-gris">{a.textoCajas}</td>
+                      <td className="esc-gris"><EnlacesCajas cajas={a.cajas} /></td>
                       <td className={a.rotos > 0 ? 'estado-roto' : 'esc-gris'}>{estadoTexto(a)}</td>
                       <td className="esc-gris">{a.etiquetas.join(' · ')}</td>
                     </tr>

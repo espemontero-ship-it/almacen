@@ -1610,14 +1610,46 @@ html body .llenado.esc .esc-vistas button { font-size: 13px; padding: 0 8px; }
 /* Cajas: resumen de artículos en cada fila y filtros */
 .lista-cajas-resumen { margin-left: 10px; color: var(--secundario); font-size: 0.875em; }
 .cajas-filtros { max-width: 640px; }
-html body .esc.esc .cajas-filtros .cajas-fecha { height: 34px; min-height: 34px; padding: 0 8px; font-size: 13px; border: var(--cb); border-radius: var(--cr); background: var(--fondo); font-family: inherit; }
+html body .esc.esc.cajas-filtros .cajas-fecha { height: 34px; min-height: 34px; padding: 0 8px; font-size: 13px; border: var(--cb); border-radius: var(--cr); background: var(--fondo); font-family: inherit; }
 .cajas-tick { flex-direction: row !important; align-items: center !important; }
 .cajas-tick input { width: 18px; height: 18px; min-height: 0; margin: 0; }
 .cajas-contador { margin-left: auto; }
 @media (max-width: 899px) {
-  html body .esc.esc .cajas-filtros .cajas-fecha { height: 44px; min-height: 44px; font-size: 16px; }
+  html body .esc.esc.cajas-filtros .cajas-fecha { height: 44px; min-height: 44px; font-size: 16px; }
   .lista-cajas-resumen { display: block; margin-left: 0; }
   .cajas-contador { margin-left: 0; width: 100%; }
 }
 .cajas-filtros label { white-space: nowrap; } .cajas-filtros { gap: 10px 18px; }
-html body .esc.esc .cajas-filtros select, html body .esc.esc .cajas-filtros .cajas-fecha { border-radius: 0; }
+html body .esc.esc.cajas-filtros select, html body .esc.esc.cajas-filtros .cajas-fecha { border-radius: 0; }
+/* Títulos de columna que ordenan (tablas del inicio, de la caja y Cajas) */
+.orden-titulo { padding: 0; border: none; background: none; font: inherit; color: inherit; cursor: pointer; text-align: inherit; }
+.orden-activo { color: var(--texto); }
+.orden-flecha { font-size: 0.8em; }
+.esc-num .orden-titulo { width: 100%; text-align: inherit; }
+.enlace-caja { color: inherit; text-decoration: underline; text-decoration-color: var(--linea); text-underline-offset: 2px; cursor: pointer; }
+.enlace-caja:hover { color: var(--texto); }
+/* Cajas: tabla con títulos */
+.cajas-tabla > li { display: grid; grid-template-columns: minmax(0, 1fr) 72px 72px 80px 90px; gap: 12px; align-items: center; }
+.cajas-tabla-edicion > li { grid-template-columns: minmax(0, 1fr) 72px 72px 80px 100px 26px; }
+.cajas-cab { color: var(--secundario); font-size: 0.875em; padding: 6px 0; border-bottom: 1px solid var(--linea); }
+.cajas-num { text-align: right; }
+.cajas-revisada-movil { display: none; }
+.lista-cajas-fila .lista-cajas-revisada { white-space: nowrap; }
+@media (min-width: 900px) { .cajas-tabla { max-width: 760px; } }
+@media (max-width: 899px) {
+  .cajas-tabla > li { grid-template-columns: minmax(0, 1fr) 52px 52px 80px; gap: 8px; }
+  .cajas-tabla-edicion > li { grid-template-columns: minmax(0, 1fr) 44px 48px 96px 30px; }
+  .cajas-col-revisada { display: none; }
+  .cajas-revisada-movil { display: block; color: var(--secundario); font-size: 13px; font-weight: 400; }
+}
+.orden-titulo { white-space: nowrap; }
+@media (max-width: 899px) { .cajas-tabla > li { grid-template-columns: minmax(0, 1fr) 62px 62px 80px; } .cajas-tabla-edicion > li { grid-template-columns: minmax(0, 1fr) 62px 62px 96px 30px; } .cajas-cab { font-size: 13px; } }
+/* Filtros de Cajas: mismo aspecto que los del inicio (alto 34, esquinas rectas; 44 en el móvil) */
+html body .esc.esc.cajas-filtros select { height: 34px; min-height: 34px; padding: 0 8px; font-size: 13px; font-weight: 400; border: var(--cb); border-radius: 0; background: var(--fondo); }
+html body .esc.esc.cajas-filtros label { font-size: 13px; font-weight: 400; color: var(--texto); }
+@media (max-width: 899px) { html body .esc.esc.cajas-filtros select { height: 44px; min-height: 44px; font-size: 16px; } html body .esc.esc.cajas-filtros label { font-size: 14px; } }
+/* Inicio: "Añadir artículo" y "Añadir caja" junto al recuento */
+.inicio-acciones { display: inline-flex; align-items: center; gap: 8px; }
+.inicio-acciones .boton-secundario { display: inline-flex; align-items: center; text-decoration: none; color: var(--texto); min-height: 34px; height: 34px; padding: 0 12px; font-size: 13px; font-weight: 400; }
+.inicio-anadir { max-width: 640px; margin: 0 0 16px; }
+@media (max-width: 899px) { .inicio-acciones .boton-secundario { min-height: 44px; height: 44px; font-size: 15px; } .inicio-anadir { padding: 0 16px; } }

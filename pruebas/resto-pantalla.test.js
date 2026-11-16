@@ -5,6 +5,7 @@ import FichaNueva from '../app/articulo/[id]/FichaNueva.js';
 import ListaHistorial from '../app/components/ListaHistorial.js';
 import CabeceraMovil from '../app/components/CabeceraMovil.js';
 import Buscador from '../app/components/Buscador.js';
+import { BotonesInicio, AnadirDesdeInicio } from '../app/components/AccionesInicio.js';
 import { redDeMentira } from './ayuda-pantalla.js';
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }) }));
@@ -62,23 +63,23 @@ describe('historial', () => {
 });
 
 describe('cabecera del móvil', () => {
-  const t = { titulo: 'Almacén', personas: 'Personas', salir: 'Salir', entrar: 'Entrar', cajas: 'Cajas' };
+  const t = { titulo: 'Almacén', personas: 'Usuarios', salir: 'Salir', entrar: 'Entrar', cajas: 'Cajas' };
   const enlaces = () => screen.queryAllByRole('link').map(a => a.textContent);
 
-  it('64. el menú empieza cerrado; al abrirlo, Historial y Cajas para todo el mundo y Entrar sin sesión', () => {
+  it('64. el menú empieza cerrado; al abrirlo, Artículos, Cajas e Historial para todo el mundo y Entrar sin sesión', () => {
     render(<CabeceraMovil idioma="es" textos={t} puedeEditar={false} esAdmin={false} haySesion={false} />);
     expect(enlaces()).toEqual(['Almacén']);
     fireEvent.click(screen.getByRole('button', { name: /Menú/ }));
-    expect(enlaces()).toEqual(['Almacén', 'Historial', 'Cajas', 'Entrar']);
+    expect(enlaces()).toEqual(['Almacén', 'Artículos', 'Cajas', 'Historial', 'Entrar']);
   });
 
-  it('65. + Crear caja solo para quien edita, Personas solo para administración, y Salir con sesión', () => {
+  it('65. orden: Artículos, Cajas, Inventario, Historial, Usuarios (los dos solo administración) y Salir; ya no está + Crear caja', () => {
     const { rerender } = render(<CabeceraMovil idioma="es" textos={t} puedeEditar esAdmin={false} haySesion />);
     fireEvent.click(screen.getByRole('button', { name: /Menú/ }));
-    expect(enlaces()).toEqual(['Almacén', 'Historial', 'Cajas', '+ Crear caja']);
+    expect(enlaces()).toEqual(['Almacén', 'Artículos', 'Cajas', 'Historial']);
     expect(screen.getByRole('button', { name: 'Salir' })).toBeTruthy();
     rerender(<CabeceraMovil idioma="es" textos={t} puedeEditar esAdmin haySesion />);
-    expect(enlaces()).toContain('Personas');
+    expect(enlaces()).toEqual(['Almacén', 'Artículos', 'Cajas', 'Inventario', 'Historial', 'Usuarios']);
   });
 });
 
@@ -99,5 +100,23 @@ describe('buscador', () => {
     fireEvent.change(container.querySelector('input'), { target: { value: 'p' } });
     await new Promise(r => setTimeout(r, 400));
     expect(red).toHaveLength(0);
+  });
+});
+
+describe('inicio: añadir artículo y caja', () => {
+  it('166. "Añadir artículo" abre el formulario de la caja con el selector de caja; sin caja no añade', async () => {
+    const red = redDeMentira(url => (url.startsWith('/api/sugerencias') || url.includes('buscar') ? { lista: [], articulos: [] } : { ok: true }));
+    const { container } = render(<AnadirDesdeInicio idioma="es" cajas={[{ id: 7, texto: 'C1' }]} etiquetas={[]} alCerrar={() => {}} />);
+    expect(container.querySelector('select').textContent).toContain('C1');
+    expect(screen.getByPlaceholderText('Escribe el artículo')).toBeTruthy();
+    expect(red.filter(r => r.cuerpo && r.cuerpo.accion)).toEqual([]);
+  });
+
+  it('167. junto al recuento salen "Añadir artículo" y "Añadir caja" (que lleva a crear caja)', () => {
+    const alAnadir = vi.fn();
+    render(<BotonesInicio idioma="es" alAnadir={alAnadir} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Añadir artículo' }));
+    expect(alAnadir).toHaveBeenCalled();
+    expect(screen.getByRole('link', { name: 'Añadir caja' }).getAttribute('href')).toBe('/caja-nueva');
   });
 });

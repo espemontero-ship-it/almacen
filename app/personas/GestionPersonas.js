@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 const T = {
   es: {
-    titulo: 'Personas',
+    titulo: 'Usuarios',
     roles: { admin: 'Administración', editor: 'Edición', consulta: 'Solo consulta' },
     pendiente: 'Aún no ha elegido contraseña',
     nuevaContrasena: 'Nueva contraseña',
@@ -21,7 +21,7 @@ const T = {
     error: 'No se ha podido hacer.',
   },
   en: {
-    titulo: 'People',
+    titulo: 'Users',
     roles: { admin: 'Admin', editor: 'Editor', consulta: 'View only' },
     pendiente: 'Has not chosen a password yet',
     nuevaContrasena: 'New password',

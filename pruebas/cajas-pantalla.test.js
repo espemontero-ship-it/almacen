@@ -14,11 +14,12 @@ const CAJAS = [
 const nombres = c => [...c.querySelectorAll('.lista-cajas-nombre strong')].map(s => s.textContent);
 
 describe('pantalla Cajas', () => {
-  it('161. cada fila lleva su resumen de artículos y cuándo se revisó; arriba, cuántas cajas salen', () => {
+  it('161. tabla con títulos (Caja, Artículos, Unidades, Revisada, Llenado); cada fila con sus datos; arriba, cuántas cajas salen', () => {
     const { container } = render(<ListaCajas cajas={CAJAS} idioma="es" puedeEditar={false} />);
+    expect([...container.querySelectorAll('.cajas-cab .orden-titulo')].map(b => b.textContent)).toEqual(['Caja', 'Artículos', 'Unidades', 'Revisada', 'Llenado']);
     const p1 = container.querySelector('.lista-cajas-fila');
-    expect(p1.textContent).toContain('3 artículos · 19 unidades');
-    expect(p1.textContent).toContain('Revisada el 10 nov');
+    expect([...p1.querySelectorAll('.cajas-num')].map(x => x.textContent)).toEqual(['3', '19']);
+    expect(p1.querySelector('.cajas-col-revisada').textContent).toBe('10 nov');
     expect(container.querySelector('.cajas-contador').textContent).toBe('4 cajas');
   });
 
@@ -36,5 +37,21 @@ describe('pantalla Cajas', () => {
     fireEvent.change(container.querySelector('.cajas-filtros select'), { target: { value: 'otros' } });
     expect(nombres(container)).toEqual(['Espe House']);
     expect(container.querySelector('.cajas-contador').textContent).toBe('1 caja');
+  });
+});
+
+describe('ordenar por los títulos', () => {
+  it('163. Cajas: tocar un título ordena de menor a mayor y otra vez al revés; las nunca revisadas van al final', () => {
+    const { container } = render(<ListaCajas cajas={CAJAS} idioma="es" puedeEditar={false} />);
+    const titulo = t => [...container.querySelectorAll('.cajas-cab .orden-titulo')].find(b => b.textContent.startsWith(t));
+    fireEvent.click(titulo('Unidades'));
+    expect(nombres(container)).toEqual(['Espe House', 'P2', 'C1', 'P1']);
+    expect(titulo('Unidades').textContent).toBe('Unidades ▲');
+    fireEvent.click(titulo('Unidades'));
+    expect(nombres(container)).toEqual(['P1', 'C1', 'P2', 'Espe House']);
+    fireEvent.click(titulo('Revisada'));
+    expect(nombres(container).slice(0, 2)).toEqual(['P1', 'C1']);
+    fireEvent.click(titulo('Revisada'));
+    expect(nombres(container).slice(0, 2)).toEqual(['C1', 'P1']);
   });
 });

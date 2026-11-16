@@ -5,6 +5,7 @@ import CajaEditable from '../app/sitio/[id]/CajaEditable.js';
 import ListaHistorial from '../app/components/ListaHistorial.js';
 import AbrirInventario from '../app/inventario/AbrirInventario.js';
 import CerrarInventario from '../app/inventario/CerrarInventario.js';
+import EnlacesCajas from '../app/components/EnlacesCajas.js';
 import { CONTENIDO, redDeMentira } from './ayuda-pantalla.js';
 
 const empuja = vi.fn();
@@ -201,5 +202,28 @@ describe('pantalla Inventario', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Sí' }));
     await waitFor(() => expect(empuja).toHaveBeenCalledWith('/inventario?ver=4'));
     expect(red[0].cuerpo).toEqual({ accion: 'cerrarInventario', id: 4 });
+  });
+});
+
+describe('ordenar la Lista de la caja y abrir cajas desde sus códigos', () => {
+  it('164. en la caja, tocar "Total" ordena por cantidad (y otra vez al revés)', () => {
+    const { container } = caja();
+    const nombresMovil = () => [...container.querySelectorAll('.solo-movil .cx-tabla-caja tbody tr')].map(tr => tr.querySelector('.esc-nombre').textContent);
+    fireEvent.click(container.querySelector('.solo-movil .cx-tabla-caja th:nth-child(3) .orden-titulo'));
+    expect(nombresMovil()).toEqual(['Copa', 'Espada']);
+    fireEvent.click(container.querySelector('.solo-movil .cx-tabla-caja th:nth-child(3) .orden-titulo'));
+    expect(nombresMovil()).toEqual(['Espada', 'Copa']);
+  });
+
+  it('165. los códigos de caja llevan a su caja; dentro de una tarjeta, sin abrir el artículo', () => {
+    empuja.mockClear();
+    const cajas = [{ id: 1, texto: 'P1' }, { id: 2, texto: 'C1' }, { id: 1, texto: 'P1' }];
+    const { container, rerender } = render(<EnlacesCajas cajas={cajas} />);
+    expect([...container.querySelectorAll('a.enlace-caja')].map(a => a.getAttribute('href'))).toEqual(['/sitio/1', '/sitio/2']);
+    const alArticulo = vi.fn();
+    rerender(<a href="/articulo/9" onClick={alArticulo}><EnlacesCajas cajas={cajas} dentroDeEnlace /></a>);
+    fireEvent.click(screen.getByRole('link', { name: 'C1' }));
+    expect(empuja).toHaveBeenCalledWith('/sitio/2');
+    expect(alArticulo).not.toHaveBeenCalled();
   });
 });

@@ -6,7 +6,7 @@ import Buscador from './Buscador';
 import BotonIdioma from './BotonIdioma';
 
 // Cabecera del móvil (versión 1 elegida): "Almacén" (vuelve al inicio) y el botón "Menú",
-// que despliega Historial, + Crear caja, Personas (solo administración), Salir o Entrar y ES / EN;
+// que despliega Artículos, Cajas, Inventario y Usuarios (solo administración), Historial, Salir o Entrar y ES / EN;
 // debajo, el buscador.
 export default function CabeceraMovil({ idioma, busqueda, textos: t, puedeEditar, esAdmin, haySesion }) {
   const en = idioma === 'en';
@@ -22,10 +22,10 @@ export default function CabeceraMovil({ idioma, busqueda, textos: t, puedeEditar
       </div>
       {abierto && (
         <nav className="cm-desplegable">
-          <Link href="/historial" className="cm-enlace">{en ? 'History' : 'Historial'}</Link>
+          <Link href="/" className="cm-enlace">{en ? 'Items' : 'Artículos'}</Link>
           <Link href="/cajas" className="cm-enlace">{t.cajas}</Link>
           {esAdmin && <Link href="/inventario" className="cm-enlace">{en ? 'Inventory' : 'Inventario'}</Link>}
-          {puedeEditar && <Link href="/caja-nueva" className="cm-enlace">{en ? '+ New box' : '+ Crear caja'}</Link>}
+          <Link href="/historial" className="cm-enlace">{en ? 'History' : 'Historial'}</Link>
           {esAdmin && <Link href="/personas" className="cm-enlace">{t.personas}</Link>}
           {haySesion ? (
             <form action="/api/logout" method="post" className="cm-form">
