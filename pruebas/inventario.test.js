@@ -126,3 +126,53 @@ describe('inventario compartido de una caja', () => {
     await expect(ed().marcarRevision(d.p1, otra, true, ADMIN)).rejects.toThrow('ya no está en esta caja');
   });
 });
+
+describe('abrir y cerrar inventarios', () => {
+  it('153. los tipos salen en el orden de la app con cuántas cajas tiene cada uno', async () => {
+    const tipos = await ed().tiposDeCaja();
+    expect(tipos.map(t => t.letra).slice(0, 2)).toEqual(['P', 'C']);
+    expect(tipos.find(t => t.letra === 'P').cajas).toBeGreaterThan(0);
+  });
+
+  it('154. se abre por cajas sueltas; solo puede haber uno abierto; las cajas entran solas en inventario', async () => {
+    const inv = await ed().abrirInventario({ forma: 'cajas', cajas: [d.p1] }, ADMIN);
+    expect(inv.cajas).toBe(1);
+    await expect(ed().abrirInventario({ forma: 'general' }, ADMIN)).rejects.toThrow('Ya hay un inventario abierto');
+    const actual = await ed().inventarioActual();
+    expect(actual).toMatchObject({ id: inv.id, total: 1, detalle: { forma: 'cajas' } });
+    expect(actual.revisadas).toEqual([]);
+    expect((await ed().estadoRevision(d.p1, ADMIN)).activa).toBe(true);
+    expect((await ed().estadoRevision(d.c1, ADMIN)).activa).toBe(false);
+  });
+
+  it('155. al revisar una caja cuenta para el inventario, con quién y cuándo; Cajas sabe cuándo se revisó', async () => {
+    await ed().revisarCaja(d.p1, ADMIN);
+    const actual = await ed().inventarioActual();
+    expect(actual.revisadas).toHaveLength(1);
+    expect(actual.revisadas[0]).toMatchObject({ id: d.p1, usuario_nombre: 'Admin de prueba' });
+    expect((await ed().listarCajas()).find(c => c.id === d.p1).revisada).toBeTruthy();
+  });
+
+  it('156. al cerrar sale el resumen, pasa a los anteriores y las cajas que entraron solas dejan de estar en revisión', async () => {
+    const { query } = db();
+    const inv = (await ed().inventarioActual()).id;
+    await query('INSERT INTO inventario_cajas (inventario_id, sitio_id) VALUES ($1, $2)', [inv, d.c1]);
+    expect((await ed().estadoRevision(d.c1, ADMIN)).activa).toBe(true);
+    const cerrado = await ed().cerrarInventario(inv);
+    expect(cerrado.revisadas.map(c => c.id)).toEqual([d.p1]);
+    expect(cerrado.sinRevisar.map(c => c.id)).toEqual([d.c1]);
+    expect(await ed().inventarioActual()).toBe(null);
+    expect((await ed().estadoRevision(d.c1, ADMIN)).activa).toBe(false);
+    expect((await ed().inventariosAnteriores())[0]).toMatchObject({ id: inv, total: 2, revisadas: 1 });
+    await expect(ed().cerrarInventario(inv)).rejects.toThrow('ya está cerrado');
+  });
+
+  it('157. por tipo coge las cajas de esos tipos; sin elegir nada no se abre', async () => {
+    await expect(ed().abrirInventario({ forma: 'tipos', letras: [] }, ADMIN)).rejects.toThrow('Elige al menos una caja');
+    const inv = await ed().abrirInventario({ forma: 'tipos', letras: ['C'] }, ADMIN);
+    const actual = await ed().inventarioActual();
+    expect(actual.detalle).toEqual({ forma: 'tipos', letras: ['C'] });
+    expect(actual.sinRevisar.every(c => c.codigo.startsWith('C'))).toBe(true);
+    await ed().cerrarInventario(inv.id);
+  });
+});

@@ -23,6 +23,7 @@ export default async function Cabecera({ busqueda = '', volver = false, idioma, 
           <nav className="esc-nav">
             <Link href="/historial" className="esc-accion">{en ? 'History' : 'Historial'}</Link>
             <Link href="/cajas" className="esc-accion">{t.cajasTitulo}</Link>
+            {sesion?.rol === 'admin' && <Link href="/inventario" className="esc-accion">{en ? 'Inventory' : 'Inventario'}</Link>}
             {puedeEditar && <Link href="/caja-nueva" className="esc-accion esc-accion-crear">{en ? '+ New box' : '+ Crear caja'}</Link>}
             {sesion?.rol === 'admin' && <Link href="/personas" className="esc-accion">{t.personas}</Link>}
             {sesion ? (

@@ -3,6 +3,8 @@ import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import CajaEditable from '../app/sitio/[id]/CajaEditable.js';
 import ListaHistorial from '../app/components/ListaHistorial.js';
+import AbrirInventario from '../app/inventario/AbrirInventario.js';
+import CerrarInventario from '../app/inventario/CerrarInventario.js';
 import { CONTENIDO, redDeMentira } from './ayuda-pantalla.js';
 
 const empuja = vi.fn();
@@ -170,5 +172,34 @@ describe('borrar una caja', () => {
     expect(lineas[2].querySelector('button')).toBe(null);
     rerender(<ListaHistorial cambios={cambios} idioma="es" />);
     expect(container.querySelector('button')).toBe(null);
+  });
+});
+
+describe('pantalla Inventario', () => {
+  const TIPOS = [{ letra: 'P', texto: 'P · Props', cajas: 2 }, { letra: 'C', texto: 'C · Cocina', cajas: 1 }];
+  const CAJAS = [{ id: 1, texto: 'P1 latex weapons' }, { id: 2, texto: 'C1' }];
+
+  it('158. "Abrir inventario" deja elegir general, por tipo (con cuántas cajas) o cajas sueltas, y lo abre', async () => {
+    const red = redDeMentira(() => ({ ok: true, id: 1, cajas: 1 }));
+    render(<AbrirInventario idioma="es" tipos={TIPOS} cajas={CAJAS} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir inventario' }));
+    fireEvent.click(screen.getByLabelText('Por tipo de caja'));
+    expect(screen.getByLabelText('P · Props · 2')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Abrir' }).disabled).toBe(true);
+    fireEvent.click(screen.getByLabelText('Cajas individuales'));
+    fireEvent.click(screen.getByLabelText('C1'));
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir' }));
+    await waitFor(() => expect(red).toHaveLength(1));
+    expect(red[0].cuerpo).toEqual({ accion: 'abrirInventario', forma: 'cajas', letras: [], cajas: [2] });
+  });
+
+  it('159. "Cerrar inventario" pregunta cuántas cajas quedan y, al cerrar, lleva al resumen', async () => {
+    const red = redDeMentira(() => ({ ok: true }));
+    render(<CerrarInventario id={4} quedan={1} idioma="es" />);
+    fireEvent.click(screen.getByRole('button', { name: 'Cerrar inventario' }));
+    expect(screen.getByText('¿Cerrar el inventario? Queda 1 caja sin revisar.')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Sí' }));
+    await waitFor(() => expect(empuja).toHaveBeenCalledWith('/inventario?ver=4'));
+    expect(red[0].cuerpo).toEqual({ accion: 'cerrarInventario', id: 4 });
   });
 });

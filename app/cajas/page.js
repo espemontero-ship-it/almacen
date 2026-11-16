@@ -18,6 +18,11 @@ export default async function Cajas() {
   const puedeEditar = Boolean(sesion && ['admin', 'editor'].includes(sesion.rol));
   await purgarCajas();
   const cajas = await listarCajas();
+  // Junto a cada caja, cuándo se revisó por última vez (si se ha revisado alguna vez).
+  const revisadaEl = f => {
+    const dia = new Intl.DateTimeFormat(idioma === 'en' ? 'en-GB' : 'es-ES', { timeZone: 'Europe/Madrid', day: 'numeric', month: 'short' }).format(new Date(f));
+    return idioma === 'en' ? `Checked on ${dia}` : `Revisada el ${dia}`;
+  };
   return (
     <>
       <Cabecera volver idioma={idioma} />
@@ -30,6 +35,7 @@ export default async function Cajas() {
                 <strong>{c.codigo || c.nombre}</strong>
                 {c.codigo && c.nombre ? ` ${c.nombre}` : ''}
               </Link>
+              {c.revisada && <span className="lista-cajas-revisada">{revisadaEl(c.revisada)}</span>}
               {puedeEditar ? (
                 <span className="lista-cajas-acciones">
                   <Llenado sitioId={c.id} llenado={c.llenado} idioma={idioma} soloVer={false} />

@@ -164,3 +164,6 @@ CREATE TABLE IF NOT EXISTS revision_presentes (
   visto TIMESTAMPTZ NOT NULL DEFAULT now(),
   PRIMARY KEY (sitio_id, usuario_id)
 );
+
+-- Inventarios: qué cajas abarca (general, por tipos o cajas sueltas), para enseñarlo en la pantalla Inventario.
+ALTER TABLE inventarios ADD COLUMN IF NOT EXISTS detalle JSONB NOT NULL DEFAULT '{}';

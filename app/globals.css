@@ -1595,3 +1595,15 @@ html body .llenado.esc .esc-vistas button { font-size: 13px; padding: 0 8px; }
 /* Inventario compartido: quién marcó cada artículo y quién más está revisando la caja */
 .inv-marcado-por { display: block; color: var(--secundario); font-size: 12px; }
 .inv-tambien { color: var(--texto); }
+/* Cajas: cuándo se revisó cada caja */
+.lista-cajas-revisada { color: var(--secundario); white-space: nowrap; font-size: 0.875em; }
+/* Pantalla Inventario */
+.inv-subtitulo { font-size: 15px; font-weight: 400; color: var(--secundario); margin-top: 20px; padding-bottom: 4px; }
+.inv-progreso { margin: 4px 0 12px; }
+.inv-lista { max-width: 640px; }
+.inv-abrir { display: flex; flex-direction: column; gap: 4px; max-width: 640px; }
+.inv-opciones { display: flex; flex-direction: column; padding-left: 30px; border-left: 1px solid var(--linea); margin: 4px 0 8px 10px; }
+.inv-opciones-cajas { max-height: 50vh; overflow-y: auto; }
+.inv-abrir-botones { display: flex; gap: 12px; margin-top: 8px; }
+.inv-sin-revisar { line-height: 1.6; }
+.inv-anterior { display: block; color: var(--texto); text-decoration: none; }

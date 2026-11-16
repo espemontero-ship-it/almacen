@@ -36,6 +36,12 @@ export async function POST(request) {
         return Response.json({ ok: true, nombres: await ed.cambiarNombres(Number(c.id), { idioma: c.idioma, nombre: c.nombre }, quien) });
       case 'sinonimos':
         return Response.json({ ok: true, nombres: await ed.cambiarNombres(Number(c.id), { sinonimos: c.sinonimos }, quien) });
+      case 'abrirInventario':
+        if (sesion.rol !== 'admin') return Response.json({ error: 'Solo administración puede abrir inventarios.' }, { status: 403 });
+        return Response.json({ ok: true, ...(await ed.abrirInventario(c, quien)) });
+      case 'cerrarInventario':
+        if (sesion.rol !== 'admin') return Response.json({ error: 'Solo administración puede cerrar inventarios.' }, { status: 403 });
+        return Response.json({ ok: true, inventario: await ed.cerrarInventario(Number(c.id)) });
       case 'estadoRevision':
         return Response.json({ ok: true, ...(await ed.estadoRevision(Number(c.sitioId), quien)) });
       case 'empezarRevision':
