@@ -9,7 +9,7 @@ import CajaEditable from './CajaEditable';
 import Papelera from './Papelera';
 import Llenado from './Llenado';
 import { textosHistorial } from '../../../lib/textosHistorial';
-const { listarEtiquetas, quitados, ultimaRevision } = require('../../../lib/edicion.cjs');
+const { listarEtiquetas, quitados, ultimaRevision, estadoRevision } = require('../../../lib/edicion.cjs');
 const { obtenerSitio } = require('../../../lib/datos.cjs');
 
 export const dynamic = 'force-dynamic';
@@ -26,6 +26,10 @@ export default async function Sitio({ params }) {
   const puedeEditar = Boolean(sesion && ['admin', 'editor'].includes(sesion.rol));
   const etiquetas = puedeEditar ? await listarEtiquetas(idioma) : [];
   const papelera = puedeEditar ? await quitados(sitio.id) : [];
+  // Inventario compartido: lo que lleva marcado la caja (y quién), y si ha de entrar sola en modo inventario.
+  const revisionInicial = puedeEditar
+    ? { ...(await estadoRevision(sitio.id, { id: sesion.id, nombre: sesion.nombre })), yo: sesion.nombre ?? null }
+    : null;
   const th = textosHistorial(idioma);
   // Inventario: junto al título, cuándo se revisó la caja por última vez y quién.
   const revisada = await ultimaRevision(sitio.id);
@@ -39,7 +43,7 @@ export default async function Sitio({ params }) {
     <>
       <Cabecera volver idioma={idioma} />
       <main className="contenido reducido pagina-caja">
-        <CajaEditable sitioId={sitio.id} contenido={sitio.contenido} etiquetas={etiquetas} idioma={idioma} soloVer={!puedeEditar} codigo={sitio.codigo || sitio.nombre} llenado={sitio.llenado}
+        <CajaEditable sitioId={sitio.id} contenido={sitio.contenido} etiquetas={etiquetas} idioma={idioma} soloVer={!puedeEditar} codigo={sitio.codigo || sitio.nombre} llenado={sitio.llenado} revisionInicial={revisionInicial}
           titulo={(
             <>
               <h1 className="sitio-titulo"><NombreSitio codigo={sitio.codigo} nombre={sitio.nombre} /></h1>

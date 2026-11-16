@@ -134,3 +134,33 @@ CREATE INDEX IF NOT EXISTS revisiones_sitio ON revisiones (sitio_id, cuando DESC
 
 -- Borrar caja: queda 30 días en el Historial con "Recuperar"; después se borra del todo.
 ALTER TABLE sitios ADD COLUMN IF NOT EXISTS borrado TIMESTAMPTZ;
+
+-- Inventario de una caja compartido: la revisión en curso, lo marcado (y quién), las fotos saltadas
+-- y quién tiene la caja abierta en modo inventario (se ve unos segundos después de su último aviso).
+CREATE TABLE IF NOT EXISTS revision_curso (
+  sitio_id INTEGER PRIMARY KEY REFERENCES sitios(id) ON DELETE CASCADE,
+  empezada TIMESTAMPTZ NOT NULL DEFAULT now(),
+  empezada_por TEXT
+);
+
+CREATE TABLE IF NOT EXISTS revision_marcas (
+  sitio_id INTEGER NOT NULL REFERENCES sitios(id) ON DELETE CASCADE,
+  contenido_id INTEGER NOT NULL REFERENCES contenido(id) ON DELETE CASCADE,
+  usuario_nombre TEXT,
+  cuando TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (sitio_id, contenido_id)
+);
+
+CREATE TABLE IF NOT EXISTS revision_saltadas (
+  sitio_id INTEGER NOT NULL REFERENCES sitios(id) ON DELETE CASCADE,
+  contenido_id INTEGER NOT NULL REFERENCES contenido(id) ON DELETE CASCADE,
+  PRIMARY KEY (sitio_id, contenido_id)
+);
+
+CREATE TABLE IF NOT EXISTS revision_presentes (
+  sitio_id INTEGER NOT NULL REFERENCES sitios(id) ON DELETE CASCADE,
+  usuario_id INTEGER NOT NULL,
+  usuario_nombre TEXT,
+  visto TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (sitio_id, usuario_id)
+);

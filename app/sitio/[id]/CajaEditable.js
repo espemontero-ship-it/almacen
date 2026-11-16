@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Foto from '../../components/Foto';
 import BotonFoto from '../../components/BotonFoto';
@@ -154,13 +154,13 @@ function CampoComentario({ valor, onGuardar, pista, etiqueta }) {
 // Inventario: lo que se añade a cada artículo mientras se revisa la caja.
 const R = {
   es: {
-    hacer: 'Hacer inventario', revisando: (c, n, t) => `Revisando ${c} · Quedan ${t - n} de ${t}`, todoBien: 'Todo está bien', leyenda: 'Haz click para marcarlo como revisado o pulsa Caja revisada si la caja está correcta', estanBien: 'Están bien',
+    hacer: 'Hacer inventario', revisando: (c, n, t) => `Revisando ${c} · Quedan ${t - n} de ${t}`, todoBien: 'Todo está bien', leyenda: 'Haz click para marcarlo como revisado o pulsa Caja revisada si la caja está correcta', tambien: nombres => `${nombres} también ${nombres.includes(' y ') ? 'están' : 'está'} revisando esta caja`, estanBien: 'Están bien',
     esta: '✓ Está', comprobado: '✓ Comprobado', noEsta: 'No está', faltaFoto: 'Falta foto', hacerFoto: 'Hacer foto', saltar: 'Saltar',
     comoEsta: '¿Cómo está la caja?', revisada: 'Caja revisada', quedan: n => `Quedan ${n} sin comprobar.`, quitarlos: 'Quitarlos', volver: 'Volver',
     hecha: 'Caja revisada. Gracias.', siguiente: 'Siguiente caja sin revisar', visto: '✓ Visto', marcarVisto: 'Marcar visto', revisandoSolo: c => `Revisando ${c}`, revisadosTitulo: n => `Revisados (${n})`, quitar: 'Quitar', comentario: '+ Comentario', porRevisarTitulo: n => `Por revisar (${n})`, verRevisados: n => `Ver revisados (${n})`, ocultarRevisados: n => `Ocultar revisados (${n})`,
   },
   en: {
-    hacer: 'Take inventory', revisando: (c, n, t) => `Checking ${c} · ${t - n} of ${t} left`, todoBien: 'All is fine', leyenda: 'Click an item to mark it as checked, or press Box checked if the box is correct', estanBien: 'They are fine',
+    hacer: 'Take inventory', revisando: (c, n, t) => `Checking ${c} · ${t - n} of ${t} left`, todoBien: 'All is fine', leyenda: 'Click an item to mark it as checked, or press Box checked if the box is correct', tambien: nombres => `${nombres} ${nombres.includes(' and ') ? 'are' : 'is'} also checking this box`, estanBien: 'They are fine',
     esta: '✓ It is here', comprobado: '✓ Checked', noEsta: 'Not here', faltaFoto: 'Missing photo', hacerFoto: 'Take photo', saltar: 'Skip',
     comoEsta: 'How full is the box?', revisada: 'Box checked', quedan: n => `${n} still unchecked.`, quitarlos: 'Remove them', volver: 'Back',
     hecha: 'Box checked. Thanks.', siguiente: 'Next unchecked box', visto: '✓ Seen', marcarVisto: 'Mark as seen', revisandoSolo: c => `Checking ${c}`, revisadosTitulo: n => `Checked (${n})`, quitar: 'Remove', comentario: '+ Comment', porRevisarTitulo: n => `To check (${n})`, verRevisados: n => `Show checked (${n})`, ocultarRevisados: n => `Hide checked (${n})`,
@@ -170,6 +170,15 @@ const R = {
 // Inventario: el ✕ para quitar, "Falta foto · Hacer foto · Saltar" al marcar un artículo sin foto.
 function Aspa({ c, r, onClick }) {
   return <button type="button" className="inv-aspa" aria-label={`${r.quitar}: ${c.nombre}`} title={r.quitar} onClick={onClick}>✕</button>;
+}
+
+function mapaMarcas(d) {
+  return new Map((d?.marcas || []).map(m => [m.id, m.nombre ?? null]));
+}
+
+function unirNombres(nombres, en) {
+  if (nombres.length < 2) return nombres.join('');
+  return `${nombres.slice(0, -1).join(', ')} ${en ? 'and' : 'y'} ${nombres[nombres.length - 1]}`;
 }
 
 function PideFoto({ c, r, revision, actualizar }) {
@@ -247,7 +256,13 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, rev
   const botonQuitar = soloVer ? null : (
     <button type="button" className="cx-quitar" onClick={() => setConfirmar(true)}>{y.quitarCorto}</button>
   );
-  const enRevision = revision && !soloVer ? <PideFoto c={c} r={r} revision={revision} actualizar={actualizar} /> : null;
+  const marcadoPor = revision && !soloVer && revision.comprobados.has(c.id) ? revision.comprobados.get(c.id) : null;
+  const enRevision = revision && !soloVer ? (
+    <>
+      {marcadoPor !== null && <span className="inv-marcado-por">✓ {marcadoPor || '—'}</span>}
+      <PideFoto c={c} r={r} revision={revision} actualizar={actualizar} />
+    </>
+  ) : null;
   // Inventario (A): se marca tocando el artículo en una zona libre (no foto, números, comentario, botones ni campos).
   const tocar = revision && !soloVer ? e => {
     if (e.target.closest('button, input, textarea, select, a, label, .cx-foto, .boton-foto-envoltura')) return;
@@ -494,68 +509,101 @@ function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho }) {
 // Caja: igual que el inicio, con botón Cuadrícula / Lista en el ordenador.
 // Lista: una fila por artículo (dos columnas en el ordenador). Cuadrícula: las tarjetas del inicio.
 // En el móvil, solo la lista.
-export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, soloVer = false, codigo = '', llenado = null, titulo = null, resumen = '' }) {
+export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, soloVer = false, codigo = '', llenado = null, titulo = null, resumen = '', revisionInicial = null }) {
   const router = useRouter();
   const en = idioma === 'en';
   const r = R[en ? 'en' : 'es'];
   const [lineas, setLineas] = useState(contenido);
   const [vista, setVista] = useState('lista');
-  // Inventario de la caja: se guarda en este navegador para no perder lo comprobado si se recarga.
-  const claveRevision = `revision-caja-${sitioId}`;
-  const [revisando, setRevisando] = useState(false);
-  const [comprobados, setComprobados] = useState(() => new Set());
-  const [saltadas, setSaltadas] = useState(() => new Set());
+  // Inventario de la caja, compartido: lo marcado (y quién) está en el servidor y se vuelve a leer cada 5 segundos.
+  const [revisando, setRevisando] = useState(Boolean(revisionInicial?.activa));
+  const [comprobados, setComprobados] = useState(() => mapaMarcas(revisionInicial));
+  const [saltadas, setSaltadas] = useState(() => new Set(revisionInicial?.saltadas || []));
+  const [presentes, setPresentes] = useState(() => revisionInicial?.presentes || []);
   const [quedanPorQuitar, setQuedanPorQuitar] = useState(null);
   const [terminada, setTerminada] = useState(null);
   const [errorRevision, setErrorRevision] = useState('');
+  const yo = revisionInicial?.yo ?? null;
   useEffect(() => setLineas(contenido), [contenido]);
   useEffect(() => {
     const guardada = window.localStorage.getItem('caja-vista');
     if (guardada === 'lista' || guardada === 'cuadricula') setVista(guardada);
-    try {
-      const r0 = JSON.parse(window.localStorage.getItem(claveRevision) || 'null');
-      if (r0 && r0.activo) {
-        setRevisando(true);
-        setComprobados(new Set(r0.comprobados || []));
-        setSaltadas(new Set(r0.saltadas || []));
-      }
-    } catch {}
-  }, [claveRevision]);
+  }, []);
 
-  function guardarRevision(activo, comp, salt) {
-    if (activo) window.localStorage.setItem(claveRevision, JSON.stringify({ activo: true, comprobados: [...comp], saltadas: [...salt] }));
-    else window.localStorage.removeItem(claveRevision);
-  }
-
-  function empezar() {
+  function aplicarEstado(d) {
+    if (!d) return;
+    if (!d.activa) {
+      // Otra persona ha terminado la revisión: la caja vuelve a verse normal.
+      if (revisandoRef.current) router.refresh();
+      setRevisando(false);
+      setComprobados(new Map());
+      setSaltadas(new Set());
+      setPresentes([]);
+      return;
+    }
     setRevisando(true);
+    setComprobados(mapaMarcas(d));
+    setSaltadas(new Set(d.saltadas || []));
+    setPresentes(d.presentes || []);
+  }
+
+  // Cada 5 segundos, mientras la caja está en revisión y la pantalla a la vista.
+  const revisandoRef = useRef(revisando);
+  revisandoRef.current = revisando;
+  useEffect(() => {
+    if (soloVer || !revisando) return undefined;
+    let vivo = true;
+    async function leer() {
+      if (document.visibilityState !== 'visible') return;
+      try {
+        const d = await editar({ accion: 'estadoRevision', sitioId });
+        if (vivo) aplicarEstado(d);
+      } catch {}
+    }
+    const t = setInterval(leer, 5000);
+    document.addEventListener('visibilitychange', leer);
+    return () => { vivo = false; clearInterval(t); document.removeEventListener('visibilitychange', leer); };
+  }, [revisando, soloVer, sitioId]);
+
+  async function empezar() {
+    setErrorRevision('');
     setTerminada(null);
-    setComprobados(new Set());
-    setSaltadas(new Set());
-    guardarRevision(true, new Set(), new Set());
+    try {
+      aplicarEstado(await editar({ accion: 'empezarRevision', sitioId }));
+    } catch (err) {
+      setErrorRevision(err.message || T[en ? 'en' : 'es'].error);
+    }
   }
 
-  function alternar(id) {
-    const n = new Set(comprobados);
-    if (n.has(id)) n.delete(id);
-    else n.add(id);
+  async function alternar(id) {
+    const marcar = !comprobados.has(id);
+    const antes = comprobados;
+    const n = new Map(comprobados);
+    if (marcar) n.set(id, yo);
+    else n.delete(id);
     setComprobados(n);
-    guardarRevision(true, n, saltadas);
+    try {
+      await editar({ accion: 'marcarRevision', sitioId, id, marcado: marcar });
+    } catch (err) {
+      setComprobados(antes);
+      setErrorRevision(err.message || T[en ? 'en' : 'es'].error);
+    }
   }
 
-  // "Todo está bien": marca todos los artículos como revisados y termina el inventario de la caja (lo guarda).
-  function todoBien() {
-    const n = new Set(lineas.map(l => l.id));
-    setComprobados(n);
-    guardarRevision(true, n, saltadas);
-    terminar();
+  // "Están bien": marca lo que quede sin marcar y termina el inventario de la caja.
+  async function todoBien() {
+    setErrorRevision('');
+    try {
+      await editar({ accion: 'marcarTodas', sitioId });
+      await terminar();
+    } catch (err) {
+      setErrorRevision(err.message || T[en ? 'en' : 'es'].error);
+    }
   }
 
-  function saltar(id) {
-    const n = new Set(saltadas);
-    n.add(id);
-    setSaltadas(n);
-    guardarRevision(true, comprobados, n);
+  async function saltar(id) {
+    setSaltadas(s => new Set([...s, id]));
+    try { await editar({ accion: 'saltarFoto', sitioId, id }); } catch {}
   }
 
   async function terminar() {
@@ -563,8 +611,10 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
     try {
       const d = await editar({ accion: 'revisarCaja', sitioId });
       setRevisando(false);
+      setComprobados(new Map());
+      setSaltadas(new Set());
+      setPresentes([]);
       setQuedanPorQuitar(null);
-      guardarRevision(false);
       setTerminada({ siguiente: d.siguiente || null });
       router.refresh();
     } catch (err) {
@@ -637,6 +687,7 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
         )}
         {!soloVer && <span className="cx-borrar-caja"><BorrarCaja sitioId={sitioId} codigo={codigo} idioma={idioma} alBorrar="/cajas" /></span>}
       </div>
+      {!soloVer && revisando && presentes.length > 0 && <p className="inv-tambien cx-leyenda-caja">{r.tambien(unirNombres(presentes, en))}</p>}
       {!soloVer && revisando && <p className="inv-leyenda cx-leyenda-caja">{r.leyenda}</p>}
       {!soloVer && terminada && <p className="inv-leyenda cx-leyenda-caja">{r.hecha}</p>}
       {errorRevision && <p className="error cx-leyenda-caja">{errorRevision}</p>}

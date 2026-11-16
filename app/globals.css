@@ -1591,3 +1591,7 @@ html body .llenado.esc .esc-vistas button { font-size: 13px; padding: 0 8px; }
 .aspa-esquina-tarjeta { position: absolute; top: -9px; right: -9px; z-index: 2; }
 .aspa-esquina-tarjeta .inv-aspa { width: 22px; height: 22px; font-size: 12px; background: var(--fondo); border: 1px solid var(--texto); border-radius: 0; }
 .tarjeta-con-aspa .cx-foto .foto { border: 1px solid var(--linea); }
+
+/* Inventario compartido: quién marcó cada artículo y quién más está revisando la caja */
+.inv-marcado-por { display: block; color: var(--secundario); font-size: 12px; }
+.inv-tambien { color: var(--texto); }

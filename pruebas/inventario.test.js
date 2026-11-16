@@ -78,3 +78,51 @@ describe('borrar una caja', () => {
     await expect(ed().crearCaja({ letra: 'Z', numero: 2 }, ADMIN)).rejects.toThrow('está borrada');
   });
 });
+
+describe('inventario compartido de una caja', () => {
+  const ANA = { id: 2, nombre: 'Ana' };
+
+  it('138. lo marcado se guarda con quién lo marcó, lo ve todo el mundo y vale el último toque; se ve quién más está dentro', async () => {
+    const { query } = db();
+    const linea = (await query('SELECT id FROM contenido WHERE sitio_id = $1 AND borrado IS NULL ORDER BY id LIMIT 1', [d.p1])).rows[0].id;
+    expect((await ed().estadoRevision(d.p1, ADMIN)).activa).toBe(false);
+    await ed().empezarRevision(d.p1, ADMIN);
+    await ed().marcarRevision(d.p1, linea, true, ANA);
+    const visto = await ed().estadoRevision(d.p1, ADMIN);
+    expect(visto.activa).toBe(true);
+    expect(visto.marcas).toEqual([{ id: linea, nombre: 'Ana' }]);
+    await ed().estadoRevision(d.p1, ANA);
+    expect((await ed().estadoRevision(d.p1, ADMIN)).presentes).toEqual(['Ana']);
+    expect((await ed().estadoRevision(d.p1, ANA)).presentes).toEqual(['Admin de prueba']);
+    await ed().marcarRevision(d.p1, linea, false, ADMIN);
+    expect((await ed().estadoRevision(d.p1, ANA)).marcas).toEqual([]);
+    await ed().saltarFoto(d.p1, linea);
+    expect((await ed().estadoRevision(d.p1, ANA)).saltadas).toEqual([linea]);
+    await query("UPDATE revision_presentes SET visto = now() - interval '20 seconds' WHERE usuario_id = $1", [ANA.id]);
+    expect((await ed().estadoRevision(d.p1, ADMIN)).presentes).toEqual([]);
+  });
+
+  it('139. "Están bien" marca el resto; "Caja revisada" termina para todos y borra lo marcado', async () => {
+    await ed().marcarTodas(d.p1, ADMIN);
+    const total = (await datos().obtenerSitio(d.p1, 'es')).contenido.length;
+    expect((await ed().estadoRevision(d.p1, ADMIN)).marcas).toHaveLength(total);
+    await ed().revisarCaja(d.p1, ADMIN);
+    expect(await ed().estadoRevision(d.p1, ANA)).toEqual({ activa: false, marcas: [], saltadas: [], presentes: [] });
+  });
+
+  it('151. con un inventario abierto que incluye la caja entra sola; una vez revisada para ese inventario, ya no', async () => {
+    const { query } = db();
+    const inv = (await query("INSERT INTO inventarios (tipo) VALUES ('parcial') RETURNING id")).rows[0].id;
+    await query('INSERT INTO inventario_cajas (inventario_id, sitio_id) VALUES ($1, $2)', [inv, d.c1]);
+    expect((await ed().estadoRevision(d.c1, ADMIN)).activa).toBe(true);
+    await ed().revisarCaja(d.c1, ADMIN);
+    expect((await ed().estadoRevision(d.c1, ADMIN)).activa).toBe(false);
+    await query('UPDATE inventarios SET cerrado = now() WHERE id = $1', [inv]);
+  });
+
+  it('152. no se puede marcar un artículo que no es de la caja', async () => {
+    const { query } = db();
+    const otra = (await query('SELECT id FROM contenido WHERE sitio_id = $1 AND borrado IS NULL LIMIT 1', [d.c1])).rows[0].id;
+    await expect(ed().marcarRevision(d.p1, otra, true, ADMIN)).rejects.toThrow('ya no está en esta caja');
+  });
+});

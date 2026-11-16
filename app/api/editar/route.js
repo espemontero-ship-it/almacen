@@ -36,6 +36,16 @@ export async function POST(request) {
         return Response.json({ ok: true, nombres: await ed.cambiarNombres(Number(c.id), { idioma: c.idioma, nombre: c.nombre }, quien) });
       case 'sinonimos':
         return Response.json({ ok: true, nombres: await ed.cambiarNombres(Number(c.id), { sinonimos: c.sinonimos }, quien) });
+      case 'estadoRevision':
+        return Response.json({ ok: true, ...(await ed.estadoRevision(Number(c.sitioId), quien)) });
+      case 'empezarRevision':
+        return Response.json({ ok: true, ...(await ed.empezarRevision(Number(c.sitioId), quien)) });
+      case 'marcarRevision':
+        return Response.json(await ed.marcarRevision(Number(c.sitioId), Number(c.id), Boolean(c.marcado), quien));
+      case 'marcarTodas':
+        return Response.json(await ed.marcarTodas(Number(c.sitioId), quien));
+      case 'saltarFoto':
+        return Response.json(await ed.saltarFoto(Number(c.sitioId), Number(c.id)));
       case 'revisarCaja':
         return Response.json({ ok: true, ...(await ed.revisarCaja(Number(c.sitioId), quien)) });
       case 'llenado':

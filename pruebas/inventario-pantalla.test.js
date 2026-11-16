@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import CajaEditable from '../app/sitio/[id]/CajaEditable.js';
 import ListaHistorial from '../app/components/ListaHistorial.js';
 import { CONTENIDO, redDeMentira } from './ayuda-pantalla.js';
@@ -10,81 +10,135 @@ vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh: vi.fn(), push: 
 beforeEach(() => { window.localStorage.clear(); empuja.mockClear(); });
 afterEach(() => vi.unstubAllGlobals());
 
-const caja = props => render(<CajaEditable sitioId={7} contenido={CONTENIDO} etiquetas={[]} idioma="es" codigo="C1" resumen="2 artículos · 13 unidades" {...props} />);
+const caja = props => render(<CajaEditable sitioId={7} contenido={CONTENIDO} etiquetas={[]} idioma="es" codigo="C1" resumen="2 artículos · 13 unidades" revisionInicial={{ activa: false, marcas: [], saltadas: [], presentes: [], yo: 'Espe' }} {...props} />);
 const empezar = () => fireEvent.click(screen.getByRole('button', { name: 'Hacer inventario' }));
 // La primera fila de un artículo (la Lista sale dos veces: ordenador y móvil).
 const fila = (container, nombre) => [...container.querySelectorAll('.cx-tabla-caja tbody tr')].find(tr => tr.textContent.includes(nombre));
 
-describe('inventario de una caja', () => {
+// Servidor de mentira con la revisión compartida: guarda lo marcado (y quién) y responde al estado.
+function servidor({ marcas = [], presentes = [], activa = true } = {}) {
+  const estado = { activa, marcas: [...marcas], saltadas: [], presentes };
+  const red = redDeMentira((url, c) => {
+    if (c.accion === 'empezarRevision') { estado.activa = true; return { ok: true, ...estado }; }
+    if (c.accion === 'estadoRevision') return { ok: true, ...estado };
+    if (c.accion === 'marcarRevision') {
+      estado.marcas = estado.marcas.filter(m => m.id !== c.id);
+      if (c.marcado) estado.marcas.push({ id: c.id, nombre: 'Espe' });
+      return { ok: true };
+    }
+    if (c.accion === 'marcarTodas') return { ok: true };
+    if (c.accion === 'saltarFoto') { estado.saltadas.push(c.id); return { ok: true }; }
+    if (c.accion === 'revisarCaja') { estado.activa = false; return { ok: true, siguiente: null }; }
+    return { ok: true };
+  });
+  return { red, estado };
+}
+const acciones = red => red.map(l => l.cuerpo.accion);
+
+describe('inventario de una caja (compartido)', () => {
   it('140. quien solo consulta no ve "Hacer inventario"', () => {
-    caja({ soloVer: true });
+    caja({ soloVer: true, revisionInicial: null });
     expect(screen.queryByRole('button', { name: 'Hacer inventario' })).toBe(null);
   });
 
-  it('141. al empezar: "Quedan 2 de 2" en lugar del recuento, la leyenda y "Caja revisada"', () => {
+  it('141. "Hacer inventario" lo empieza en el servidor: "Quedan 2 de 2", la leyenda y "Caja revisada"', async () => {
+    const { red } = servidor({ activa: false });
     const { container } = caja();
     expect(container.textContent).toContain('2 artículos · 13 unidades');
     empezar();
-    expect(container.textContent).toContain('Quedan 2 de 2');
+    await waitFor(() => expect(container.textContent).toContain('Quedan 2 de 2'));
+    expect(red[0].cuerpo).toEqual({ accion: 'empezarRevision', sitioId: 7 });
     expect(container.textContent).not.toContain('2 artículos · 13 unidades');
     expect(container.textContent).toContain('Haz click para marcarlo como revisado o pulsa Caja revisada si la caja está correcta');
     expect(screen.getByRole('button', { name: 'Caja revisada' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Hacer inventario' })).toBe(null);
   });
 
-  it('142. tocar un artículo lo marca: baja a "Revisados" y el contador baja; tocarlo otra vez lo desmarca', () => {
-    const { container } = caja();
-    empezar();
+  it('142. tocar un artículo lo marca en el servidor con quién lo marcó, y baja a "Revisados"; tocarlo otra vez lo desmarca', async () => {
+    const { red } = servidor();
+    const { container } = caja({ revisionInicial: { activa: true, marcas: [], saltadas: [], presentes: [], yo: 'Espe' } });
     fireEvent.click(fila(container, 'Espada'));
     expect(container.textContent).toContain('Quedan 1 de 2');
     expect(container.querySelector('.inv-apartado').textContent).toBe('Revisados (1)');
-    expect(container.querySelector('.inv-bloque-revisados').textContent).toContain('Espada');
+    expect(container.querySelector('.inv-bloque-revisados').textContent).toContain('✓ Espe');
+    await waitFor(() => expect(red).toHaveLength(1));
+    expect(red[0].cuerpo).toEqual({ accion: 'marcarRevision', sitioId: 7, id: 1, marcado: true });
     fireEvent.click(fila(container.querySelector('.inv-bloque-revisados'), 'Espada'));
     expect(container.textContent).toContain('Quedan 2 de 2');
-    expect(container.querySelector('.inv-apartado')).toBe(null);
+    await waitFor(() => expect(red).toHaveLength(2));
+    expect(red[1].cuerpo).toEqual({ accion: 'marcarRevision', sitioId: 7, id: 1, marcado: false });
   });
 
   it('143. tocar el − + o el ✕ no marca el artículo', () => {
-    const { container } = caja();
-    empezar();
-    redDeMentira();
+    const { red } = servidor();
+    const { container } = caja({ revisionInicial: { activa: true, marcas: [], saltadas: [], presentes: [], yo: 'Espe' } });
     fireEvent.click(screen.getAllByRole('button', { name: 'Cantidad +' })[0]);
     fireEvent.click(screen.getAllByRole('button', { name: 'Quitar: Espada' })[0]);
     expect(container.textContent).toContain('Quedan 2 de 2');
+    expect(acciones(red)).not.toContain('marcarRevision');
   });
 
-  it('144. un artículo sin foto, al marcarlo, pide la foto (Falta foto · Saltar)', () => {
-    const { container } = caja();
-    empezar();
-    fireEvent.click(fila(container, 'Copa'));
+  it('144. un artículo sin foto, al marcarlo, pide la foto; "Saltar" se guarda en el servidor', async () => {
+    const { red } = servidor();
+    const { container } = caja({ revisionInicial: { activa: true, marcas: [{ id: 3, nombre: 'Ana' }], saltadas: [], presentes: [], yo: 'Espe' } });
     expect(container.querySelector('.inv-bloque-revisados').textContent).toContain('Falta foto');
     fireEvent.click(screen.getAllByRole('button', { name: 'Saltar' })[0]);
     expect(container.querySelector('.inv-bloque-revisados').textContent).not.toContain('Falta foto');
+    await waitFor(() => expect(acciones(red)).toContain('saltarFoto'));
   });
 
-  it('145. "Caja revisada" con artículos sin marcar pregunta; "Están bien" los da por buenos y guarda la revisión', async () => {
-    const red = redDeMentira(() => ({ ok: true, siguiente: null }));
-    const { container } = caja();
-    empezar();
-    fireEvent.click(fila(container, 'Espada'));
+  it('145. "Caja revisada" con artículos sin marcar pregunta; "Están bien" marca el resto y guarda la revisión', async () => {
+    const { red } = servidor();
+    const { container } = caja({ revisionInicial: { activa: true, marcas: [{ id: 1, nombre: 'Espe' }], saltadas: [], presentes: [], yo: 'Espe' } });
     fireEvent.click(screen.getByRole('button', { name: 'Caja revisada' }));
     expect(container.textContent).toContain('Quedan 1 sin comprobar.');
     expect(screen.getByRole('button', { name: 'Quitarlos' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Volver' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Están bien' }));
-    await waitFor(() => expect(red).toHaveLength(1));
-    expect(red[0].cuerpo).toEqual({ accion: 'revisarCaja', sitioId: 7 });
     await waitFor(() => expect(container.textContent).toContain('Caja revisada. Gracias.'));
+    expect(acciones(red)).toEqual(['marcarTodas', 'revisarCaja']);
     expect(screen.queryByRole('button', { name: 'Hacer inventario' })).toBe(null);
   });
 
-  it('146. lo marcado se guarda en el navegador y sigue al volver a abrir la caja', () => {
-    const { container, unmount } = caja();
-    empezar();
-    fireEvent.click(fila(container, 'Espada'));
-    unmount();
-    const otra = caja();
-    expect(otra.container.textContent).toContain('Quedan 1 de 2');
+  it('146. si la caja ya está en revisión (o la abre un inventario), entra sola con lo que marcaron otros y quién está dentro', () => {
+    servidor();
+    const { container } = caja({ revisionInicial: { activa: true, marcas: [{ id: 3, nombre: 'Ana' }], saltadas: [], presentes: ['Ana', 'Luis'], yo: 'Espe' } });
+    expect(container.textContent).toContain('Quedan 1 de 2');
+    expect(container.querySelector('.inv-bloque-revisados').textContent).toContain('✓ Ana');
+    expect(container.querySelector('.inv-tambien').textContent).toBe('Ana y Luis también están revisando esta caja');
+    expect(screen.queryByRole('button', { name: 'Hacer inventario' })).toBe(null);
+  });
+
+  it('149. cada 5 segundos lee el estado: aparece lo que marca otra persona y se va el aviso de quien ha salido', async () => {
+    vi.useFakeTimers();
+    try {
+      const { red, estado } = servidor({ presentes: ['Ana'] });
+      const { container } = caja({ revisionInicial: { activa: true, marcas: [], saltadas: [], presentes: ['Ana'], yo: 'Espe' } });
+      expect(container.querySelector('.inv-tambien')).toBeTruthy();
+      estado.marcas.push({ id: 1, nombre: 'Ana' });
+      estado.presentes = [];
+      await act(async () => { await vi.advanceTimersByTimeAsync(5000); });
+      expect(acciones(red)).toEqual(['estadoRevision']);
+      expect(container.textContent).toContain('Quedan 1 de 2');
+      expect(container.querySelector('.inv-bloque-revisados').textContent).toContain('✓ Ana');
+      expect(container.querySelector('.inv-tambien')).toBe(null);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('150. si otra persona termina la revisión, la caja vuelve a verse normal', async () => {
+    vi.useFakeTimers();
+    try {
+      const { estado } = servidor();
+      const { container } = caja({ revisionInicial: { activa: true, marcas: [], saltadas: [], presentes: [], yo: 'Espe' } });
+      estado.activa = false;
+      await act(async () => { await vi.advanceTimersByTimeAsync(5000); });
+      expect(screen.getByRole('button', { name: 'Hacer inventario' })).toBeTruthy();
+      expect(container.textContent).toContain('2 artículos · 13 unidades');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 
