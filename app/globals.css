@@ -1607,3 +1607,17 @@ html body .llenado.esc .esc-vistas button { font-size: 13px; padding: 0 8px; }
 .inv-abrir-botones { display: flex; gap: 12px; margin-top: 8px; }
 .inv-sin-revisar { line-height: 1.6; }
 .inv-anterior { display: block; color: var(--texto); text-decoration: none; }
+/* Cajas: resumen de artículos en cada fila y filtros */
+.lista-cajas-resumen { margin-left: 10px; color: var(--secundario); font-size: 0.875em; }
+.cajas-filtros { max-width: 640px; }
+html body .esc.esc .cajas-filtros .cajas-fecha { height: 34px; min-height: 34px; padding: 0 8px; font-size: 13px; border: var(--cb); border-radius: var(--cr); background: var(--fondo); font-family: inherit; }
+.cajas-tick { flex-direction: row !important; align-items: center !important; }
+.cajas-tick input { width: 18px; height: 18px; min-height: 0; margin: 0; }
+.cajas-contador { margin-left: auto; }
+@media (max-width: 899px) {
+  html body .esc.esc .cajas-filtros .cajas-fecha { height: 44px; min-height: 44px; font-size: 16px; }
+  .lista-cajas-resumen { display: block; margin-left: 0; }
+  .cajas-contador { margin-left: 0; width: 100%; }
+}
+.cajas-filtros label { white-space: nowrap; } .cajas-filtros { gap: 10px 18px; }
+html body .esc.esc .cajas-filtros select, html body .esc.esc .cajas-filtros .cajas-fecha { border-radius: 0; }

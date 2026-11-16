@@ -176,3 +176,14 @@ describe('abrir y cerrar inventarios', () => {
     await ed().cerrarInventario(inv.id);
   });
 });
+
+describe('pantalla Cajas', () => {
+  it('160. cada caja trae su tipo, cuántos artículos y unidades tiene (sin lo quitado) y cuándo se revisó', async () => {
+    const p1 = (await ed().listarCajas()).find(c => c.id === d.p1);
+    const caja = await datos().obtenerSitio(d.p1, 'es');
+    expect(p1.letra).toBe('P');
+    expect(p1.articulos).toBe(caja.contenido.length);
+    expect(p1.unidades).toBe(caja.contenido.reduce((n, c) => n + c.cantidad, 0));
+    expect(p1.revisada).toBeTruthy();
+  });
+});
