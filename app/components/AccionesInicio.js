@@ -26,7 +26,6 @@ export function AnadirDesdeInicio({ idioma, cajas, etiquetas, alCerrar }) {
   const x = T[idioma === 'en' ? 'en' : 'es'];
   const router = useRouter();
   const [sitioId, setSitioId] = useState('');
-  const [hecho, setHecho] = useState('');
   const nombre = id => cajas.find(c => String(c.id) === String(id))?.texto || '';
   return (
     <div className="inicio-anadir">
@@ -36,18 +35,18 @@ export function AnadirDesdeInicio({ idioma, cajas, etiquetas, alCerrar }) {
         idioma={idioma}
         abiertoInicial
         alCerrar={alCerrar}
-        onHecho={() => { setHecho(x.hecho(nombre(sitioId))); router.refresh(); }}
+        nombreCaja={nombre(sitioId)}
+        onHecho={() => router.refresh()}
         antesDelBuscador={(
-          <label className="detalle-campo detalle-columna">
+          <label className="catalogo-caja">
             {x.caja}
-            <select value={sitioId} onChange={e => { setSitioId(e.target.value); setHecho(''); }}>
+            <select value={sitioId} onChange={e => setSitioId(e.target.value)}>
               <option value="">{x.elige}</option>
               {cajas.map(c => <option key={c.id} value={c.id}>{c.texto}</option>)}
             </select>
           </label>
         )}
       />
-      {hecho && <p className="aviso">{hecho}</p>}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { textos } from '../../lib/textos';
 import { ordenarTallas } from '../../lib/tallas.cjs';
 import NombreEditable from './NombreEditable';
 import EnlacesCajas from './EnlacesCajas';
+import CamaraEsquina from './CamaraEsquina';
 import { useOrden } from './Ordenar';
 import { BotonesInicio, AnadirDesdeInicio } from './AccionesInicio';
 
@@ -174,7 +175,8 @@ export default function Escritorio({ filas, idioma, conFiltros = true, orden = n
         {vista === 'cuadricula' ? (
           <ul className="esc-cuadricula">
             {articulos.map(a => (
-              <li key={a.id}>
+              <li key={a.id} className={puedeEditar ? 'tarjeta-con-camara' : undefined}>
+                {puedeEditar && <span className="tarjeta-camara"><CamaraEsquina articuloId={a.id} idioma={idioma} /></span>}
                 <Link href={`/articulo/${a.id}`} className="esc-tarjeta">
                   <Img url={a.foto_url} nombre={a.nombre} clase="esc-foto-cuadrada" />
                   <NombreEditable articuloId={a.id} nombre={a.nombre} sinonimos={a.sinonimos} idioma={idioma} puedeEditar={puedeEditar} className="esc-nombre" enlace={`/articulo/${a.id}`} />

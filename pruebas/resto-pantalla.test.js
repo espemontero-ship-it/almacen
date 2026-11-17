@@ -104,12 +104,58 @@ describe('buscador', () => {
 });
 
 describe('inicio: añadir artículo y caja', () => {
-  it('166. "Añadir artículo" abre el formulario de la caja con el selector de caja; sin caja no añade', async () => {
-    const red = redDeMentira(url => (url.startsWith('/api/sugerencias') || url.includes('buscar') ? { lista: [], articulos: [] } : { ok: true }));
-    const { container } = render(<AnadirDesdeInicio idioma="es" cajas={[{ id: 7, texto: 'C1' }]} etiquetas={[]} alCerrar={() => {}} />);
-    expect(container.querySelector('select').textContent).toContain('C1');
-    expect(screen.getByPlaceholderText('Escribe el artículo')).toBeTruthy();
-    expect(red.filter(r => r.cuerpo && r.cuerpo.accion)).toEqual([]);
+  const CATALOGO = [
+    { id: 1, nombre: 'Abrebotellas', buscable: 'abrebotellas bottle opener', foto_url: null, tallas: [], etiquetas: ['Bar'] },
+    { id: 2, nombre: 'Camiseta negra', buscable: 'camiseta negra black t-shirt', foto_url: null, tallas: ['M', 'S'], etiquetas: ['Uniformes'] },
+    { id: 3, nombre: 'Copa', buscable: 'copa cup', foto_url: null, tallas: [], etiquetas: ['Bar', 'Atrezo'] },
+  ];
+  const nombresCatalogo = () => [...document.querySelectorAll('.catalogo-tarjeta .esc-nombre')].map(n => n.textContent);
+
+  it('166. "Añadir artículo" abre el catálogo entero (con el selector de caja en el inicio): buscar en los dos idiomas, filtrar por etiqueta y elegir', async () => {
+    const red = redDeMentira(url => (url.startsWith('/api/catalogo') ? { articulos: CATALOGO } : { ok: true }));
+    render(<AnadirDesdeInicio idioma="es" cajas={[{ id: 7, texto: 'C1' }]} etiquetas={[]} alCerrar={() => {}} />);
+    await waitFor(() => expect(nombresCatalogo()).toEqual(['Abrebotellas', 'Camiseta negra', 'Copa']));
+    expect(document.querySelector('.catalogo-caja select').textContent).toContain('C1');
+    fireEvent.change(document.querySelector('.catalogo-buscar'), { target: { value: 'cup' } });
+    expect(nombresCatalogo()).toEqual(['Copa']);
+    fireEvent.change(document.querySelector('.catalogo-buscar'), { target: { value: '' } });
+    fireEvent.change(document.querySelector('.catalogo-etiqueta'), { target: { value: 'Bar' } });
+    expect(nombresCatalogo()).toEqual(['Abrebotellas', 'Copa']);
+    fireEvent.click(screen.getByRole('button', { name: /Copa/ }));
+    expect(document.querySelector('.catalogo-pie').textContent).toContain('Copa');
+    fireEvent.click(screen.getByRole('button', { name: 'Añadir' }));
+    expect(document.querySelector('.catalogo-pie').textContent).toContain('Elige la caja.');
+    fireEvent.change(document.querySelector('.catalogo-caja select'), { target: { value: '7' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Añadir a C1' }));
+    await waitFor(() => expect(red.some(l => l.cuerpo?.accion === 'anadir')).toBe(true));
+    expect(red.find(l => l.cuerpo?.accion === 'anadir').cuerpo).toEqual({ accion: 'anadir', sitioId: 7, articuloId: 3, cantidad: 1, talla: '' });
+    await waitFor(() => expect(document.querySelector('.catalogo-hecho').textContent).toBe('Añadido a C1.'));
+    fireEvent.click(screen.getByRole('button', { name: 'Cerrar' }));
+  });
+
+  it('166b. en la Lista del catálogo, la ropa pide la talla antes de añadir', async () => {
+    redDeMentira(url => (url.startsWith('/api/catalogo') ? { articulos: CATALOGO } : { ok: true }));
+    render(<AnadirDesdeInicio idioma="es" cajas={[{ id: 7, texto: 'C1' }]} etiquetas={[]} alCerrar={() => {}} />);
+    await waitFor(() => expect(nombresCatalogo()).toHaveLength(3));
+    fireEvent.click(screen.getByRole('button', { name: 'Lista' }));
+    fireEvent.click([...document.querySelectorAll('.catalogo-tabla tbody tr')].find(tr => tr.textContent.includes('Camiseta')));
+    fireEvent.change(document.querySelector('.catalogo-caja select'), { target: { value: '7' } });
+    expect(screen.getByRole('button', { name: 'Añadir a C1' }).disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Cerrar' }));
+  });
+
+  it('166c. "Crear artículo nuevo": "Crear y añadir a la caja" o "Crear solo en el catálogo" (sin caja ni unidades)', async () => {
+    const red = redDeMentira(url => (url.startsWith('/api/catalogo') ? { articulos: CATALOGO } : { ok: true, articuloId: 9 }));
+    render(<AnadirDesdeInicio idioma="es" cajas={[{ id: 7, texto: 'C1' }]} etiquetas={[]} alCerrar={() => {}} />);
+    await waitFor(() => expect(nombresCatalogo()).toHaveLength(3));
+    fireEvent.click(screen.getByRole('button', { name: 'Crear artículo nuevo' }));
+    fireEvent.change(screen.getByLabelText('Nombre en español'), { target: { value: 'Lámpara' } });
+    expect(screen.getByRole('button', { name: 'Crear y añadir a la caja' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Crear solo en el catálogo' }));
+    await waitFor(() => expect(red.some(l => l.cuerpo?.accion === 'crearArticulo')).toBe(true));
+    expect(red.find(l => l.cuerpo?.accion === 'crearArticulo').cuerpo).toMatchObject({ sitioId: null, soloCatalogo: true, es: 'Lámpara' });
+    await waitFor(() => expect(document.querySelector('.catalogo-hecho').textContent).toBe('«Lámpara» creado en el catálogo.'));
+    fireEvent.click(screen.getByRole('button', { name: 'Cerrar' }));
   });
 
   it('167. junto al recuento salen "Añadir artículo" y "Añadir caja" (que lleva a crear caja)', () => {

@@ -60,3 +60,14 @@ describe('inicio y búsqueda (tarjetas y lista)', () => {
     expect(tarjetas(container)[2].querySelector('.estado-roto').textContent).toBe('8 good · 2 broken');
   });
 });
+
+describe('botón de foto en las tarjetas', () => {
+  it('168. quien edita tiene la cámara en la esquina de cada foto, fuera del enlace de la tarjeta; sin permiso, no', () => {
+    const { container, rerender } = render(<Escritorio filas={FILAS} idioma="es" puedeEditar />);
+    const li = tarjetas(container)[0];
+    expect(li.querySelector('.tarjeta-camara .boton-foto')).toBeTruthy();
+    expect(li.querySelector('a .boton-foto')).toBe(null);
+    rerender(<Escritorio filas={FILAS} idioma="es" />);
+    expect(container.querySelector('.boton-foto')).toBe(null);
+  });
+});

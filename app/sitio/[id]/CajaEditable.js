@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { createPortal } from 'react-dom';
 import Foto from '../../components/Foto';
 import BotonFoto from '../../components/BotonFoto';
 import NombreEditable from '../../components/NombreEditable';
 import BorrarCaja from '../../components/BorrarCaja';
+import CamaraEsquina from '../../components/CamaraEsquina';
 import { useOrden } from '../../components/Ordenar';
 
 // Lista de la caja: columnas que se ordenan tocando su título.
@@ -17,6 +19,7 @@ const CLAVES_CAJA = {
 };
 import { textos } from '../../../lib/textos';
 import { ordenarTallas } from '../../../lib/tallas.cjs';
+import { trozosBusqueda, normalizar as normalizarTexto } from '../../../lib/normalizar.cjs';
 
 const TALLAS_LETRA = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'];
 
@@ -30,7 +33,7 @@ const T = {
     confirmarQuitar: n => `¿Quitar «${n}» de esta caja?`,
     si: 'Sí, quitar',
     no: 'Cancelar',
-    anadir: 'Añadir artículo',
+    anadir: 'Añadir artículo', catalogoBuscar: 'Buscar en el catálogo', etiquetaTodas: 'Etiqueta: todas', crearNuevo: 'Crear artículo nuevo', proponerIA: 'Proponer con IA', proponiendo: 'Proponiendo…', sinonimos: 'Sinónimos', sinonimosAyuda: 'Marca los que quieras guardar.', sinonimosNinguno: 'La IA no ha encontrado sinónimos exactos.', sinonimosPropios: 'Añadir otros (separados por comas)', crearYAnadir: c => (c ? `Crear y añadir a ${c}` : 'Crear y añadir a la caja'), crearCatalogo: 'Crear solo en el catálogo', creadoCatalogo: n => `«${n}» creado en el catálogo.`, volverCatalogo: '‹ Volver al catálogo', anadirA: c => (c ? `Añadir a ${c}` : 'Añadir'), anadidoA: c => `Añadido a ${c}.`, cargando: 'Cargando…', nadaCatalogo: 'No hay ningún artículo así.', nArt: n => `${n} ${n === 1 ? 'artículo' : 'artículos'}`,
     buscarArticulo: 'Escribe el artículo',
     cantidad: 'Cantidad',
     talla: 'Talla',
@@ -55,7 +58,7 @@ const T = {
     confirmarQuitar: n => `Remove “${n}” from this box?`,
     si: 'Yes, remove',
     no: 'Cancel',
-    anadir: 'Add item',
+    anadir: 'Add item', catalogoBuscar: 'Search the catalogue', etiquetaTodas: 'Tag: all', crearNuevo: 'Create new item', proponerIA: 'Suggest with AI', proponiendo: 'Suggesting…', sinonimos: 'Synonyms', sinonimosAyuda: 'Tick the ones you want to keep.', sinonimosNinguno: 'The AI found no exact synonyms.', sinonimosPropios: 'Add others (separated by commas)', crearYAnadir: c => (c ? `Create and add to ${c}` : 'Create and add to the box'), crearCatalogo: 'Create in the catalogue only', creadoCatalogo: n => `“${n}” created in the catalogue.`, volverCatalogo: '‹ Back to the catalogue', anadirA: c => (c ? `Add to ${c}` : 'Add'), anadidoA: c => `Added to ${c}.`, cargando: 'Loading…', nadaCatalogo: 'No item like that.', nArt: n => `${n} ${n === 1 ? 'item' : 'items'}`,
     buscarArticulo: 'Type the item',
     cantidad: 'Quantity',
     talla: 'Size',
@@ -215,7 +218,9 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, rev
     setAviso('');
     try {
       const { fila } = await editar(cuerpo);
-      if (fila) actualizar(c.id, fila);
+      // Al bajar a 0, el artículo sale de la caja (queda en la papelera).
+      if (fila?.quitada) onQuitada(c.id);
+      else if (fila) actualizar(c.id, fila);
     } catch (err) {
       actualizar(c.id, anterior);
       setAviso(err.message || x.error);
@@ -348,42 +353,85 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, rev
 
 // "Añadir artículo". En la caja va con su caja; en el inicio se abre ya desplegado, con el selector de caja
 // arriba (antesDelBuscador) y alCerrar para volver al botón.
-export function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho, abiertoInicial = false, alCerrar = null, antesDelBuscador = null }) {
+export function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho, abiertoInicial = false, alCerrar = null, antesDelBuscador = null, nombreCaja = '' }) {
   const x = T[idioma === 'en' ? 'en' : 'es'];
   const [abierto, setAbierto] = useState(abiertoInicial);
   const [texto, setTexto] = useState('');
-  const [sugerencias, setSugerencias] = useState([]);
+  const [catalogo, setCatalogo] = useState(null);
+  const [etiquetaFiltro, setEtiquetaFiltro] = useState('');
+  const [vistaCatalogo, setVistaCatalogo] = useState('cuadricula');
+  const [hecho, setHecho] = useState('');
   const [elegido, setElegido] = useState(null);
   const [creando, setCreando] = useState(false);
   const [cantidad, setCantidad] = useState(1);
   const [talla, setTalla] = useState('');
   const [nuevo, setNuevo] = useState({ es: '', en: '', etiquetas: [], ropa: false });
   const [error, setError] = useState('');
+  // "Proponer con IA": sinónimos propuestos (salen sin marcar), los marcados y los escritos a mano.
+  const [propuestos, setPropuestos] = useState(null);
+  const [marcados, setMarcados] = useState([]);
+  const [propios, setPropios] = useState('');
+  const [proponiendo, setProponiendo] = useState(false);
 
-  async function buscar(q) {
-    setTexto(q);
-    setElegido(null);
-    setCreando(false);
-    if (q.trim().length < 2) {
-      setSugerencias([]);
-      return;
-    }
-    const r = await fetch(`/api/sugerencias?q=${encodeURIComponent(q.trim())}`);
-    if (r.ok) {
-      const d = await r.json();
-      setSugerencias(d.lista.filter(s => s.tipo === 'articulo'));
+  function limpiarSinonimos() {
+    setPropuestos(null);
+    setMarcados([]);
+    setPropios('');
+  }
+
+  async function proponer() {
+    setError('');
+    setProponiendo(true);
+    try {
+      const r = await fetch('/api/proponer-nombres', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ es: nuevo.es }),
+      });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error || x.error);
+      setNuevo(nv => ({ ...nv, en: d.en }));
+      setPropuestos(d.sinonimos || []);
+      setMarcados([]);
+    } catch (err) {
+      setError(err.message || x.error);
+    } finally {
+      setProponiendo(false);
     }
   }
 
+  useEffect(() => {
+    if (!abierto || catalogo) return;
+    let vivo = true;
+    fetch('/api/catalogo').then(r => (r.ok ? r.json() : { articulos: [] })).then(d => { if (vivo) setCatalogo(d.articulos || []); }).catch(() => { if (vivo) setCatalogo([]); });
+    return () => { vivo = false; };
+  }, [abierto, catalogo]);
+
+  const etiquetasCatalogo = useMemo(
+    () => [...new Set((catalogo || []).flatMap(a => a.etiquetas))].sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' })),
+    [catalogo]
+  );
+  const visibles = useMemo(() => {
+    const trozos = trozosBusqueda(texto);
+    return (catalogo || []).filter(a => {
+      if (etiquetaFiltro && !a.etiquetas.includes(etiquetaFiltro)) return false;
+      if (!trozos.length) return true;
+      const donde = normalizarTexto(`${a.nombre} ${a.buscable || ''}`);
+      return trozos.every(t => donde.includes(t));
+    });
+  }, [catalogo, texto, etiquetaFiltro]);
+
   function reiniciar() {
     setTexto('');
-    setSugerencias([]);
+    setEtiquetaFiltro('');
+    setHecho('');
     setElegido(null);
     setCreando(false);
     setCantidad(1);
     setTalla('');
     setNuevo({ es: '', en: '', etiquetas: [], ropa: false });
     setError('');
+    limpiarSinonimos();
   }
 
   async function anadir() {
@@ -391,19 +439,30 @@ export function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho, abiertoIni
     if (!sitioId) { setError(idioma === 'en' ? 'Choose the box.' : 'Elige la caja.'); return; }
     try {
       await editar({ accion: 'anadir', sitioId, articuloId: elegido.id, cantidad, talla });
-      reiniciar();
+      // Se queda en el catálogo para seguir añadiendo.
+      setHecho(x.anadidoA(nombreCaja || ''));
+      setElegido(null);
+      setCantidad(1);
+      setTalla('');
       onHecho();
     } catch (err) {
       setError(err.message || x.error);
     }
   }
 
-  async function crear() {
+  async function crear(soloCatalogo = false) {
     setError('');
-    if (!sitioId) { setError(idioma === 'en' ? 'Choose the box.' : 'Elige la caja.'); return; }
+    if (!soloCatalogo && !sitioId) { setError(idioma === 'en' ? 'Choose the box.' : 'Elige la caja.'); return; }
     try {
-      await editar({ accion: 'crearArticulo', sitioId, cantidad, talla, ...nuevo });
-      reiniciar();
+      const sinonimos = [...marcados, ...propios.split(',')].map(s => s.trim()).filter(Boolean);
+      await editar({ accion: 'crearArticulo', sitioId: soloCatalogo ? null : sitioId, cantidad, talla, soloCatalogo, ...nuevo, sinonimos });
+      setHecho(soloCatalogo ? x.creadoCatalogo(nuevo.es.trim()) : x.anadidoA(nombreCaja || ''));
+      setCreando(false);
+      setNuevo({ es: '', en: '', etiquetas: [], ropa: false });
+      limpiarSinonimos();
+      setCantidad(1);
+      setTalla('');
+      setCatalogo(null);
       onHecho();
     } catch (err) {
       setError(err.message || x.error);
@@ -431,58 +490,104 @@ export function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho, abiertoIni
     </label>
   );
 
-  return (
-    <div className="anadir">
-      <div className="anadir-cabecera">
-        <h2 className="grupo-titulo">{x.anadir}</h2>
-        <button type="button" className="boton-texto" onClick={() => { reiniciar(); setAbierto(false); if (alCerrar) alCerrar(); }}>{x.cerrar}</button>
-      </div>
-      {antesDelBuscador}
-      <input value={texto} onChange={e => buscar(e.target.value)} placeholder={x.buscarArticulo} autoComplete="off" />
-      {!elegido && !creando && texto.trim().length >= 2 && (
-        <ul className="lista">
-          {sugerencias.map(s => (
-            <li key={s.id}>
-              <button type="button" className="sugerencia boton-ancho-texto" onClick={() => { setElegido(s); setSugerencias([]); }}>
-                <span className="sugerencia-texto"><strong>{s.nombre}</strong></span>
-                <span className="sugerencia-dato">{s.total}</span>
-              </button>
-            </li>
-          ))}
-          <li>
-            <button
-              type="button"
-              className="sugerencia boton-ancho-texto"
-              onClick={() => { setCreando(true); setNuevo(n => ({ ...n, es: texto.trim() })); }}
-            >
-              <strong>{x.crear(texto.trim())}</strong>
-            </button>
-          </li>
-        </ul>
-      )}
-      {elegido && (
-        <div className="formulario">
-          <p><strong>{elegido.nombre}</strong></p>
-          {tallasElegido.length > 0 && selectorTalla(tallasElegido)}
-          <label className="detalle-campo">
-            {x.cantidad}
-            <Contador etiqueta={x.cantidad} valor={cantidad} min={1} onCambio={setCantidad} />
-          </label>
-          <button type="button" className="boton-principal" onClick={anadir} disabled={tallasElegido.length > 0 && !talla}>
-            {x.anadirBoton}
-          </button>
+  const fotoCatalogo = (art, clase) => (art.foto_url
+    ? <span className={`esc-foto ${clase}`}><img src={art.foto_url} alt={art.nombre} loading="lazy" /></span>
+    : <span className={`esc-foto esc-foto-vacia ${clase}`} aria-hidden="true" />);
+
+  if (typeof document === 'undefined') return null;
+  return createPortal((
+    <div className="catalogo" role="dialog" aria-modal="true" aria-label={x.anadir}>
+      <div className="catalogo-cabecera esc">
+        <div className="catalogo-fila">
+          <h2 className="grupo-titulo">{x.anadir}</h2>
+          <button type="button" className="boton-texto catalogo-cerrar" onClick={() => { reiniciar(); setAbierto(false); if (alCerrar) alCerrar(); }}>{x.cerrar}</button>
         </div>
-      )}
-      {creando && (
+        {antesDelBuscador}
+        {!creando && (
+          <div className="catalogo-fila catalogo-filtros">
+            <input className="catalogo-buscar" value={texto} onChange={e => setTexto(e.target.value)} placeholder={x.catalogoBuscar} autoComplete="off" />
+            <select className="catalogo-etiqueta" aria-label={x.etiquetas} value={etiquetaFiltro} onChange={e => setEtiquetaFiltro(e.target.value)}>
+              <option value="">{x.etiquetaTodas}</option>
+              {etiquetasCatalogo.map(et => <option key={et} value={et}>{et}</option>)}
+            </select>
+            <span className="esc-vistas">
+              <button type="button" className={vistaCatalogo === 'cuadricula' ? 'esc-vista-activa' : ''} onClick={() => setVistaCatalogo('cuadricula')}>{idioma === 'en' ? 'Grid' : 'Cuadrícula'}</button>
+              <button type="button" className={vistaCatalogo === 'lista' ? 'esc-vista-activa' : ''} onClick={() => setVistaCatalogo('lista')}>{idioma === 'en' ? 'List' : 'Lista'}</button>
+            </span>
+            <span className="esc-gris">{catalogo ? x.nArt(visibles.length) : ''}</span>
+            <button type="button" className="boton-secundario catalogo-crear" onClick={() => { setCreando(true); setElegido(null); setNuevo(nv => ({ ...nv, es: texto.trim() })); }}>{x.crearNuevo}</button>
+          </div>
+        )}
+        {hecho && <p className="aviso catalogo-hecho">{hecho}</p>}
+      </div>
+      <div className="catalogo-cuerpo">
+        {!creando && !catalogo && <p className="aviso">{x.cargando}</p>}
+        {!creando && catalogo && visibles.length === 0 && <p className="aviso">{x.nadaCatalogo}</p>}
+        {!creando && catalogo && vistaCatalogo === 'cuadricula' && (
+          <ul className="esc-cuadricula catalogo-cuadricula">
+            {visibles.map(art => (
+              <li key={art.id} className="tarjeta-con-camara">
+                <span className="tarjeta-camara"><CamaraEsquina articuloId={art.id} idioma={idioma} alSubir={url => setCatalogo(cs => cs.map(z => (z.id === art.id ? { ...z, foto_url: url } : z)))} /></span>
+                <button type="button" className={elegido?.id === art.id ? 'esc-tarjeta catalogo-tarjeta catalogo-elegido' : 'esc-tarjeta catalogo-tarjeta'} aria-pressed={elegido?.id === art.id} onClick={() => { setElegido(art); setTalla(''); setCantidad(1); setHecho(''); }}>
+                  {fotoCatalogo(art, 'esc-foto-cuadrada')}
+                  <span className="esc-nombre">{art.nombre}</span>
+                  <span className="esc-gris">{art.etiquetas.join(' · ')}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {!creando && catalogo && vistaCatalogo === 'lista' && (
+          <table className="esc-tabla esc-lista-B catalogo-tabla">
+            <thead>
+              <tr><th className="esc-c-foto" /><th>{idioma === 'en' ? 'Item' : 'Artículo'}</th><th>{x.etiquetas}</th></tr>
+            </thead>
+            <tbody>
+              {visibles.map(art => (
+                <tr key={art.id} className={elegido?.id === art.id ? 'catalogo-elegido' : undefined} onClick={() => { setElegido(art); setTalla(''); setCantidad(1); setHecho(''); }}>
+                  <td className="esc-c-foto">{fotoCatalogo(art, 'esc-foto-40')}</td>
+                  <td><span className="esc-nombre">{art.nombre}</span></td>
+                  <td className="esc-gris">{art.etiquetas.join(' · ')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {creando && (
         <div className="formulario">
-          <label>
-            {x.nombreEs}
-            <input value={nuevo.es} onChange={e => setNuevo({ ...nuevo, es: e.target.value })} />
-          </label>
+          <button type="button" className="boton-texto" onClick={() => setCreando(false)}>{x.volverCatalogo}</button>
+          <div className="crear-nombre-ia">
+            <label>
+              {x.nombreEs}
+              <input value={nuevo.es} onChange={e => setNuevo({ ...nuevo, es: e.target.value })} />
+            </label>
+            <button type="button" className="boton-secundario" onClick={proponer} disabled={!nuevo.es.trim() || proponiendo}>
+              {proponiendo ? x.proponiendo : x.proponerIA}
+            </button>
+          </div>
           <label>
             {x.nombreEn}
             <input value={nuevo.en} onChange={e => setNuevo({ ...nuevo, en: e.target.value })} />
           </label>
+          <fieldset className="etiquetas-elegir crear-sinonimos">
+            <legend>{x.sinonimos}</legend>
+            {propuestos && propuestos.length > 0 && <p className="esc-gris">{x.sinonimosAyuda}</p>}
+            {propuestos && propuestos.length === 0 && <p className="esc-gris">{x.sinonimosNinguno}</p>}
+            {(propuestos || []).map(s => (
+              <label key={s} className="casilla">
+                <input
+                  type="checkbox"
+                  checked={marcados.includes(s)}
+                  onChange={ev => setMarcados(m => (ev.target.checked ? [...m, s] : m.filter(z => z !== s)))}
+                />
+                {s}
+              </label>
+            ))}
+            <label className="crear-sinonimos-propios">
+              {x.sinonimosPropios}
+              <input value={propios} onChange={e => setPropios(e.target.value)} />
+            </label>
+          </fieldset>
           <fieldset className="etiquetas-elegir">
             <legend>{x.etiquetas}</legend>
             {etiquetas.map(e => (
@@ -510,14 +615,31 @@ export function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho, abiertoIni
             {x.cantidad}
             <Contador etiqueta={x.cantidad} valor={cantidad} min={1} onCambio={setCantidad} />
           </label>
-          <button type="button" className="boton-principal" onClick={crear} disabled={!nuevo.es.trim() || (nuevo.ropa && !talla)}>
-            {x.crearBoton}
+          <div className="catalogo-crear-botones">
+            <button type="button" className="boton-principal" onClick={() => crear(false)} disabled={!nuevo.es.trim() || (nuevo.ropa && !talla)}>
+              {x.crearYAnadir(nombreCaja)}
+            </button>
+            <button type="button" className="boton-secundario" onClick={() => crear(true)} disabled={!nuevo.es.trim()}>
+              {x.crearCatalogo}
+            </button>
+          </div>
+          {error && <p className="error">{error}</p>}
+        </div>
+        )}
+      </div>
+      {elegido && !creando && (
+        <div className="catalogo-pie">
+          <strong className="catalogo-pie-nombre">{elegido.nombre}</strong>
+          {tallasElegido.length > 0 && selectorTalla(tallasElegido)}
+          <Contador etiqueta={x.cantidad} valor={cantidad} min={1} onCambio={setCantidad} />
+          <button type="button" className="boton-principal" onClick={anadir} disabled={tallasElegido.length > 0 && !talla}>
+            {x.anadirA(nombreCaja)}
           </button>
+          {error && <p className="error">{error}</p>}
         </div>
       )}
-      {error && <p className="error">{error}</p>}
     </div>
-  );
+  ), document.body);
 }
 
 // Caja: igual que el inicio, con botón Cuadrícula / Lista en el ordenador.
@@ -674,6 +796,8 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
 
   function quitada(id) {
     setLineas(l => l.filter(v => v.id !== id));
+    // Recuento de arriba y papelera al día.
+    router.refresh();
   }
 
   const comunes = { idioma, actualizar, onQuitada: quitada, soloVer, revision };
@@ -682,7 +806,7 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
     <>
       <div className="cx-barra-caja cab-barra cab-op2">
         <span className={'cab-linea cab-izq' + (revisando ? ' cab-inv' : '')}>{titulo}<span className="cab-gris">{resumenVisto}</span></span>
-        {!soloVer && <AnadirArticulo sitioId={sitioId} etiquetas={etiquetas} idioma={idioma} onHecho={() => router.refresh()} />}
+        {!soloVer && <AnadirArticulo sitioId={sitioId} etiquetas={etiquetas} idioma={idioma} onHecho={() => router.refresh()} nombreCaja={codigo} />}
         {!soloVer && !revisando && !terminada && <button type="button" className="boton-secundario" onClick={empezar}>{r.hacer}</button>}
         {!soloVer && revisando && <button type="button" className="boton-secundario" onClick={cajaRevisada}>{r.revisada}</button>}
         {!soloVer && terminada?.siguiente && <a href={`/sitio/${terminada.siguiente}`} className="boton-secundario">{r.siguiente}</a>}

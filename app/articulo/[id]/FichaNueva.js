@@ -4,6 +4,7 @@ import { useState } from 'react';
 import EnlacesCajas from '../../components/EnlacesCajas';
 import Link from 'next/link';
 import Foto from '../../components/Foto';
+import CamaraEsquina from '../../components/CamaraEsquina';
 import NombreEditable from '../../components/NombreEditable';
 import { textos } from '../../../lib/textos';
 
@@ -25,7 +26,7 @@ export default function FichaNueva({ articulo: a, idioma, puedeEditar }) {
   return (
     <div className="fx">
       <div className="fx-cabecera">
-        <span className="fx-foto"><Foto url={a.foto_url} nombre={a.nombre} /></span>
+        <span className="fx-foto con-camara"><Foto url={a.foto_url} nombre={a.nombre} />{puedeEditar && <CamaraEsquina articuloId={a.id} idioma={idioma} />}</span>
         <div className="fx-datos">
           <NombreEditable articuloId={a.id} nombre={a.nombre} sinonimos={a.sinonimos} idioma={idioma} puedeEditar={puedeEditar} className="nombre-articulo fx-nombre" />
           {a.etiquetas.length > 0 && <span className="fx-gris">{a.etiquetas.join(' · ')}</span>}

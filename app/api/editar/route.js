@@ -31,7 +31,7 @@ export async function POST(request) {
           ),
         });
       case 'crearArticulo':
-        return Response.json({ ok: true, ...(await ed.crearArticulo({ ...c, sitioId: Number(c.sitioId) }, quien)) });
+        return Response.json({ ok: true, ...(await ed.crearArticulo({ ...c, sitioId: c.sitioId ? Number(c.sitioId) : null, soloCatalogo: Boolean(c.soloCatalogo) }, quien)) });
       case 'nombre':
         return Response.json({ ok: true, nombres: await ed.cambiarNombres(Number(c.id), { idioma: c.idioma, nombre: c.nombre }, quien) });
       case 'sinonimos':
