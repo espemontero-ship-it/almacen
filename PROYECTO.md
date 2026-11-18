@@ -284,7 +284,7 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - **Datos definitivos**: cargarlos cuando termine la reorganización del almacén. La carga une la ropa por tallas y reutiliza los nombres ya revisados.
 - **9 artículos sin traducir**: no se sabe qué son; tienen el nombre original en los dos idiomas.
 - **Revisión de pantallas**: terminada el 2026-11-14 (inicio, búsqueda, caja, historial, Crear caja, Personas, Entrar, Recuperar y ficha del artículo).
-- **Sinónimos**: la lista no tiene las palabras en inglés; se hizo mal. Aparcado por decisión suya.
+- **Sinónimos en inglés**: hecho el 2026-11-18 (ver el registro de decisiones).
 
 ## Pruebas automáticas
 
@@ -399,3 +399,4 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - Crear artículo: "Crear y añadir a C1" o "Crear solo en el catálogo" (sin caja ni unidades; queda en el historial como "Artículo nuevo en el catálogo").
 - "Proponer con IA" al crear un artículo (decidido por ella): botón junto al nombre en español, solo al pulsarlo; la IA (Claude Sonnet 5.5) rellena el nombre en inglés (editable) y propone sinónimos en español e inglés, que salen sin marcar; debajo, una casilla para añadir otros a mano, separados por comas. Se guardan los marcados y los escritos, y el buscador encuentra el artículo por ellos. Reglas para la IA: el nombre normal en España; solo sinónimos exactos; sin marcas ni categorías; tallas y medidas tal cual. De momento solo al crear. La clave de la IA (ANTHROPIC_API_KEY) se añadió en Vercel con su permiso.
 - Subido: cámara en todas las fotos, bajar a 0 manda a la papelera, catálogo en "Añadir artículo", "Crear solo en el catálogo" y "Proponer con IA".
+- Sinónimos en inglés (decidido por ella): la IA (Claude Sonnet 5.5) añadió 675 sinónimos en inglés a 431 artículos, en la web y en el ordenador. Reglas: solo se añade, no se borra nada; lo que ella hizo en español (nombres y sinónimos) no se toca, ni el nombre en inglés, ni las etiquetas, ni los 20 artículos que corrigió a mano; solo equivalentes exactos; ningún sinónimo lleva marca (tampoco la del nombre ni marcas usadas como nombre común, como Scotch); tallas y medidas tal cual (la app descarta cualquier sinónimo con otros números); fuera lo que solo cambia la ortografía, los guiones, el plural o el orden de las palabras. Antes de hacerlo todo vio tres muestras de 50.
