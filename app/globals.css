@@ -1758,3 +1758,14 @@ tr.catalogo-elegido td:last-child { box-shadow: inset -2px 2px 0 var(--texto), i
   .cabecera.cm .cm-boton-menu { min-height: 38px; height: 38px; }
   html body .cabecera.cm .buscador input, html body .cabecera.cm .buscador button { height: 38px; min-height: 38px; }
 }
+/* Caja en el móvil: la parte de arriba (título, llenado, recuento, botones, Cuadrícula / Lista y leyenda) en menos filas
+   y más bajas. Los mismos botones. */
+@media (max-width: 899px) {
+  html body .pagina-caja .cab-barra.cab-op2 { gap: 8px; row-gap: 8px; margin: 0 0 8px; align-items: center; }
+  html body .pagina-caja .cab-op2 > .cab-izq { margin: 8px 0 0; gap: 4px 10px; }
+  html body .pagina-caja .cab-op2 .llenado-selector select, html body .pagina-caja .cab-op2 .llenado select { height: 36px; min-height: 36px; }
+  html body .pagina-caja .cab-op2 .boton-secundario { min-height: 36px; height: 36px; padding: 0 8px; font-size: 13px; }
+  html body .pagina-caja .cab-op2 .cx-vistas-movil .esc-vistas { height: 36px; }
+  html body .pagina-caja .cab-op2 .cx-vistas-movil .esc-vistas button { padding: 0 8px; font-size: 14px; }
+  html body .pagina-caja .cx-leyenda-caja { margin: 0 0 8px; font-size: 13px; }
+}
