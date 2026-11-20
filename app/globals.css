@@ -1714,7 +1714,28 @@ tr.catalogo-elegido td:last-child { box-shadow: inset -2px 2px 0 var(--texto), i
 }
 /* La cuadrícula de la caja (con − + y comentario) se queda como estaba: no entra en las 3 por fila */
 @media (max-width: 899px) {
-  .esc-cuadricula.cx-cuadricula { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .esc-cuadricula.cx-cuadricula { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .cx-cuadricula .esc-tarjeta > span:not(.esc-foto), .cx-cuadricula .esc-tarjeta .esc-nombre { font-size: 14px; }
   .cx-cuadricula .esc-tarjeta { padding: 6px; }
+}
+/* Caja en el móvil, 3 por fila: "Cant." y "Rotas" encima de su − número +, que ocupa todo el ancho de la tarjeta */
+@media (max-width: 899px) {
+  .cx-cuadricula .esc-tarjeta { padding: 5px; }
+  .cx-cuadricula .esc-tarjeta > span:not(.esc-foto), .cx-cuadricula .esc-tarjeta .esc-nombre { font-size: 12px; }
+  .cx-cuadricula .cx-tarjeta .cx-pares { gap: 6px; }
+  .cx-cuadricula .cx-tarjeta .cx-par { flex-direction: column; align-items: stretch; gap: 2px; }
+  .cx-cuadricula .cx-tarjeta .cx-par > * { width: 100%; }
+  .cx-cuadricula .cx-tarjeta .num-pasos { display: flex; width: 100%; }
+  .cx-cuadricula .cx-tarjeta .num-boton { flex: 0 0 26px; width: 26px; height: 30px; min-height: 30px; }
+  .cx-cuadricula .cx-tarjeta .num-casilla, .cx-cuadricula .cx-tarjeta .num-valor { flex: 1 1 auto; width: auto; min-width: 0; height: 30px; min-height: 30px; padding: 0 2px; }
+  .cx-cuadricula .cx-tarjeta .cx-coment-campo { width: 100%; box-sizing: border-box; height: 30px; min-height: 30px; }
+}
+/* Lista de la caja en el móvil: filas más bajas y − + más juntos, para que el nombre tenga sitio y no quede hueco */
+@media (max-width: 899px) {
+  html body .esc.esc .cx-tabla-caja td, html body .esc.esc .cx-tabla-caja th { padding: 4px 2px; }
+  html body .esc.esc .cx-tabla-caja td:nth-child(2) { padding-left: 6px; }
+  .cx-tabla-caja .num-boton { width: 22px; }
+  .cx-tabla-caja .num-casilla, .cx-tabla-caja .num-valor { width: 1.6em; min-width: 1.6em; }
+  .cx-tabla-caja .num-casilla, .cx-tabla-caja .num-boton, .cx-tabla-caja .num-valor { height: 28px; min-height: 28px; }
+  .cx-tabla-caja .inv-aspa { width: 28px; height: 28px; }
 }
