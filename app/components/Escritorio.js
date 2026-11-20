@@ -180,7 +180,7 @@ export default function Escritorio({ filas, idioma, conFiltros = true, orden = n
                 <Link href={`/articulo/${a.id}`} className="esc-tarjeta">
                   <Img url={a.foto_url} nombre={a.nombre} clase="esc-foto-cuadrada" />
                   <NombreEditable articuloId={a.id} nombre={a.nombre} sinonimos={a.sinonimos} idioma={idioma} puedeEditar={puedeEditar} className="esc-nombre" enlace={`/articulo/${a.id}`} />
-                  <span className="esc-gris">{a.etiquetas.join(' · ')}</span>
+                  <span className="esc-gris esc-etq-tarjeta">{a.etiquetas.join(' · ')}</span>
                   {a.rotos > 0 && <span className="estado-roto">{estadoTexto(a)}</span>}
                   {tallasTexto(a) && <span className="esc-gris">{tallasTexto(a)}</span>}
                   <span><strong>{a.total}</strong> <span className="esc-gris">{t.enTotal} · <EnlacesCajas cajas={a.cajas} dentroDeEnlace /></span></span>

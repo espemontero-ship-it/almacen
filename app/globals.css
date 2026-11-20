@@ -1741,3 +1741,13 @@ tr.catalogo-elegido td:last-child { box-shadow: inset -2px 2px 0 var(--texto), i
 }
 /* Caja en el móvil: la tarjeta sin la etiqueta de categoría, más corta */
 @media (max-width: 899px) { .cx-cuadricula .cx-etq-tarjeta { display: none; } }
+/* Móvil: las tarjetas del inicio, la búsqueda y el catálogo, sin la etiqueta de categoría, más cortas */
+@media (max-width: 899px) { .esc-etq-tarjeta { display: none; } }
+/* Lista del inicio y la búsqueda en el móvil: letra y filas más pequeñas, foto más pequeña y que no se salga de la pantalla */
+@media (max-width: 899px) {
+  html body .esc.esc .esc-lista-B:not(.cx-tabla-caja) td, html body .esc.esc .esc-lista-B:not(.cx-tabla-caja) th { font-size: 13px; padding: 4px 4px; }
+  html body .esc.esc .esc-lista-B:not(.cx-tabla-caja) td:nth-child(2) { padding-left: 18px; }
+  .esc-lista-B:not(.cx-tabla-caja) td:nth-child(2) .esc-flecha { left: 2px; }
+  .esc-lista-B:not(.cx-tabla-caja) .esc-foto-40 { width: 32px; height: 32px; }
+  .esc-lista-B:not(.cx-tabla-caja) td:nth-child(4) { word-break: break-word; }
+}

@@ -533,7 +533,7 @@ export function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho, abiertoIni
                 <button type="button" className={elegido?.id === art.id ? 'esc-tarjeta catalogo-tarjeta catalogo-elegido' : 'esc-tarjeta catalogo-tarjeta'} aria-pressed={elegido?.id === art.id} onClick={() => { setElegido(art); setTalla(''); setCantidad(1); setHecho(''); }}>
                   {fotoCatalogo(art, 'esc-foto-cuadrada')}
                   <span className="esc-nombre">{art.nombre}</span>
-                  <span className="esc-gris">{art.etiquetas.join(' · ')}</span>
+                  <span className="esc-gris esc-etq-tarjeta">{art.etiquetas.join(' · ')}</span>
                 </button>
               </li>
             ))}
