@@ -1739,3 +1739,5 @@ tr.catalogo-elegido td:last-child { box-shadow: inset -2px 2px 0 var(--texto), i
   .cx-tabla-caja .num-casilla, .cx-tabla-caja .num-boton, .cx-tabla-caja .num-valor { height: 28px; min-height: 28px; }
   .cx-tabla-caja .inv-aspa { width: 28px; height: 28px; }
 }
+/* Caja en el móvil: la tarjeta sin la etiqueta de categoría, más corta */
+@media (max-width: 899px) { .cx-cuadricula .cx-etq-tarjeta { display: none; } }

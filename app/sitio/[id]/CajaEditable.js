@@ -337,7 +337,9 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, rev
           {aspa && <span className="aspa-esquina-tarjeta">{aspa}</span>}
           <FotoCamara c={c} x={x} actualizar={actualizar} soloVer={soloVer} />
           <NombreEditable articuloId={c.articulo_id} nombre={c.nombre} sinonimos={c.sinonimos} idioma={idioma} puedeEditar={!soloVer} className="esc-nombre" />
-          {(talla || etiquetasTexto) && <span className="esc-gris">{[talla, etiquetasTexto].filter(Boolean).join(' · ')}</span>}
+          {/* En el móvil la etiqueta de categoría no sale, para que la tarjeta sea más corta (la talla sí) */}
+          {talla && <span className="esc-gris">{talla}{etiquetasTexto && <span className="cx-etq-tarjeta"> · {etiquetasTexto}</span>}</span>}
+          {!talla && etiquetasTexto && <span className="esc-gris cx-etq-tarjeta">{etiquetasTexto}</span>}
           <span className="esc-gris cx-pares"><span className="cx-par">{y.cant} {cantidad}</span><span className="cx-par">{x.rotas} {rotas}</span></span>
           <span className="esc-gris">{comentario}</span>
           {enRevision}
