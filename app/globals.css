@@ -1778,3 +1778,51 @@ tr.catalogo-elegido td:last-child { box-shadow: inset -2px 2px 0 var(--texto), i
   html body .cabecera.cm .idioma { font-size: 13px; }
   html body .cabecera.cm .idiomas { height: 38px; }
 }
+
+/* ===== Móvil: botones iguales (32 de alto, letra 13) y menos filas ===== */
+@media (max-width: 899px) {
+  /* Cabecera en una sola fila: Almacén · buscador con Buscar · Menú */
+  html body .cabecera.cm { padding: 8px 12px; gap: 6px; }
+  html body .cabecera.cm .cm-una-fila { gap: 8px; min-height: 32px; justify-content: flex-start; }
+  html body .cabecera.cm .cm-una-fila .cm-titulo { flex: none; font-size: 14px; }
+  html body .cabecera.cm .cm-una-fila .buscador { flex: 1 1 auto; min-width: 0; margin: 0; display: flex; }
+  html body .cabecera.cm .cm-una-fila .buscador input { flex: 1 1 auto; min-width: 0; width: auto; height: 32px; min-height: 32px; padding: 0 8px; }
+  html body .cabecera.cm .cm-una-fila .buscador button { flex: none; height: 32px; min-height: 32px; padding: 0 8px; font-size: 13px; }
+  html body .cabecera.cm .cm-boton-menu { flex: none; height: 32px; min-height: 32px; padding: 0 8px; font-size: 13px; }
+  /* Inicio y búsqueda: una fila con Filtros, Añadir artículo, Añadir caja y Cuadrícula / Lista */
+  html body .esc.esc .esc-movil .esc-m-fila { gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+  html body .esc.esc .esc-movil .esc-m-filtros, html body .esc.esc .esc-movil .inicio-acciones .boton-secundario { height: 32px; min-height: 32px; padding: 0 8px; font-size: 13px; display: inline-flex; align-items: center; }
+  html body .esc.esc .esc-movil .inicio-acciones { display: inline-flex; gap: 6px; margin: 0; }
+  html body .esc.esc .esc-movil .esc-m-vistas { height: 32px; margin-left: auto; }
+  html body .esc.esc .esc-movil .esc-m-vistas button { padding: 0 8px; font-size: 13px; }
+  html body .esc-main { padding-top: 8px; }
+}
+@media (max-width: 899px) {
+  html body .esc.esc .esc-movil .esc-m-vistas button { width: 32px; padding: 0; font-size: 15px; }
+  html body .esc.esc .inicio-acciones .boton-secundario { min-height: 32px; height: 32px; font-size: 13px; padding: 0 8px; }
+}
+@media (max-width: 899px) {
+  html body .cabecera.cm .cm-una-fila .buscador-envoltura { flex: 1 1 auto; min-width: 0; }
+  html body .cabecera.cm .cm-una-fila .buscador-envoltura .buscador { width: 100%; }
+  html body .cabecera.cm .cm-una-fila .buscador input { width: 0; }
+  html body .esc.esc .esc-movil .esc-m-fila { gap: 4px; }
+  html body .esc.esc .esc-movil .inicio-acciones { gap: 4px; }
+  html body .esc.esc .esc-movil .esc-m-filtros, html body .esc.esc .inicio-acciones .boton-secundario { padding: 0 6px; }
+  html body .esc.esc .esc-movil .esc-m-vistas button { width: 28px; }
+}
+@media (max-width: 899px) { html body .esc.esc .esc-movil .inicio-acciones .boton-secundario, html body .esc.esc .esc-movil .esc-m-filtros { padding: 0 6px; } }
+/* Caja en el móvil: los mismos botones que el inicio (32 de alto, letra 13) y lo de arriba en menos filas */
+@media (max-width: 899px) {
+  html body .pagina-caja .cab-barra.cab-op2 { gap: 6px 4px; margin: 0 0 8px; }
+  html body .pagina-caja .cab-op2 > .cab-izq { margin: 8px 0 0; gap: 2px 8px; }
+  html body .pagina-caja .cab-op2 .sitio-titulo { font-size: 20px; line-height: 32px; }
+  html body .pagina-caja .cab-op2 .llenado-selector select, html body .pagina-caja .cab-op2 .llenado select { height: 32px; min-height: 32px; font-size: 13px; padding: 0 6px; }
+  html body .pagina-caja .cab-op2 .revision-texto, html body .pagina-caja .cab-op2 .cab-gris { font-size: 13px; flex-basis: 100%; }
+  html body .pagina-caja .cab-op2 .boton-secundario { min-height: 32px; height: 32px; padding: 0 6px; font-size: 13px; }
+  html body .pagina-caja .cab-op2 .cx-vistas-movil .esc-vistas { height: 32px; }
+  html body .pagina-caja .cab-op2 .cx-vistas-movil .esc-vistas button { width: 28px; padding: 0; font-size: 15px; }
+  html body .pagina-caja .cab-op2 .cx-borrar-caja .inv-aspa { width: 32px; height: 32px; }
+  html body .pagina-caja .cx-leyenda-caja { font-size: 13px; margin: 0 0 8px; }
+}
+/* Caja en el móvil (3 por fila): el ✕ dentro de la esquina de la tarjeta, para que no se salga por el borde de la pantalla */
+@media (max-width: 899px) { .cx-cuadricula .aspa-esquina-tarjeta { top: 2px; right: 2px; } }

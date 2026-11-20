@@ -125,12 +125,13 @@ export default function Escritorio({ filas, idioma, conFiltros = true, orden = n
               </button>
             )}
             {!conFiltros && <span className="esc-contador">{t.nArticulos(articulos.length)}</span>}
+            {/* Móvil: Filtros, Añadir artículo, Añadir caja y Cuadrícula / Lista en una sola fila */}
+            {conBotones && <BotonesInicio idioma={idioma} alAnadir={() => setAnadiendo(true)} />}
             <span className="esc-vistas esc-m-vistas">
               <button type="button" aria-label={en ? 'Grid' : 'Cuadrícula'} className={vista === 'cuadricula' ? 'esc-vista-activa' : ''} onClick={() => setVista('cuadricula')}>▦</button>
               <button type="button" aria-label={en ? 'List' : 'Lista'} className={vista === 'lista' ? 'esc-vista-activa' : ''} onClick={() => setVista('lista')}>☰</button>
             </span>
           </div>
-          {conBotones && <div className="esc-m-fila"><BotonesInicio idioma={idioma} alAnadir={() => setAnadiendo(true)} /></div>}
           {conFiltros && filtrosAbiertos && (
             <div className="esc-m-fila esc-m-panel">
               {selectEtiqueta}

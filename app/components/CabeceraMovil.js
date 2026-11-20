@@ -14,8 +14,10 @@ export default function CabeceraMovil({ idioma, busqueda, textos: t, puedeEditar
 
   return (
     <header className="cabecera cm solo-movil">
-      <div className="cm-fila">
+      {/* Una sola fila: Almacén, el buscador con Buscar y Menú */}
+      <div className="cm-fila cm-una-fila">
         <Link href="/" className="cm-titulo">{t.titulo}</Link>
+        <Buscador key={busqueda} busqueda={busqueda} idioma={idioma} />
         <button type="button" className={abierto ? 'cm-boton-menu cm-boton-menu-activo' : 'cm-boton-menu'} aria-expanded={abierto} onClick={() => setAbierto(!abierto)}>
           {en ? 'Menu' : 'Menú'} {abierto ? '▴' : '▾'}
         </button>
@@ -37,7 +39,6 @@ export default function CabeceraMovil({ idioma, busqueda, textos: t, puedeEditar
           <BotonIdioma idioma={idioma} />
         </nav>
       )}
-      <Buscador key={busqueda} busqueda={busqueda} idioma={idioma} />
     </header>
   );
 }
