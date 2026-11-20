@@ -1712,3 +1712,9 @@ tr.catalogo-elegido td:last-child { box-shadow: inset -2px 2px 0 var(--texto), i
   .esc-tarjeta > span:not(.esc-foto), .esc-tarjeta .esc-nombre { font-size: 12px; }
   .esc-tarjeta { padding: 5px; }
 }
+/* La cuadrícula de la caja (con − + y comentario) se queda como estaba: no entra en las 3 por fila */
+@media (max-width: 899px) {
+  .esc-cuadricula.cx-cuadricula { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .cx-cuadricula .esc-tarjeta > span:not(.esc-foto), .cx-cuadricula .esc-tarjeta .esc-nombre { font-size: 14px; }
+  .cx-cuadricula .esc-tarjeta { padding: 6px; }
+}
