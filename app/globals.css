@@ -1838,3 +1838,12 @@ tr.catalogo-elegido td:last-child { box-shadow: inset -2px 2px 0 var(--texto), i
   html body .pagina-caja .cab-op2 > .cab-izq > .cab-gris { grid-row: 2; align-self: start; }
   html body .pagina-caja .cab-op2 > .cab-izq.cab-inv > .cab-gris { grid-row: 1 / span 2; align-self: center; }
 }
+/* Móvil: cabecera, fila de botones y tarjetas alineadas a los mismos bordes (16 a cada lado); los botones llenan la fila con separaciones iguales */
+@media (max-width: 899px) {
+  html body .cabecera.cm { padding: 8px 16px; }
+  html body .esc.esc .esc-movil .esc-m-fila:first-child { flex-wrap: nowrap; gap: 4px; }
+  html body .esc.esc .esc-movil .esc-m-fila:first-child > .esc-m-filtros { flex: 1 1 auto; justify-content: center; }
+  html body .esc.esc .esc-movil .esc-m-fila:first-child > .inicio-acciones { flex: 2 1 auto; display: flex; gap: 4px; }
+  html body .esc.esc .esc-movil .esc-m-fila:first-child > .inicio-acciones .boton-secundario { flex: 1 1 auto; justify-content: center; }
+  html body .esc.esc .esc-movil .esc-m-fila:first-child > .esc-m-vistas { flex: none; margin-left: 0; }
+}
