@@ -1769,3 +1769,12 @@ tr.catalogo-elegido td:last-child { box-shadow: inset -2px 2px 0 var(--texto), i
   html body .pagina-caja .cab-op2 .cx-vistas-movil .esc-vistas button { padding: 0 8px; font-size: 14px; }
   html body .pagina-caja .cx-leyenda-caja { margin: 0 0 8px; font-size: 13px; }
 }
+/* Cabecera del móvil: letra más pequeña (el texto que se escribe en el buscador se queda en 16 para que el iPhone no amplíe la pantalla) */
+@media (max-width: 899px) {
+  html body .cabecera.cm .cm-titulo { font-size: 15px; }
+  html body .cabecera.cm .cm-boton-menu { font-size: 13px; padding: 0 12px; }
+  html body .cabecera.cm .buscador button { font-size: 14px; }
+  html body .cabecera.cm .cm-desplegable .cm-enlace { font-size: 14px; min-height: 38px; }
+  html body .cabecera.cm .idioma { font-size: 13px; }
+  html body .cabecera.cm .idiomas { height: 38px; }
+}
