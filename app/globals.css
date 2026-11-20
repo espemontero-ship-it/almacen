@@ -1826,3 +1826,15 @@ tr.catalogo-elegido td:last-child { box-shadow: inset -2px 2px 0 var(--texto), i
 }
 /* Caja en el móvil (3 por fila): el ✕ dentro de la esquina de la tarjeta, para que no se salga por el borde de la pantalla */
 @media (max-width: 899px) { .cx-cuadricula .aspa-esquina-tarjeta { top: 2px; right: 2px; } }
+/* Tarjetas de la caja con esquinas rectas, como las del inicio (identidad visual v3) */
+.cx-cuadricula .esc-tarjeta, .cx-cuadricula .cx-tarjeta, .cx-cuadricula li { border-radius: 0; }
+/* Caja en el móvil: la revisión y el recuento a la derecha del llenado, uno encima de otro, en gris pequeño */
+@media (max-width: 899px) {
+  html body .pagina-caja .cab-op2 > .cab-izq { display: grid; grid-template-columns: auto auto minmax(0, 1fr); column-gap: 8px; row-gap: 0; align-items: center; }
+  html body .pagina-caja .cab-op2 > .cab-izq > .sitio-titulo { grid-column: 1; grid-row: 1 / span 2; }
+  html body .pagina-caja .cab-op2 > .cab-izq > .llenado { grid-column: 2; grid-row: 1 / span 2; }
+  html body .pagina-caja .cab-op2 > .cab-izq > .revision-texto, html body .pagina-caja .cab-op2 > .cab-izq > .cab-gris { grid-column: 3; font-size: 12px; line-height: 15px; flex-basis: auto; }
+  html body .pagina-caja .cab-op2 > .cab-izq > .revision-texto { grid-row: 1; align-self: end; }
+  html body .pagina-caja .cab-op2 > .cab-izq > .cab-gris { grid-row: 2; align-self: start; }
+  html body .pagina-caja .cab-op2 > .cab-izq.cab-inv > .cab-gris { grid-row: 1 / span 2; align-self: center; }
+}
