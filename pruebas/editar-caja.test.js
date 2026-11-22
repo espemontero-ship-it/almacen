@@ -161,3 +161,23 @@ describe('mover artículos de una caja a otra', () => {
     await expect(ed().moverArticulos({ desdeSitioId: d.c1, haciaSitioId: d.p1, lineas: [] }, ADMIN)).rejects.toThrow('Elige qué mover');
   });
 });
+
+describe('deshacer un movimiento', () => {
+  it('10h. deshacer devuelve todo a su caja con las mismas unidades, una sola vez; queda en el historial y ya no se ofrece', async () => {
+    const { query } = db();
+    const { articuloId } = await ed().crearArticulo({ es: 'Farol deshacer', sitioId: d.p1, cantidad: 6 }, ADMIN);
+    const id = (await query('SELECT id FROM contenido WHERE articulo_id = $1', [articuloId])).rows[0].id;
+    const m = await ed().moverArticulos({ desdeSitioId: d.p1, haciaSitioId: d.c1, lineas: [{ contenidoId: id, cantidad: 4, rotos: 0 }] }, ADMIN);
+    expect(m.grupo).toBeTruthy();
+    const linea = sitio => query('SELECT cantidad FROM contenido WHERE articulo_id = $1 AND sitio_id = $2 AND borrado IS NULL', [articuloId, sitio]).then(r => r.rows[0]?.cantidad);
+    expect(await linea(d.p1)).toBe(2);
+    expect(await linea(d.c1)).toBe(4);
+    expect((await ed().historial({ sitioId: d.c1, idioma: 'es' })).find(h => h.accion === 'mover').deshacible).toBe(true);
+    await ed().deshacerMovimiento(m.grupo, ADMIN);
+    expect(await linea(d.p1)).toBe(6);
+    expect(await linea(d.c1)).toBe(undefined);
+    expect((await ed().historial({ sitioId: d.p1, idioma: 'es' }))[0]).toMatchObject({ accion: 'deshacerMover' });
+    expect((await ed().historial({ sitioId: d.c1, idioma: 'es' })).find(h => h.accion === 'mover').deshacible).toBe(false);
+    await expect(ed().deshacerMovimiento(m.grupo, ADMIN)).rejects.toThrow('ya se deshizo');
+  });
+});

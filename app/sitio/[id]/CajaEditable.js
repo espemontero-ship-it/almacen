@@ -840,6 +840,22 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
   const [moviendo, setMoviendo] = useState(false);
   const [elegidos, setElegidos] = useState(() => new Map());
   const [avisoMover, setAvisoMover] = useState('');
+  // Recién movido aquí: "Movido de C1: 3 artículos · Deshacer" (se queda hasta salir de la caja).
+  const [recienMovido, setRecienMovido] = useState(null);
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get('movido')) setRecienMovido({ grupo: p.get('movido'), desde: Number(p.get('desde')), codigo: p.get('codigo') || '', n: Number(p.get('n')) || 0 });
+  }, []);
+  const [errorDeshacer, setErrorDeshacer] = useState('');
+  async function deshacerMovido() {
+    setErrorDeshacer('');
+    try {
+      await editar({ accion: 'deshacerMovimiento', grupo: recienMovido.grupo });
+      router.push('/sitio/' + recienMovido.desde);
+    } catch (err) {
+      setErrorDeshacer(err.message || (en ? 'Could not be undone.' : 'No se ha podido deshacer.'));
+    }
+  }
   useEffect(() => setLineas(contenido), [contenido]);
   useEffect(() => {
     const guardada = window.localStorage.getItem('caja-vista');
@@ -1037,6 +1053,16 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
       {/* Móvil: revisión y recuento en una línea, debajo de los botones y encima de la lista */}
       <p className="cx-info-movil solo-movil">{revisando ? resumenVisto : infoCorta}</p>
       {avisoMover && <p className="aviso cx-leyenda-caja">{avisoMover}</p>}
+      {recienMovido && (
+        <p className="aviso cx-leyenda-caja cx-movido">
+          {en
+            ? `Moved from ${recienMovido.codigo}: ${recienMovido.n} ${recienMovido.n === 1 ? 'item' : 'items'}`
+            : `Movido de ${recienMovido.codigo}: ${recienMovido.n} ${recienMovido.n === 1 ? 'artículo' : 'artículos'}`}
+          {' · '}
+          <button type="button" className="boton-secundario" onClick={deshacerMovido}>{en ? 'Undo' : 'Deshacer'}</button>
+          {errorDeshacer && <span className="error"> {errorDeshacer}</span>}
+        </p>
+      )}
       {moviendo && (
         <span className="cx-mover-todos">
           <input type="checkbox" className="cx-mover-casilla" checked={todosElegidos} onChange={elegirTodos} aria-label={en ? 'Choose all' : 'Elegir todos'} />
@@ -1048,7 +1074,7 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
           idioma={idioma}
           lineas={lineas.filter(l => elegidos.has(l.id)).map(l => ({ ...l, mover: elegidos.get(l.id) }))}
           alCancelar={() => { setMoviendo(false); setElegidos(new Map()); }}
-          alMover={d => { setMoviendo(false); setElegidos(new Map()); router.push('/sitio/' + d.hacia.id); }}
+          alMover={d => { setMoviendo(false); setElegidos(new Map()); router.push('/sitio/' + d.hacia.id + '?movido=' + encodeURIComponent(d.grupo) + '&desde=' + d.desde.id + '&codigo=' + encodeURIComponent(d.desde.codigo) + '&n=' + d.movidos); }}
         />
       )}
       {[{ grupo: pendientes, titulo: null }, ...(revisados.length ? [{ grupo: revisados, titulo: r.revisadosTitulo(revisados.length), esRevisados: true }] : [])].map(({ grupo, titulo, esRevisados }) => {

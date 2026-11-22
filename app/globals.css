@@ -1995,3 +1995,6 @@ html body .inv-caja-botones .inv-aspa { width: 28px; height: 28px; }
 .cx-mover-todos { display: flex; align-items: center; gap: 8px; padding: 6px 2px; border-bottom: 1px solid var(--linea); font-size: 14px; cursor: pointer; }
 .cx-mover-todos .cx-mover-casilla { margin: 0; }
 .cx-mover-todos { cursor: default; padding: 6px 0 6px 4px; }
+/* Mover: aviso "Movido de C1: 3 artículos · Deshacer" en la caja de destino */
+.cx-movido { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 6px; font-size: 13px; }
+.cx-movido .boton-secundario { min-height: 28px; height: 28px; padding: 0 10px; font-size: 13px; }
