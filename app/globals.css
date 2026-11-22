@@ -1859,3 +1859,43 @@ tr.catalogo-elegido td:last-child { box-shadow: inset -2px 2px 0 var(--texto), i
 .elegir-foto-vista { width: 88px; height: 88px; object-fit: cover; border: 1px solid var(--linea); display: block; }
 .elegir-foto .boton-foto { width: 36px; height: 36px; padding: 0; }
 .elegir-foto .boton-foto svg { width: 20px; height: 20px; }
+
+/* Crear caja: números libres (huecos) para elegir con un toque */
+.numeros-libres { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.numero-libre { height: 28px; min-height: 28px; padding: 0 8px; border: 1px solid var(--linea); border-radius: 0; background: var(--fondo); color: var(--texto); font: inherit; font-size: 13px; cursor: pointer; }
+.numero-libre-elegido { background: var(--texto); border-color: var(--texto); color: var(--fondo); }
+
+/* Inventario abierto: lista de cajas (pendientes y revisadas) */
+.inv-acciones { margin: 8px 0; }
+.inv-acciones .boton-secundario { display: inline-flex; align-items: center; min-height: 32px; height: 32px; padding: 0 10px; font-size: 13px; text-decoration: none; color: var(--texto); }
+.inv-lista-cajas { list-style: none; margin: 0 0 16px; padding: 0; }
+.inv-caja { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--linea); }
+.inv-caja-datos { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.inv-caja-nombre { color: var(--texto); font-weight: 600; text-decoration: none; }
+.inv-caja-sub { font-size: 12px; }
+.inv-en-curso { font-weight: 600; color: var(--texto); }
+.inv-caja-botones { flex: none; display: inline-flex; align-items: center; gap: 6px; }
+.inv-caja-botones .boton-secundario { min-height: 32px; height: 32px; padding: 0 8px; font-size: 13px; }
+.inv-caja-botones .inv-aspa { width: 32px; height: 32px; }
+/* Inventario abierto, más compacto: resumen en una línea, botones en una fila, filas bajas (nombre y última revisión en una línea) */
+html body .inv-resumen { margin: 4px 0 8px; font-size: 13px; color: var(--secundario); }
+html body .inv-resumen .inv-progreso { color: var(--texto); font-weight: 600; }
+html body .inv-acciones { display: flex; gap: 6px; margin: 0 0 8px; }
+html body .inv-acciones .boton-secundario { display: inline-flex; align-items: center; min-height: 32px; height: 32px; padding: 0 10px; font-size: 13px; }
+html body .inv-cajas .inv-subtitulo { font-size: 14px; margin: 12px 0 4px; }
+html body .inv-caja { padding: 4px 0; min-height: 40px; gap: 6px; }
+html body .inv-caja-datos { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
+html body .inv-caja-nombre { font-size: 14px; font-weight: 600; }
+html body .inv-caja-sub { font-size: 12px; }
+html body .inv-caja-botones .boton-secundario { min-height: 30px; height: 30px; padding: 0 8px; font-size: 13px; }
+html body .inv-caja-botones .inv-aspa { width: 30px; height: 30px; }
+/* Inventario abierto, aún más compacto: título más pequeño; "n de m revisadas" y los botones en una fila; filas de unos 34 */
+html body .inv-titulo { font-size: 20px; margin: 8px 0 4px; line-height: 1.2; }
+html body .inv-acciones { align-items: center; flex-wrap: wrap; margin: 0 0 4px; }
+html body .inv-acciones .inv-progreso { font-size: 13px; font-weight: 600; margin-right: auto; }
+html body .inv-acciones .boton-secundario { min-height: 30px; height: 30px; padding: 0 8px; }
+html body .inv-cajas .inv-subtitulo { font-size: 13px; margin: 8px 0 2px; }
+html body .inv-caja { padding: 2px 0; min-height: 34px; }
+html body .inv-caja-nombre { font-size: 13px; }
+html body .inv-caja-botones .boton-secundario { min-height: 28px; height: 28px; padding: 0 8px; font-size: 12px; }
+html body .inv-caja-botones .inv-aspa { width: 28px; height: 28px; }

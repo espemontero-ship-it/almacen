@@ -187,3 +187,32 @@ describe('pantalla Cajas', () => {
     expect(p1.revisada).toBeTruthy();
   });
 });
+
+describe('lista de cajas del inventario abierto', () => {
+  it('161. cada caja trae su última revisión (aunque sea de antes), si está en revisión; las borradas salen; la creada desde Inventario entra', async () => {
+    const { query } = db();
+    await query('UPDATE inventarios SET cerrado = now() WHERE cerrado IS NULL');
+    await ed().revisarCaja(d.c1, ADMIN);
+    const { id } = await ed().abrirInventario({ forma: 'general' }, ADMIN);
+    let inv = await ed().inventarioActual();
+    const c1 = inv.sinRevisar.find(c => c.id === d.c1);
+    expect(c1.ultima_por).toBe('Admin de prueba');
+    expect(c1.ultima_cuando).toBeTruthy();
+    const total = inv.total;
+    const nueva = await ed().crearCaja({ letra: 'P', numero: 90, alInventario: true }, ADMIN);
+    inv = await ed().inventarioActual();
+    expect(inv.total).toBe(total + 1);
+    expect(inv.sinRevisar.some(c => c.id === nueva.id)).toBe(true);
+    const suelta = await ed().crearCaja({ letra: 'P', numero: 91 }, ADMIN);
+    expect((await ed().inventarioActual()).sinRevisar.some(c => c.id === suelta.id)).toBe(false);
+    await ed().borrarCaja(nueva.id, ADMIN);
+    expect((await ed().inventarioActual()).total).toBe(total);
+    await ed().cerrarInventario(id);
+  });
+
+  it('162. los números libres son los huecos entre el 1 y el más alto', async () => {
+    expect(await ed().numerosLibres('P')).toEqual(expect.arrayContaining([3, 89]));
+    expect(await ed().numerosLibres('P')).not.toContain(90);
+    expect(await ed().numerosLibres('Q')).toEqual([]);
+  });
+});

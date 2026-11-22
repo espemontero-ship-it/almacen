@@ -73,10 +73,10 @@ describe('cabecera del móvil', () => {
     expect(enlaces()).toEqual(['Almacén', 'Artículos', 'Cajas', 'Historial', 'Entrar']);
   });
 
-  it('65. orden: Artículos, Cajas, Inventario, Historial, Usuarios (los dos solo administración) y Salir; ya no está + Crear caja', () => {
+  it('65. orden: Artículos, Cajas, Inventario (con sesión), Historial, Usuarios (solo administración) y Salir; ya no está + Crear caja', () => {
     const { rerender } = render(<CabeceraMovil idioma="es" textos={t} puedeEditar esAdmin={false} haySesion />);
     fireEvent.click(screen.getByRole('button', { name: /Menú/ }));
-    expect(enlaces()).toEqual(['Almacén', 'Artículos', 'Cajas', 'Historial']);
+    expect(enlaces()).toEqual(['Almacén', 'Artículos', 'Cajas', 'Inventario', 'Historial']);
     expect(screen.getByRole('button', { name: 'Salir' })).toBeTruthy();
     rerender(<CabeceraMovil idioma="es" textos={t} puedeEditar esAdmin haySesion />);
     expect(enlaces()).toEqual(['Almacén', 'Artículos', 'Cajas', 'Inventario', 'Historial', 'Usuarios']);

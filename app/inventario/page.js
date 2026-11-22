@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Cabecera from '../components/Cabecera';
 import AbrirInventario from './AbrirInventario';
 import CerrarInventario from './CerrarInventario';
+import ListaInventario from './ListaInventario';
 import { idiomaActual } from '../../lib/idioma';
 import { textos } from '../../lib/textos';
 import { sesionActual } from '../../lib/sesionActual';
@@ -24,6 +25,7 @@ const T = {
     sinRevisar: n => `Quedaron sin revisar (${n})`,
     todasRevisadas: 'Se revisaron todas.',
     volver: '‹ Inventario',
+    sinAbierto: 'No hay ningún inventario abierto.',
     fechas: (a, b) => `${a} – ${b}`,
   },
   en: {
@@ -39,6 +41,7 @@ const T = {
     sinRevisar: n => `Left unchecked (${n})`,
     todasRevisadas: 'All were checked.',
     volver: '‹ Inventory',
+    sinAbierto: 'There is no open inventory.',
     fechas: (a, b) => `${a} – ${b}`,
   },
 };
@@ -54,6 +57,18 @@ function queEs(inv, x) {
   if (d.forma === 'tipos') return x.porTipos((d.letras || []).map(l => (l === 'otros' ? (x === T.en ? 'others' : 'otros') : l)).join(', '));
   if (d.forma === 'cajas') return x.sueltas;
   return x.general;
+}
+
+// Nombre de un inventario (pedido por ella): "Inventario P Esperanza 22/11" — tipo, quién lo abrió y el día.
+function diaMes(f) {
+  return new Intl.DateTimeFormat('es-ES', { timeZone: 'Europe/Madrid', day: '2-digit', month: '2-digit' }).format(new Date(f));
+}
+function nombreInventario(inv, x) {
+  const d = inv.detalle || {};
+  const tipo = d.forma === 'tipos'
+    ? (d.letras || []).map(l => (l === 'otros' ? (x === T.en ? 'others' : 'otros') : l)).join(', ')
+    : d.forma === 'cajas' ? (x === T.en ? 'single boxes' : 'cajas individuales') : (x === T.en ? 'general' : 'general');
+  return [x === T.en ? 'Inventory' : 'Inventario', tipo, inv.abierto_por, diaMes(inv.abierto)].filter(Boolean).join(' ');
 }
 
 function nombreCaja(c) {
@@ -76,11 +91,14 @@ function ListaRevisadas({ cajas, idioma }) {
   );
 }
 
-// Inventario (solo administración): abrir uno (general, por tipos o cajas sueltas), seguir el abierto y cerrarlo,
-// y consultar los anteriores.
+// Inventario. Lo ve todo el que entra con su usuario. Administración abre (general, por tipos o cajas sueltas) y
+// cierra; con uno abierto, salen sus cajas (pendientes y revisadas): quien edita las marca revisadas, las borra o
+// añade cajas; quien solo consulta, las ve. Debajo, los inventarios anteriores.
 export default async function Inventario({ searchParams }) {
   const sesion = await sesionActual();
-  if (!sesion || sesion.rol !== 'admin') notFound();
+  if (!sesion) notFound();
+  const esAdmin = sesion.rol === 'admin';
+  const puedeEditar = ['admin', 'editor'].includes(sesion.rol);
   const idioma = await idiomaActual();
   const x = T[idioma === 'en' ? 'en' : 'es'];
   const t = textos(idioma);
@@ -95,7 +113,7 @@ export default async function Inventario({ searchParams }) {
         <Cabecera volver idioma={idioma} />
         <main className="contenido reducido">
           <p><Link href="/inventario" className="enlace-volver">{x.volver}</Link></p>
-          <h1 className="sitio-titulo">{queEs(inv, x)} · {x.fechas(fecha(inv.abierto, idioma), fecha(inv.cerrado, idioma))}</h1>
+          <h1 className="sitio-titulo">{nombreInventario(inv, x)} – {diaMes(inv.cerrado)}</h1>
           <p className="resumen-sitio">{x.nDeM(inv.revisadas.length, inv.total)}</p>
           <h2 className="grupo-titulo inv-subtitulo">{x.revisadas}</h2>
           <ListaRevisadas cajas={inv.revisadas} idioma={idioma} />
@@ -112,39 +130,40 @@ export default async function Inventario({ searchParams }) {
 
   const actual = await inventarioActual();
   const anteriores = actual ? [] : await inventariosAnteriores();
-  const cajas = actual ? [] : await listarCajas();
-  const tipos = actual ? [] : await tiposDeCaja();
+  const cajas = actual || !esAdmin ? [] : await listarCajas();
+  const tipos = actual || !esAdmin ? [] : await tiposDeCaja();
   return (
     <>
       <Cabecera volver idioma={idioma} />
       <main className="contenido reducido">
-        <h1 className="sitio-titulo">{x.titulo}</h1>
+        <h1 className={actual ? 'sitio-titulo inv-titulo' : 'sitio-titulo'}>{actual ? nombreInventario(actual, x) : x.titulo}</h1>
         {actual ? (
           <>
-            <p className="resumen-sitio">{x.abiertoEl(queEs(actual, x), fecha(actual.abierto, idioma), actual.abierto_por)}</p>
-            <p className="inv-progreso">{x.nDeM(actual.revisadas.length, actual.total)}</p>
-            <CerrarInventario id={actual.id} quedan={actual.sinRevisar.length} idioma={idioma} />
-            {actual.revisadas.length > 0 && (
-              <>
-                <h2 className="grupo-titulo inv-subtitulo">{x.revisadas}</h2>
-                <ListaRevisadas cajas={actual.revisadas} idioma={idioma} />
-              </>
-            )}
+            {/* Debajo del nombre, en una fila: cuántas van y los botones; luego las cajas */}
+            <ListaInventario
+              progreso={x.nDeM(actual.revisadas.length, actual.total)}
+              pendientes={actual.sinRevisar}
+              revisadas={actual.revisadas}
+              idioma={idioma}
+              puedeEditar={puedeEditar}
+              cerrar={esAdmin ? <CerrarInventario id={actual.id} quedan={actual.sinRevisar.length} idioma={idioma} /> : null}
+            />
           </>
         ) : (
           <>
-            <AbrirInventario
+            {!esAdmin && <p className="aviso">{x.sinAbierto}</p>}
+            {esAdmin && <AbrirInventario
               idioma={idioma}
               tipos={tipos.map(tp => ({ letra: tp.letra, texto: t.tipos[tp.letra] || tp.letra, cajas: tp.cajas }))}
               cajas={cajas.map(c => ({ id: c.id, texto: nombreCaja(c) }))}
-            />
+            />}
             <h2 className="grupo-titulo inv-subtitulo">{x.anteriores}</h2>
             {anteriores.length ? (
               <ul className="lista inv-lista">
                 {anteriores.map(i => (
                   <li key={i.id} className="historial-linea">
                     <Link href={`/inventario?ver=${i.id}`} className="historial-que inv-anterior">
-                      {queEs(i, x)} · {x.fechas(fecha(i.abierto, idioma), fecha(i.cerrado, idioma))} · {x.nDeM(i.revisadas, i.total)}
+                      {nombreInventario(i, x)} – {diaMes(i.cerrado)} · {x.nDeM(i.revisadas, i.total)}
                     </Link>
                   </li>
                 ))}

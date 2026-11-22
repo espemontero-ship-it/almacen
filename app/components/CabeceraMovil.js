@@ -26,7 +26,7 @@ export default function CabeceraMovil({ idioma, busqueda, textos: t, puedeEditar
         <nav className="cm-desplegable">
           <Link href="/" className="cm-enlace">{en ? 'Items' : 'Artículos'}</Link>
           <Link href="/cajas" className="cm-enlace">{t.cajas}</Link>
-          {esAdmin && <Link href="/inventario" className="cm-enlace">{en ? 'Inventory' : 'Inventario'}</Link>}
+          {haySesion && <Link href="/inventario" className="cm-enlace">{en ? 'Inventory' : 'Inventario'}</Link>}
           <Link href="/historial" className="cm-enlace">{en ? 'History' : 'Historial'}</Link>
           {esAdmin && <Link href="/personas" className="cm-enlace">{t.personas}</Link>}
           {haySesion ? (
