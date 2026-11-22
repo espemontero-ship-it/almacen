@@ -1899,3 +1899,71 @@ html body .inv-caja { padding: 2px 0; min-height: 34px; }
 html body .inv-caja-nombre { font-size: 13px; }
 html body .inv-caja-botones .boton-secundario { min-height: 28px; height: 28px; padding: 0 8px; font-size: 12px; }
 html body .inv-caja-botones .inv-aspa { width: 28px; height: 28px; }
+/* Inventario: tabla de cajas (Caja · Última revisión · botones), se ordena tocando los títulos */
+.inv-tabla { width: 100%; border-collapse: collapse; margin: 0 0 12px; font-size: 13px; }
+.inv-tabla th { text-align: left; font-weight: 400; color: var(--secundario); padding: 2px 4px 4px 0; border-bottom: 1px solid var(--linea); }
+.inv-tabla td { padding: 3px 4px 3px 0; border-bottom: 1px solid var(--linea); vertical-align: middle; }
+.inv-tabla .inv-col-fecha { white-space: nowrap; }
+.inv-tabla .inv-col-fecha .inv-caja-sub { display: block; font-size: 11px; }
+.inv-tabla .inv-col-botones { width: 1%; white-space: nowrap; padding-right: 0; }
+.inv-tabla .orden-titulo { font-size: 12px; }
+
+/* Mover artículos: botón "Mover" activo, casillas, elegidos resaltados, barra de abajo y ventana */
+.cx-mover-activo { background: var(--texto); color: var(--fondo); border-color: var(--texto); }
+.cx-mover-casilla { width: 20px; height: 20px; min-height: 0; margin: 0 6px 0 0; vertical-align: middle; }
+.cx-mover-esquina { position: absolute; top: 4px; left: 4px; z-index: 3; background: var(--fondo); line-height: 0; padding: 2px; }
+.cx-mover-esquina .cx-mover-casilla { margin: 0; }
+.cx-elegido.esc-tarjeta, tr.cx-elegido { outline: 2px solid var(--texto); outline-offset: -2px; }
+.mover-barra { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--fondo); border-top: 1px solid var(--texto); }
+.mover-barra > span { margin-right: auto; font-size: 14px; }
+.mover-barra .boton-secundario, .mover-barra .boton-principal { min-height: 36px; height: 36px; padding: 0 12px; font-size: 14px; }
+.pagina-caja { padding-bottom: 72px; }
+.mover-dialogo { max-height: 85vh; overflow: auto; display: flex; flex-direction: column; gap: 10px; }
+.mover-titulo { margin: 0; font-weight: 600; }
+.mover-lineas { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mover-lineas li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; border-bottom: 1px solid var(--linea); padding-bottom: 6px; }
+.mover-nombre { flex: 1 1 100%; font-size: 14px; }
+.mover-rotas { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--secundario); }
+.mover-buscar { display: flex; flex-direction: column; gap: 4px; }
+.mover-cajas { list-style: none; margin: 0; padding: 0; border: 1px solid var(--linea); }
+.mover-cajas button { display: block; width: 100%; text-align: left; padding: 8px; border: none; border-bottom: 1px solid var(--linea); background: var(--fondo); font: inherit; cursor: pointer; }
+
+/* Caja en el móvil (con "Mover"): los mismos botones e información que antes, con su texto completo.
+   Fila 1: C1, llenado, Cuadrícula / Lista y ✕; debajo, la revisión y el recuento en gris; fila 2: los botones. */
+@media (max-width: 899px) {
+  html body .pagina-caja .cab-barra.cab-op2 { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 6px; }
+  html body .pagina-caja .cab-op2 > .cab-izq { order: 0; flex: 1 1 0; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin: 8px 0 0; }
+  html body .pagina-caja .cab-op2 > .cab-izq::before { content: ''; order: 2; flex-basis: 100%; height: 0; }
+  html body .pagina-caja .cab-op2 > .cab-izq > .sitio-titulo { order: 0; grid-row: auto; grid-column: auto; }
+  html body .pagina-caja .cab-op2 > .cab-izq > .llenado { order: 1; grid-row: auto; grid-column: auto; }
+  html body .pagina-caja .cab-op2 > .cab-izq > .revision-texto,
+  html body .pagina-caja .cab-op2 > .cab-izq > .cab-gris { order: 3; grid-row: auto; grid-column: auto; align-self: auto; font-size: 12px; line-height: 16px; flex-basis: auto; }
+  html body .pagina-caja .cab-op2 > .cx-vistas-movil { order: 1; margin: 8px 0 0 auto; align-self: flex-start; }
+  html body .pagina-caja .cab-op2 > .cx-borrar-caja { order: 2; margin: 8px 0 0; align-self: flex-start; }
+  html body .pagina-caja .cab-op2 > .boton-secundario { order: 3; }
+}
+@media (max-width: 899px) {
+  /* La fila 1 ocupa todo el ancho (menos Cuadrícula / Lista y ✕), así los botones van siempre a la fila 2 */
+  html body .pagina-caja .cab-op2 > .cab-izq { flex: 1 1 calc(100% - 116px); }
+}
+/* Mover en la Lista: la casilla va dentro de la esquina de la foto, sin hacer la fila más alta */
+.cx-tabla-caja td.esc-c-foto { position: relative; }
+.cx-tabla-caja td.esc-c-foto > .cx-mover-casilla { position: absolute; top: 2px; left: 2px; margin: 0; z-index: 2; }
+/* Caja en el móvil (probado con ella): fila 1 "C1", llenado, ▦ ☰ y "Borrar caja" (texto); debajo, revisión y
+   recuento en gris; fila 2 "Añadir artículo", "Mover", "Hacer inventario". Todo 32 de alto, mismo borde y letra 13. */
+@media (max-width: 899px) {
+  html body .pagina-caja .cab-op2 > .cab-izq { flex: 1 1 calc(100% - 160px); }
+  html body .pagina-caja .cab-op2 > .cx-vistas-movil { order: 1; margin: 8px 0 0 auto; align-self: flex-start; }
+  html body .pagina-caja .cab-op2 > .cx-borrar-caja { order: 2; margin: 8px 0 0; align-self: flex-start; }
+  html body .pagina-caja .cab-op2 .boton-secundario { height: 32px; min-height: 32px; padding: 0 10px; font-size: 13px; display: inline-flex; align-items: center; }
+  html body .pagina-caja .cab-op2 .cx-vistas-movil .esc-vistas { height: 32px; }
+  html body .pagina-caja .cab-op2 .cx-vistas-movil .esc-vistas button { width: 30px; padding: 0; }
+  html body .pagina-caja .cab-op2 .llenado-selector select, html body .pagina-caja .cab-op2 .llenado select { height: 32px; min-height: 32px; font-size: 13px; }
+}
+/* Caja en el móvil: la revisión y el recuento salen de arriba y van en una línea encima de la lista */
+.cx-info-movil { display: none; }
+@media (max-width: 899px) {
+  html body .pagina-caja .cab-op2 > .cab-izq > .revision-texto,
+  html body .pagina-caja .cab-op2 > .cab-izq > .cab-gris { display: none; }
+  html body .pagina-caja .cx-info-movil { display: block; margin: 0 0 4px; font-size: 12px; color: var(--secundario); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}

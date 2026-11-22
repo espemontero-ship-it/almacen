@@ -126,3 +126,38 @@ describe('Proponer con IA', () => {
     await expect(proponerNombres('Algo', { cliente: falsa({ stop_reason: 'refusal', content: [] }) })).rejects.toThrow('no ha querido');
   });
 });
+
+describe('mover artículos de una caja a otra', () => {
+  it('10g. una parte resta aquí y suma allí; entero cambia de caja; si allí ya está, se suma; queda en el historial de las dos', async () => {
+    const { query } = db();
+    const nuevo = async (sitio, cantidad, rotos = 0) => {
+      const { articuloId } = await ed().crearArticulo({ es: 'Sábana mover ' + Math.random(), sitioId: sitio, cantidad }, ADMIN);
+      const id = (await query('SELECT id FROM contenido WHERE articulo_id = $1', [articuloId])).rows[0].id;
+      if (rotos) await ed().cambiarRotos(id, rotos, ADMIN);
+      return { articuloId, id };
+    };
+    const linea = async id => (await query('SELECT sitio_id, cantidad, rotos FROM contenido WHERE id = $1', [id])).rows[0];
+    // Una parte: 3 de 10 (1 rota)
+    const a = await nuevo(d.p1, 10, 2);
+    const r = await ed().moverArticulos({ desdeSitioId: d.p1, haciaSitioId: d.c1, lineas: [{ contenidoId: a.id, cantidad: 3, rotos: 1 }] }, ADMIN);
+    expect(r.movidos).toBe(1);
+    expect(await linea(a.id)).toMatchObject({ sitio_id: d.p1, cantidad: 7, rotos: 1 });
+    const alla = (await query('SELECT cantidad, rotos FROM contenido WHERE articulo_id = $1 AND sitio_id = $2', [a.articuloId, d.c1])).rows[0];
+    expect(alla).toMatchObject({ cantidad: 3, rotos: 1 });
+    // El resto, entero: se suma a la línea que ya está allí y desaparece de aquí (sin papelera)
+    await ed().moverArticulos({ desdeSitioId: d.p1, haciaSitioId: d.c1, lineas: [{ contenidoId: a.id, cantidad: 7, rotos: 1 }] }, ADMIN);
+    expect(await linea(a.id)).toBe(undefined);
+    expect((await query('SELECT cantidad, rotos FROM contenido WHERE articulo_id = $1 AND sitio_id = $2', [a.articuloId, d.c1])).rows[0]).toMatchObject({ cantidad: 10, rotos: 2 });
+    expect((await ed().quitados(d.p1)).some(q => q.articulo_id === a.articuloId)).toBe(false);
+    // Entero sin nada allí: la línea cambia de caja
+    const b = await nuevo(d.p1, 4);
+    await ed().moverArticulos({ desdeSitioId: d.p1, haciaSitioId: d.c1, lineas: [{ contenidoId: b.id, cantidad: 4, rotos: 0 }] }, ADMIN);
+    expect(await linea(b.id)).toMatchObject({ sitio_id: d.c1, cantidad: 4 });
+    // Historial en las dos cajas
+    expect((await ed().historial({ sitioId: d.p1, idioma: 'es' }))[0]).toMatchObject({ accion: 'mover' });
+    expect((await ed().historial({ sitioId: d.c1, idioma: 'es' }))[0]).toMatchObject({ accion: 'mover' });
+    // Sin caja, a la misma caja o sin nada elegido: error
+    await expect(ed().moverArticulos({ desdeSitioId: d.c1, haciaSitioId: d.c1, lineas: [] }, ADMIN)).rejects.toThrow('otra caja');
+    await expect(ed().moverArticulos({ desdeSitioId: d.c1, haciaSitioId: d.p1, lineas: [] }, ADMIN)).rejects.toThrow('Elige qué mover');
+  });
+});

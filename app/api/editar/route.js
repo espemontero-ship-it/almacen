@@ -56,6 +56,8 @@ export async function POST(request) {
         return Response.json({ ok: true, ...(await ed.revisarCaja(Number(c.sitioId), quien)) });
       case 'llenado':
         return Response.json({ ok: true, ...(await ed.cambiarLlenado(Number(c.sitioId), c.llenado, quien)) });
+      case 'moverArticulos':
+        return Response.json({ ok: true, ...(await ed.moverArticulos(c, quien)) });
       case 'borrarCaja':
         return Response.json({ ok: true, ...(await ed.borrarCaja(Number(c.sitioId), quien)) });
       case 'recuperarCaja':

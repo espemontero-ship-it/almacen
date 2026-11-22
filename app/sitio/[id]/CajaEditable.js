@@ -206,7 +206,7 @@ function PideFoto({ c, r, revision, actualizar }) {
   );
 }
 
-function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, revision = null }) {
+function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, revision = null, mover = null }) {
   const r = R[idioma === 'en' ? 'en' : 'es'];
   const t = textos(idioma);
   const x = T[idioma === 'en' ? 'en' : 'es'];
@@ -280,7 +280,15 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, rev
     </>
   ) : null;
   // Inventario (A): se marca tocando el artículo en una zona libre (no foto, números, comentario, botones ni campos).
-  const tocar = revision && !soloVer ? e => {
+  // Mover: mientras se eligen qué mover, tocar el artículo (o su casilla) lo elige o lo quita.
+  const elegido = mover ? mover.elegidos.has(c.id) : false;
+  const casillaMover = mover ? (
+    <input type="checkbox" className="cx-mover-casilla" checked={elegido} onChange={() => mover.alternar(c.id)} aria-label={(idioma === 'en' ? 'Move ' : 'Mover ') + c.nombre} />
+  ) : null;
+  const tocar = mover ? e => {
+    if (e.target.closest('button, input, textarea, select, a, [contenteditable]')) return;
+    mover.alternar(c.id);
+  } : revision && !soloVer ? e => {
     // El nombre tampoco marca: con doble toque se edita, también durante el inventario.
     if (e.target.closest('button, input, textarea, select, a, label, .cx-foto, .boton-foto-envoltura, .esc-nombre, .nombre-articulo, .nombre-zona, [contenteditable]')) return;
     revision.alternar(c.id);
@@ -308,8 +316,9 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, rev
   if (version === 'fila') {
     // Igual que una fila de la Lista del inicio (Escritorio.js), con − + en Total y Rotas, Comentario y ✕.
     return (
-      <tr className={tocar ? 'inv-tocable' : undefined} onClick={tocar}>
+      <tr className={[tocar ? 'inv-tocable' : '', elegido ? 'cx-elegido' : ''].filter(Boolean).join(' ') || undefined} onClick={tocar}>
         <td className="esc-c-foto">
+          {casillaMover}
           {c.foto_url ? (
             <span className="esc-foto esc-foto-40"><img src={c.foto_url} alt={c.nombre} loading="lazy" /></span>
           ) : (
@@ -335,7 +344,8 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, rev
     // Misma tarjeta que el inicio (Cuadrícula), con los datos editables con doble clic.
     return (
       <li>
-        <div className={tocar ? 'esc-tarjeta cx-tarjeta tarjeta-con-aspa inv-tocable' : 'esc-tarjeta cx-tarjeta tarjeta-con-aspa'} onClick={tocar}>
+        <div className={['esc-tarjeta cx-tarjeta tarjeta-con-aspa', tocar ? 'inv-tocable' : '', elegido ? 'cx-elegido' : ''].filter(Boolean).join(' ')} onClick={tocar}>
+          {casillaMover && <span className="cx-mover-esquina">{casillaMover}</span>}
           {/* ✕ en la esquina de la tarjeta, montado sobre su borde (fuera de la foto) */}
           {aspa && <span className="aspa-esquina-tarjeta">{aspa}</span>}
           <FotoCamara
@@ -685,7 +695,112 @@ export function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho, abiertoIni
 // Caja: igual que el inicio, con botón Cuadrícula / Lista en el ordenador.
 // Lista: una fila por artículo (dos columnas en el ordenador). Cuadrícula: las tarjetas del inicio.
 // En el móvil, solo la lista.
-export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, soloVer = false, codigo = '', llenado = null, titulo = null, resumen = '', revisionInicial = null }) {
+// Mover: barra de abajo ("3 elegidos · Cancelar · Elegir caja") y ventana con cuántos de cada uno (− +, también las
+// rotas si las hay) y la caja de destino (buscador de cajas).
+function MoverBarra({ sitioId, idioma, lineas, alCancelar, alMover }) {
+  const en = idioma === 'en';
+  const [abierto, setAbierto] = useState(false);
+  const [cuantos, setCuantos] = useState({});
+  const [texto, setTexto] = useState('');
+  const [cajas, setCajas] = useState([]);
+  const [destino, setDestino] = useState(null);
+  const [error, setError] = useState('');
+  const [enviando, setEnviando] = useState(false);
+
+  useEffect(() => {
+    const q = texto.trim();
+    if (q.length < 1) { setCajas([]); return undefined; }
+    let vivo = true;
+    const t = setTimeout(async () => {
+      try {
+        const r = await fetch('/api/sugerencias?q=' + encodeURIComponent(q));
+        const d = r.ok ? await r.json() : { lista: [] };
+        if (vivo) setCajas((d.lista || []).filter(z => z.tipo === 'caja' && z.id !== sitioId).slice(0, 8));
+      } catch { if (vivo) setCajas([]); }
+    }, 200);
+    return () => { vivo = false; clearTimeout(t); };
+  }, [texto, sitioId]);
+
+  const valor = (l, campo) => {
+    const v = cuantos[l.id]?.[campo];
+    return v === undefined ? (campo === 'cantidad' ? l.cantidad : l.rotos) : v;
+  };
+  const poner = (l, campo, n) => setCuantos(c => {
+    const actual = { cantidad: valor(l, 'cantidad'), rotos: valor(l, 'rotos'), ...(c[l.id] || {}), [campo]: n };
+    if (actual.rotos > actual.cantidad) actual.rotos = actual.cantidad;
+    return { ...c, [l.id]: actual };
+  });
+
+  async function mover() {
+    setError('');
+    setEnviando(true);
+    try {
+      const d = await editar({
+        accion: 'moverArticulos',
+        desdeSitioId: sitioId,
+        haciaSitioId: destino.id,
+        lineas: lineas.map(l => ({ contenidoId: l.id, cantidad: valor(l, 'cantidad'), rotos: Math.min(valor(l, 'rotos'), valor(l, 'cantidad')) })),
+      });
+      alMover(d);
+    } catch (err) {
+      setError(err.message || (en ? 'Could not be moved.' : 'No se ha podido mover.'));
+    }
+    setEnviando(false);
+  }
+
+  const nombreDestino = c => [c.codigo, c.nombre].filter(Boolean).join(' ');
+  const n = lineas.length;
+  return (
+    <>
+      <div className="mover-barra">
+        <span>{en ? n + ' chosen' : n + (n === 1 ? ' elegido' : ' elegidos')}</span>
+        <button type="button" className="boton-secundario" onClick={alCancelar}>{en ? 'Cancel' : 'Cancelar'}</button>
+        <button type="button" className="boton-principal" disabled={!n} onClick={() => setAbierto(true)}>{en ? 'Choose box' : 'Elegir caja'}</button>
+      </div>
+      {abierto && (
+        <div className="dialogo-fondo" role="dialog" aria-modal="true">
+          <div className="dialogo mover-dialogo">
+            <p className="mover-titulo">{en ? 'How many of each' : 'Cuántos de cada uno'}</p>
+            <ul className="mover-lineas">
+              {lineas.map(l => (
+                <li key={l.id}>
+                  <span className="mover-nombre">{l.nombre}{l.talla ? ' · ' + l.talla : ''}</span>
+                  <Contador etiqueta={en ? 'Units' : 'Unidades'} valor={valor(l, 'cantidad')} min={1} max={l.cantidad} onCambio={v => poner(l, 'cantidad', v)} />
+                  {l.rotos > 0 && (
+                    <span className="mover-rotas">
+                      {en ? 'broken' : 'rotas'}
+                      <Contador etiqueta={en ? 'Broken' : 'Rotas'} valor={Math.min(valor(l, 'rotos'), valor(l, 'cantidad'))} min={0} max={Math.min(l.rotos, valor(l, 'cantidad'))} onCambio={v => poner(l, 'rotos', v)} />
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <label className="mover-buscar">
+              {en ? 'To which box' : 'A qué caja'}
+              <input value={destino ? nombreDestino(destino) : texto} onChange={e => { setDestino(null); setTexto(e.target.value); }} placeholder={en ? 'Box code or name' : 'Código o nombre de la caja'} autoComplete="off" />
+            </label>
+            {!destino && cajas.length > 0 && (
+              <ul className="mover-cajas">
+                {cajas.map(c => (
+                  <li key={c.id}><button type="button" onClick={() => setDestino(c)}>{nombreDestino(c)}</button></li>
+                ))}
+              </ul>
+            )}
+            {error && <p className="error">{error}</p>}
+            <div className="revision-botones">
+              <button type="button" className="boton-principal" disabled={!destino || enviando} onClick={mover}>
+                {destino ? (en ? 'Move to ' : 'Mover a ') + destino.codigo : (en ? 'Move' : 'Mover')}
+              </button>
+              <button type="button" className="boton-secundario" onClick={() => setAbierto(false)}>{en ? 'Back' : 'Volver'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, soloVer = false, codigo = '', llenado = null, titulo = null, resumen = '', revisionInicial = null, infoCorta = '' }) {
   const router = useRouter();
   const en = idioma === 'en';
   const r = R[en ? 'en' : 'es'];
@@ -700,6 +815,10 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
   const [terminada, setTerminada] = useState(null);
   const [errorRevision, setErrorRevision] = useState('');
   const yo = revisionInicial?.yo ?? null;
+  // Mover: "Mover" (arriba) → se eligen los artículos → "Elegir caja" → cuántos de cada uno y a qué caja.
+  const [moviendo, setMoviendo] = useState(false);
+  const [elegidos, setElegidos] = useState(() => new Map());
+  const [avisoMover, setAvisoMover] = useState('');
   useEffect(() => setLineas(contenido), [contenido]);
   useEffect(() => {
     const guardada = window.localStorage.getItem('caja-vista');
@@ -840,13 +959,25 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
     router.refresh();
   }
 
-  const comunes = { idioma, actualizar, onQuitada: quitada, soloVer, revision };
+  const alternarMover = id => setElegidos(m => {
+    const n = new Map(m);
+    if (n.has(id)) n.delete(id);
+    else n.set(id, true);
+    return n;
+  });
+  const mover = moviendo ? { elegidos, alternar: alternarMover } : null;
+  const comunes = { idioma, actualizar, onQuitada: quitada, soloVer, revision, mover };
 
   return (
     <>
       <div className="cx-barra-caja cab-barra cab-op2">
         <span className={'cab-linea cab-izq' + (revisando ? ' cab-inv' : '')}>{titulo}<span className="cab-gris">{resumenVisto}</span></span>
         {!soloVer && <AnadirArticulo sitioId={sitioId} etiquetas={etiquetas} idioma={idioma} onHecho={() => router.refresh()} nombreCaja={codigo} />}
+        {!soloVer && lineas.length > 0 && (
+          <button type="button" className={moviendo ? 'boton-secundario cx-mover-activo' : 'boton-secundario'} onClick={() => { setMoviendo(!moviendo); setElegidos(new Map()); setAvisoMover(''); }}>
+            {en ? 'Move' : 'Mover'}
+          </button>
+        )}
         {!soloVer && !revisando && !terminada && <button type="button" className="boton-secundario" onClick={empezar}>{r.hacer}</button>}
         {!soloVer && revisando && <button type="button" className="boton-secundario" onClick={cajaRevisada}>{r.revisada}</button>}
         {!soloVer && terminada?.siguiente && <a href={`/sitio/${terminada.siguiente}`} className="boton-secundario">{r.siguiente}</a>}
@@ -864,12 +995,23 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
             </span>
           </span>
         )}
-        {!soloVer && <span className="cx-borrar-caja"><BorrarCaja sitioId={sitioId} codigo={codigo} idioma={idioma} alBorrar="/cajas" /></span>}
+        {!soloVer && <span className="cx-borrar-caja"><BorrarCaja sitioId={sitioId} codigo={codigo} idioma={idioma} alBorrar="/cajas" conTexto /></span>}
       </div>
       {!soloVer && revisando && presentes.length > 0 && <p className="inv-tambien cx-leyenda-caja">{r.tambien(unirNombres(presentes, en))}</p>}
-      {!soloVer && revisando && <p className="inv-leyenda cx-leyenda-caja">{r.leyenda}</p>}
       {!soloVer && terminada && <p className="inv-leyenda cx-leyenda-caja">{r.hecha}</p>}
       {errorRevision && <p className="error cx-leyenda-caja">{errorRevision}</p>}
+      {/* Móvil: revisión y recuento en una línea, debajo de los botones y encima de la lista */}
+      <p className="cx-info-movil solo-movil">{revisando ? resumenVisto : infoCorta}</p>
+      {avisoMover && <p className="aviso cx-leyenda-caja">{avisoMover}</p>}
+      {moviendo && (
+        <MoverBarra
+          sitioId={sitioId}
+          idioma={idioma}
+          lineas={lineas.filter(l => elegidos.has(l.id))}
+          alCancelar={() => { setMoviendo(false); setElegidos(new Map()); }}
+          alMover={d => { setMoviendo(false); setElegidos(new Map()); setAvisoMover((en ? 'Moved to ' : 'Movido a ') + d.hacia.codigo + '.'); router.refresh(); }}
+        />
+      )}
       {[{ grupo: pendientes, titulo: null }, ...(revisados.length ? [{ grupo: revisados, titulo: r.revisadosTitulo(revisados.length), esRevisados: true }] : [])].map(({ grupo, titulo, esRevisados }) => {
         return (
           <div key={esRevisados ? 'revisados' : 'pendientes'} className={esRevisados ? 'inv-bloque-revisados' : undefined}>

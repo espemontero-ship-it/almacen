@@ -39,6 +39,13 @@ export default async function Sitio({ params }) {
     : null;
   const quien = revisada?.usuario_nombre ? (en ? ` by ${revisada.usuario_nombre}` : ` por ${revisada.usuario_nombre}`) : '';
   const textoRevision = revisada ? (en ? `Checked on ${fecha}${quien}` : `Revisada el ${fecha}${quien}`) : (en ? 'Not checked' : 'Sin revisar');
+  // Móvil: lo mismo en una sola línea, abreviado (pedido por ella), encima de la lista.
+  const infoCorta = [
+    revisada ? (en ? `Checked ${fecha}` : `Revisada ${fecha}`) : (en ? 'Not checked' : 'Sin revisar'),
+    revisada?.usuario_nombre || null,
+    en ? `${lineas} items` : `${lineas} art.`,
+    en ? `${sitio.unidades} units` : `${sitio.unidades} ud.`,
+  ].filter(Boolean).join(' · ');
   return (
     <>
       <Cabecera volver idioma={idioma} />
@@ -51,7 +58,8 @@ export default async function Sitio({ params }) {
               <span className="revision-texto">{textoRevision}</span>
             </>
           )}
-          resumen={`${t.nArticulos(lineas)} · ${t.nUnidades(sitio.unidades)}`} />
+          resumen={`${t.nArticulos(lineas)} · ${t.nUnidades(sitio.unidades)}`}
+          infoCorta={infoCorta} />
         {puedeEditar && <Papelera lineas={papelera} titulo={th.papelera} textoRecuperar={th.recuperar} idioma={idioma} />}
         <p className="enlace-historial">
           <Link href={`/historial?caja=${sitio.id}`} className="enlace-volver">{th.verHistorialCaja}</Link>

@@ -44,7 +44,7 @@ describe('inventario de una caja (compartido)', () => {
     expect(screen.queryByRole('button', { name: 'Hacer inventario' })).toBe(null);
   });
 
-  it('141. "Hacer inventario" lo empieza en el servidor: "Quedan 2 de 2", la leyenda y "Caja revisada"', async () => {
+  it('141. "Hacer inventario" lo empieza en el servidor: "Quedan 2 de 2" y "Caja revisada" (sin leyenda, quitada por ella)', async () => {
     const { red } = servidor({ activa: false });
     const { container } = caja();
     expect(container.textContent).toContain('2 artículos · 13 unidades');
@@ -52,7 +52,7 @@ describe('inventario de una caja (compartido)', () => {
     await waitFor(() => expect(container.textContent).toContain('Quedan 2 de 2'));
     expect(red[0].cuerpo).toEqual({ accion: 'empezarRevision', sitioId: 7 });
     expect(container.textContent).not.toContain('2 artículos · 13 unidades');
-    expect(container.textContent).toContain('Haz click para marcarlo como revisado o pulsa Caja revisada si la caja está correcta');
+    expect(container.textContent).not.toContain('Haz click para marcarlo');
     expect(screen.getByRole('button', { name: 'Caja revisada' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Hacer inventario' })).toBe(null);
   });

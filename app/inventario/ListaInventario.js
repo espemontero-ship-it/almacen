@@ -16,7 +16,7 @@ const T = {
     nunca: 'Nunca',
     enCurso: 'En revisión',
     revisadaPor: (f, q) => `${f}${q ? ` · ${q}` : ''}`,
-    anadirCaja: 'Añadir caja',
+    anadirCaja: 'Añadir caja', colCaja: 'Caja', colFecha: 'Última revisión', colAcciones: 'Acciones',
     error: 'No se ha podido marcar.',
   },
   en: {
@@ -29,7 +29,7 @@ const T = {
     nunca: 'Never',
     enCurso: 'Being checked',
     revisadaPor: (f, q) => `${f}${q ? ` · ${q}` : ''}`,
-    anadirCaja: 'Add box',
+    anadirCaja: 'Add box', colCaja: 'Box', colFecha: 'Last check', colAcciones: 'Actions',
     error: 'Could not be marked.',
   },
 };
@@ -70,6 +70,73 @@ export default function ListaInventario({ pendientes, revisadas, idioma, puedeEd
     }
   }
 
+  // Ordenar tocando el título (Caja o Última revisión): ▲ y luego ▼; lo vacío ("Nunca") siempre al final.
+  // El mismo orden vale para Pendientes y Revisadas.
+  const [orden, setOrden] = useState(null);
+  const alternar = col => setOrden(o => (o && o.col === col ? { col, dir: o.dir === 'asc' ? 'desc' : 'asc' } : { col, dir: 'asc' }));
+  const ordenar = (lista, fechaDe) => {
+    if (!orden) return lista;
+    const signo = orden.dir === 'asc' ? 1 : -1;
+    const valor = c => (orden.col === 'caja' ? nombreCaja(c) : fechaDe(c) ? new Date(fechaDe(c)).getTime() : null);
+    return [...lista].sort((a, b) => {
+      const va = valor(a);
+      const vb = valor(b);
+      if (va === null || vb === null) return va === vb ? 0 : va === null ? 1 : -1;
+      if (typeof va === 'number') return signo * (va - vb);
+      return signo * String(va).localeCompare(String(vb), 'es', { numeric: true, sensitivity: 'base' });
+    });
+  };
+  const titulo = (col, texto) => {
+    const activo = orden && orden.col === col;
+    return (
+      <button type="button" className={activo ? 'orden-titulo orden-activo' : 'orden-titulo'} aria-sort={activo ? (orden.dir === 'asc' ? 'ascending' : 'descending') : undefined} onClick={() => alternar(col)}>
+        {texto}<span className="orden-flecha" aria-hidden="true">{activo ? (orden.dir === 'asc' ? ' ▲' : ' ▼') : ''}</span>
+      </button>
+    );
+  };
+
+  const tabla = (lista, fechaDe, porDe, esPendiente) => (
+    <table className="inv-tabla">
+      <thead>
+        <tr>
+          <th>{titulo('caja', x.colCaja)}</th>
+          <th>{titulo('fecha', x.colFecha)}</th>
+          {puedeEditar && <th aria-label={x.colAcciones} />}
+        </tr>
+      </thead>
+      <tbody>
+        {ordenar(lista, fechaDe).map(c => (
+          <tr key={c.id}>
+            <td>
+              <Link href={`/sitio/${c.id}`} className="inv-caja-nombre">{nombreCaja(c)}</Link>
+              {esPendiente && c.en_curso && <span className="inv-en-curso"> · {x.enCurso}</span>}
+            </td>
+            <td className="inv-col-fecha">
+              {fechaDe(c) ? (
+                <>
+                  {fecha(fechaDe(c), idioma)}
+                  {porDe(c) && <span className="esc-gris inv-caja-sub">{porDe(c)}</span>}
+                </>
+              ) : <span className="esc-gris">{x.nunca}</span>}
+            </td>
+            {puedeEditar && (
+              <td className="inv-col-botones">
+                <span className="inv-caja-botones">
+                  {esPendiente && (
+                    <button type="button" className="boton-secundario" disabled={marcando !== null} onClick={() => marcar(c.id)}>
+                      {marcando === c.id ? x.marcando : x.marcar}
+                    </button>
+                  )}
+                  <BorrarCaja sitioId={c.id} codigo={c.codigo} idioma={idioma} />
+                </span>
+              </td>
+            )}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+
   return (
     <div className="inv-cajas">
       <p className="inv-acciones">
@@ -79,46 +146,11 @@ export default function ListaInventario({ pendientes, revisadas, idioma, puedeEd
       </p>
       {error && <p className="error">{error}</p>}
       <h2 className="grupo-titulo inv-subtitulo">{x.pendientes(pendientes.length)}</h2>
-      {pendientes.length === 0 && <p className="aviso">{x.ninguna}</p>}
-      <ul className="lista inv-lista-cajas">
-        {pendientes.map(c => (
-          <li key={c.id} className="inv-caja">
-            <span className="inv-caja-datos">
-              <Link href={`/sitio/${c.id}`} className="inv-caja-nombre">{nombreCaja(c)}</Link>
-              <span className="esc-gris inv-caja-sub">
-                {c.ultima_cuando ? x.ultima(fecha(c.ultima_cuando, idioma), c.ultima_por) : x.nunca}
-                {c.en_curso && <> · <strong className="inv-en-curso">{x.enCurso}</strong></>}
-              </span>
-            </span>
-            {puedeEditar && (
-              <span className="inv-caja-botones">
-                <button type="button" className="boton-secundario" disabled={marcando !== null} onClick={() => marcar(c.id)}>
-                  {marcando === c.id ? x.marcando : x.marcar}
-                </button>
-                <BorrarCaja sitioId={c.id} codigo={c.codigo} idioma={idioma} />
-              </span>
-            )}
-          </li>
-        ))}
-      </ul>
+      {pendientes.length === 0 ? <p className="aviso">{x.ninguna}</p> : tabla(pendientes, c => c.ultima_cuando, c => c.ultima_por, true)}
       {revisadas.length > 0 && (
         <>
           <h2 className="grupo-titulo inv-subtitulo">{x.revisadas(revisadas.length)}</h2>
-          <ul className="lista inv-lista-cajas">
-            {revisadas.map(c => (
-              <li key={c.id} className="inv-caja">
-                <span className="inv-caja-datos">
-                  <Link href={`/sitio/${c.id}`} className="inv-caja-nombre">{nombreCaja(c)}</Link>
-                  <span className="esc-gris inv-caja-sub">{x.revisadaPor(fecha(c.cuando, idioma), c.usuario_nombre)}</span>
-                </span>
-                {puedeEditar && (
-                  <span className="inv-caja-botones">
-                    <BorrarCaja sitioId={c.id} codigo={c.codigo} idioma={idioma} />
-                  </span>
-                )}
-              </li>
-            ))}
-          </ul>
+          {tabla(revisadas, c => c.cuando, c => c.usuario_nombre, false)}
         </>
       )}
     </div>

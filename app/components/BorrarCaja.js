@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 // Aspa ✕ para borrar una caja entera (edición y administración). Pregunta antes; la caja queda 30 días
 // en el Historial con "Recuperar". alBorrar: a dónde ir después (si no, se recarga la pantalla).
-export default function BorrarCaja({ sitioId, codigo, idioma, alBorrar = null }) {
+export default function BorrarCaja({ sitioId, codigo, idioma, alBorrar = null, conTexto = false }) {
   const router = useRouter();
   const en = idioma === 'en';
   const [preguntar, setPreguntar] = useState(false);
@@ -31,7 +31,7 @@ export default function BorrarCaja({ sitioId, codigo, idioma, alBorrar = null })
 
   return (
     <>
-      <button type="button" className="inv-aspa" aria-label={en ? `Delete box ${codigo}` : `Borrar la caja ${codigo}`} title={en ? 'Delete box' : 'Borrar caja'} onClick={() => setPreguntar(true)}>✕</button>
+      <button type="button" className={conTexto ? 'boton-secundario' : 'inv-aspa'} aria-label={en ? `Delete box ${codigo}` : `Borrar la caja ${codigo}`} title={en ? 'Delete box' : 'Borrar caja'} onClick={() => setPreguntar(true)}>{conTexto ? (en ? 'Delete box' : 'Borrar caja') : '✕'}</button>
       {preguntar && (
         <div className="dialogo-fondo" role="dialog" aria-modal="true">
           <div className="dialogo">
