@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { createPortal } from 'react-dom';
 import Foto from '../../components/Foto';
-import BotonFoto from '../../components/BotonFoto';
+import BotonFoto, { ElegirFoto, subirFoto } from '../../components/BotonFoto';
 import NombreEditable from '../../components/NombreEditable';
 import BorrarCaja from '../../components/BorrarCaja';
 import CamaraEsquina from '../../components/CamaraEsquina';
@@ -33,7 +33,7 @@ const T = {
     confirmarQuitar: n => `¿Quitar «${n}» de esta caja?`,
     si: 'Sí, quitar',
     no: 'Cancelar',
-    anadir: 'Añadir artículo', catalogoBuscar: 'Buscar en el catálogo', etiquetaTodas: 'Etiqueta: todas', crearNuevo: 'Crear artículo nuevo', proponerIA: 'Proponer con IA', proponiendo: 'Proponiendo…', sinonimos: 'Sinónimos', sinonimosAyuda: 'Marca los que quieras guardar.', sinonimosNinguno: 'La IA no ha encontrado sinónimos exactos.', sinonimosPropios: 'Añadir otros (separados por comas)', crearYAnadir: c => (c ? `Crear y añadir a ${c}` : 'Crear y añadir a la caja'), crearCatalogo: 'Crear solo en el catálogo', creadoCatalogo: n => `«${n}» creado en el catálogo.`, volverCatalogo: '‹ Volver al catálogo', anadirA: c => (c ? `Añadir a ${c}` : 'Añadir'), anadidoA: c => `Añadido a ${c}.`, cargando: 'Cargando…', nadaCatalogo: 'No hay ningún artículo así.', nArt: n => `${n} ${n === 1 ? 'artículo' : 'artículos'}`,
+    anadir: 'Añadir artículo', catalogoBuscar: 'Buscar en el catálogo', etiquetaTodas: 'Etiqueta: todas', crearNuevo: 'Crear artículo nuevo', fotoNueva: 'Foto', quitarFoto: 'Quitar', fotoNoSubida: 'El artículo se ha creado, pero la foto no se ha podido subir. Súbela desde su tarjeta.', proponerIA: 'Proponer con IA', proponiendo: 'Proponiendo…', sinonimos: 'Sinónimos', sinonimosAyuda: 'Marca los que quieras guardar.', sinonimosNinguno: 'La IA no ha encontrado sinónimos exactos.', sinonimosPropios: 'Añadir otros (separados por comas)', crearYAnadir: c => (c ? `Crear y añadir a ${c}` : 'Crear y añadir a la caja'), crearCatalogo: 'Crear solo en el catálogo', creadoCatalogo: n => `«${n}» creado en el catálogo.`, volverCatalogo: '‹ Volver al catálogo', anadirA: c => (c ? `Añadir a ${c}` : 'Añadir'), anadidoA: c => `Añadido a ${c}.`, cargando: 'Cargando…', nadaCatalogo: 'No hay ningún artículo así.', nArt: n => `${n} ${n === 1 ? 'artículo' : 'artículos'}`,
     buscarArticulo: 'Escribe el artículo',
     cantidad: 'Cantidad',
     talla: 'Talla',
@@ -58,7 +58,7 @@ const T = {
     confirmarQuitar: n => `Remove “${n}” from this box?`,
     si: 'Yes, remove',
     no: 'Cancel',
-    anadir: 'Add item', catalogoBuscar: 'Search the catalogue', etiquetaTodas: 'Tag: all', crearNuevo: 'Create new item', proponerIA: 'Suggest with AI', proponiendo: 'Suggesting…', sinonimos: 'Synonyms', sinonimosAyuda: 'Tick the ones you want to keep.', sinonimosNinguno: 'The AI found no exact synonyms.', sinonimosPropios: 'Add others (separated by commas)', crearYAnadir: c => (c ? `Create and add to ${c}` : 'Create and add to the box'), crearCatalogo: 'Create in the catalogue only', creadoCatalogo: n => `“${n}” created in the catalogue.`, volverCatalogo: '‹ Back to the catalogue', anadirA: c => (c ? `Add to ${c}` : 'Add'), anadidoA: c => `Added to ${c}.`, cargando: 'Loading…', nadaCatalogo: 'No item like that.', nArt: n => `${n} ${n === 1 ? 'item' : 'items'}`,
+    anadir: 'Add item', catalogoBuscar: 'Search the catalogue', etiquetaTodas: 'Tag: all', crearNuevo: 'Create new item', fotoNueva: 'Photo', quitarFoto: 'Remove', fotoNoSubida: 'The item was created, but the photo could not be uploaded. Upload it from its card.', proponerIA: 'Suggest with AI', proponiendo: 'Suggesting…', sinonimos: 'Synonyms', sinonimosAyuda: 'Tick the ones you want to keep.', sinonimosNinguno: 'The AI found no exact synonyms.', sinonimosPropios: 'Add others (separated by commas)', crearYAnadir: c => (c ? `Create and add to ${c}` : 'Create and add to the box'), crearCatalogo: 'Create in the catalogue only', creadoCatalogo: n => `“${n}” created in the catalogue.`, volverCatalogo: '‹ Back to the catalogue', anadirA: c => (c ? `Add to ${c}` : 'Add'), anadidoA: c => `Added to ${c}.`, cargando: 'Loading…', nadaCatalogo: 'No item like that.', nArt: n => `${n} ${n === 1 ? 'item' : 'items'}`,
     buscarArticulo: 'Type the item',
     cantidad: 'Quantity',
     talla: 'Size',
@@ -114,10 +114,12 @@ const T2 = {
 };
 
 // Foto con el botón de la cámara como icono pequeño en su esquina.
-function FotoCamara({ c, x, actualizar, soloVer }) {
+function FotoCamara({ c, x, actualizar, soloVer, check = null }) {
   return (
     <span className="cx-foto">
       <Foto url={c.foto_url} nombre={c.nombre} />
+      {/* Inventario en el móvil: ✓ en la esquina de abajo a la izquierda (la cámara va en la otra) */}
+      {check && <span className="cx-check-esquina">{check}</span>}
       <span className="cx-camara">
         {!soloVer && <BotonFoto articuloId={c.articulo_id} etiqueta={x.foto} onSubida={url => actualizar(c.id, { foto_url: url })} />}
       </span>
@@ -279,7 +281,8 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, rev
   ) : null;
   // Inventario (A): se marca tocando el artículo en una zona libre (no foto, números, comentario, botones ni campos).
   const tocar = revision && !soloVer ? e => {
-    if (e.target.closest('button, input, textarea, select, a, label, .cx-foto, .boton-foto-envoltura')) return;
+    // El nombre tampoco marca: con doble toque se edita, también durante el inventario.
+    if (e.target.closest('button, input, textarea, select, a, label, .cx-foto, .boton-foto-envoltura, .esc-nombre, .nombre-articulo, .nombre-zona, [contenteditable]')) return;
     revision.alternar(c.id);
   } : undefined;
   // Quitar: aspa arriba a la derecha del artículo, siempre (con y sin inventario), en lugar del "Quitar" de antes.
@@ -335,7 +338,21 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, rev
         <div className={tocar ? 'esc-tarjeta cx-tarjeta tarjeta-con-aspa inv-tocable' : 'esc-tarjeta cx-tarjeta tarjeta-con-aspa'} onClick={tocar}>
           {/* ✕ en la esquina de la tarjeta, montado sobre su borde (fuera de la foto) */}
           {aspa && <span className="aspa-esquina-tarjeta">{aspa}</span>}
-          <FotoCamara c={c} x={x} actualizar={actualizar} soloVer={soloVer} />
+          <FotoCamara
+            c={c}
+            x={x}
+            actualizar={actualizar}
+            soloVer={soloVer}
+            check={revision && !soloVer ? (
+              <button
+                type="button"
+                className={marcadoPor !== null ? 'cx-check cx-check-hecho' : 'cx-check'}
+                aria-pressed={marcadoPor !== null}
+                aria-label={idioma === 'en' ? 'Checked' : 'Revisado'}
+                onClick={() => revision.alternar(c.id)}
+              >✓</button>
+            ) : null}
+          />
           <NombreEditable articuloId={c.articulo_id} nombre={c.nombre} sinonimos={c.sinonimos} idioma={idioma} puedeEditar={!soloVer} className="esc-nombre" />
           {/* En el móvil la etiqueta de categoría no sale, para que la tarjeta sea más corta (la talla sí) */}
           {talla && <span className="esc-gris">{talla}{etiquetasTexto && <span className="cx-etq-tarjeta"> · {etiquetasTexto}</span>}</span>}
@@ -374,6 +391,8 @@ export function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho, abiertoIni
   const [marcados, setMarcados] = useState([]);
   const [propios, setPropios] = useState('');
   const [proponiendo, setProponiendo] = useState(false);
+  // Foto elegida al crear el artículo: se sube cuando el artículo ya existe.
+  const [fotoNueva, setFotoNueva] = useState(null);
 
   function limpiarSinonimos() {
     setPropuestos(null);
@@ -434,6 +453,7 @@ export function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho, abiertoIni
     setNuevo({ es: '', en: '', etiquetas: [], ropa: false });
     setError('');
     limpiarSinonimos();
+    setFotoNueva(null);
   }
 
   async function anadir() {
@@ -457,8 +477,22 @@ export function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho, abiertoIni
     if (!soloCatalogo && !sitioId) { setError(idioma === 'en' ? 'Choose the box.' : 'Elige la caja.'); return; }
     try {
       const sinonimos = [...marcados, ...propios.split(',')].map(s => s.trim()).filter(Boolean);
-      await editar({ accion: 'crearArticulo', sitioId: soloCatalogo ? null : sitioId, cantidad, talla, soloCatalogo, ...nuevo, sinonimos });
-      setHecho(soloCatalogo ? x.creadoCatalogo(nuevo.es.trim()) : x.anadidoA(nombreCaja || ''));
+      const creado = await editar({ accion: 'crearArticulo', sitioId: soloCatalogo ? null : sitioId, cantidad, talla, soloCatalogo, ...nuevo, sinonimos });
+      // La foto elegida se sube en cuanto el artículo existe.
+      let fotoFallida = false;
+      if (fotoNueva && creado.articuloId) {
+        try { await subirFoto(creado.articuloId, fotoNueva); } catch { fotoFallida = true; }
+      }
+      setFotoNueva(null);
+      // Desde una caja, "Crear y añadir" vuelve a la caja (salvo que la foto falle, para poder avisar).
+      if (!soloCatalogo && !antesDelBuscador && !fotoFallida) {
+        reiniciar();
+        setAbierto(false);
+        setCatalogo(null);
+        onHecho();
+        return;
+      }
+      setHecho(fotoFallida ? x.fotoNoSubida : soloCatalogo ? x.creadoCatalogo(nuevo.es.trim()) : x.anadidoA(nombreCaja || ''));
       setCreando(false);
       setNuevo({ es: '', en: '', etiquetas: [], ropa: false });
       limpiarSinonimos();
@@ -558,6 +592,10 @@ export function AnadirArticulo({ sitioId, etiquetas, idioma, onHecho, abiertoIni
         {creando && (
         <div className="formulario">
           <button type="button" className="boton-texto" onClick={() => setCreando(false)}>{x.volverCatalogo}</button>
+          <div className="crear-foto">
+            <span className="crear-foto-titulo">{x.fotoNueva}</span>
+            <ElegirFoto archivo={fotoNueva} onElegir={setFotoNueva} etiqueta={x.fotoNueva} quitar={x.quitarFoto} />
+          </div>
           <div className="crear-nombre-ia">
             <label>
               {x.nombreEs}

@@ -1847,3 +1847,15 @@ tr.catalogo-elegido td:last-child { box-shadow: inset -2px 2px 0 var(--texto), i
   html body .esc.esc .esc-movil .esc-m-fila:first-child > .inicio-acciones .boton-secundario { flex: 1 1 auto; justify-content: center; }
   html body .esc.esc .esc-movil .esc-m-fila:first-child > .esc-m-vistas { flex: none; margin-left: 0; }
 }
+/* Inventario en el móvil: botón ✓ abajo a la izquierda de la foto de la tarjeta, del mismo tamaño que la cámara.
+   Marcado: negro. En el ordenador no sale (allí se marca tocando la tarjeta). */
+.cx-check-esquina { position: absolute; left: 3px; bottom: 3px; display: none; }
+.cx-check { width: 26px; height: 26px; min-height: 0; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--linea); border-radius: 0; background: var(--fondo); color: var(--texto); font-size: 15px; line-height: 1; cursor: pointer; }
+.cx-check-hecho { background: var(--texto); border-color: var(--texto); color: var(--fondo); }
+@media (max-width: 899px) { .cx-check-esquina { display: block; } }
+/* Crear artículo: la foto (se elige aquí y se sube al crear) */
+.crear-foto { display: flex; flex-direction: column; gap: 4px; }
+.elegir-foto { display: flex; align-items: flex-end; gap: 8px; }
+.elegir-foto-vista { width: 88px; height: 88px; object-fit: cover; border: 1px solid var(--linea); display: block; }
+.elegir-foto .boton-foto { width: 36px; height: 36px; padding: 0; }
+.elegir-foto .boton-foto svg { width: 20px; height: 20px; }
