@@ -787,44 +787,35 @@ function MoverBarra({ sitioId, idioma, lineas, alCancelar, alMover }) {
 
   const nombreDestino = c => [c.codigo, c.nombre].filter(Boolean).join(' ');
   const n = lineas.length;
+  // La caja de destino se elige en la misma barra de abajo (pedido por ella: sin otra pantalla).
   return (
-    <>
-      <div className="mover-barra">
-        <span>{en ? n + ' chosen' : n + (n === 1 ? ' elegido' : ' elegidos')}</span>
+    <div className="mover-barra">
+      {!destino && cajas.length > 0 && (
+        <ul className="mover-cajas mover-cajas-flotantes">
+          {cajas.map(c => (
+            <li key={c.id}><button type="button" onClick={() => setDestino(c)}>{nombreDestino(c)}</button></li>
+          ))}
+        </ul>
+      )}
+      <div className="mover-barra-fila">
+        <span className="mover-barra-cuantos">{en ? n + ' chosen' : n + (n === 1 ? ' elegido' : ' elegidos')}</span>
         <button type="button" className="boton-secundario" onClick={alCancelar}>{en ? 'Cancel' : 'Cancelar'}</button>
-        <button type="button" className="boton-principal" disabled={!n} onClick={() => setAbierto(true)}>{en ? 'Choose box' : 'Elegir caja'}</button>
       </div>
-      {abierto && typeof document !== 'undefined' && createPortal((
-        <div className="catalogo mover-pantalla" role="dialog" aria-modal="true">
-          <div className="catalogo-cabecera esc">
-            <div className="catalogo-fila">
-              <h2 className="grupo-titulo">{en ? 'Move' : 'Mover'}</h2>
-              <button type="button" className="boton-texto catalogo-cerrar" onClick={() => setAbierto(false)}>{en ? 'Back' : 'Volver'}</button>
-            </div>
-          </div>
-          <div className="catalogo-cuerpo mover-cuerpo">
-
-            <p className="mover-titulo">{en ? 'To which box' : 'A qué caja'}</p>
-            <label className="mover-buscar">
-              <input value={destino ? nombreDestino(destino) : texto} onChange={e => { setDestino(null); setTexto(e.target.value); }} placeholder={en ? 'Box code or name' : 'Código o nombre de la caja'} autoComplete="off" />
-            </label>
-            {!destino && cajas.length > 0 && (
-              <ul className="mover-cajas">
-                {cajas.map(c => (
-                  <li key={c.id}><button type="button" onClick={() => setDestino(c)}>{nombreDestino(c)}</button></li>
-                ))}
-              </ul>
-            )}
-            {error && <p className="error">{error}</p>}
-          </div>
-          <div className="catalogo-pie">
-            <button type="button" className="boton-principal" disabled={!destino || enviando} onClick={mover}>
-              {destino ? (en ? 'Move to ' : 'Mover a ') + destino.codigo : (en ? 'Choose the box' : 'Elige la caja')}
-            </button>
-          </div>
-        </div>
-      ), document.body)}
-    </>
+      <div className="mover-barra-fila">
+        <input
+          className="mover-barra-buscar"
+          value={destino ? nombreDestino(destino) : texto}
+          onChange={e => { setDestino(null); setTexto(e.target.value); }}
+          placeholder={en ? 'To which box' : 'A qué caja'}
+          aria-label={en ? 'To which box' : 'A qué caja'}
+          autoComplete="off"
+        />
+        <button type="button" className="boton-principal" disabled={!n || !destino || enviando} onClick={mover}>
+          {destino ? (en ? 'Move to ' : 'Mover a ') + destino.codigo : (en ? 'Move' : 'Mover')}
+        </button>
+      </div>
+      {error && <p className="error">{error}</p>}
+    </div>
   );
 }
 
@@ -1004,6 +995,9 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
     return n;
   });
   const mover = moviendo ? { elegidos, alternar: alternarMover, poner: ponerMover } : null;
+  // "Todo": marca todos los artículos de la caja con todas sus unidades (o los desmarca si ya estaban todos).
+  const todosElegidos = lineas.length > 0 && lineas.every(l => elegidos.has(l.id));
+  const elegirTodos = () => setElegidos(todosElegidos ? new Map() : new Map(lineas.map(l => [l.id, { cantidad: l.cantidad, rotos: l.rotos }])));
   const comunes = { idioma, actualizar, onQuitada: quitada, soloVer, revision, mover };
 
   return (
@@ -1041,6 +1035,11 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
       {/* Móvil: revisión y recuento en una línea, debajo de los botones y encima de la lista */}
       <p className="cx-info-movil solo-movil">{revisando ? resumenVisto : infoCorta}</p>
       {avisoMover && <p className="aviso cx-leyenda-caja">{avisoMover}</p>}
+      {moviendo && (
+        <span className="cx-mover-todos">
+          <input type="checkbox" className="cx-mover-casilla" checked={todosElegidos} onChange={elegirTodos} aria-label={en ? 'Choose all' : 'Elegir todos'} />
+        </span>
+      )}
       {moviendo && (
         <MoverBarra
           sitioId={sitioId}
