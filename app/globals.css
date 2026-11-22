@@ -1913,7 +1913,7 @@ html body .inv-caja-botones .inv-aspa { width: 28px; height: 28px; }
 .cx-mover-casilla { width: 20px; height: 20px; min-height: 0; margin: 0 6px 0 0; vertical-align: middle; }
 .cx-mover-esquina { position: absolute; top: 4px; left: 4px; z-index: 3; background: var(--fondo); line-height: 0; padding: 2px; }
 .cx-mover-esquina .cx-mover-casilla { margin: 0; }
-.cx-elegido.esc-tarjeta, tr.cx-elegido { outline: 2px solid var(--texto); outline-offset: -2px; }
+
 .mover-barra { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--fondo); border-top: 1px solid var(--texto); }
 .mover-barra > span { margin-right: auto; font-size: 14px; }
 .mover-barra .boton-secundario, .mover-barra .boton-principal { min-height: 36px; height: 36px; padding: 0 12px; font-size: 14px; }
@@ -1967,3 +1967,21 @@ html body .inv-caja-botones .inv-aspa { width: 28px; height: 28px; }
   html body .pagina-caja .cab-op2 > .cab-izq > .cab-gris { display: none; }
   html body .pagina-caja .cx-info-movil { display: block; margin: 0 0 4px; font-size: 12px; color: var(--secundario); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
+/* Mover, versión limpia: al elegir, cada artículo solo con casilla, foto, nombre y cuántos; sin marcos negros.
+   La pantalla de "Mover" ocupa toda la pantalla, como la de "Añadir artículo": primero qué y cuántos, luego a qué caja. */
+.cx-tabla-caja:has(.cx-mover-fila) thead { display: none; }
+.cx-mover-fila { cursor: pointer; }
+.cx-mover-linea { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cx-mover-cuantos { color: var(--secundario); font-size: 13px; white-space: nowrap; }
+.cx-mover-tarjeta { position: relative; cursor: pointer; }
+.cx-mover-tarjeta .cx-foto .foto { width: 100%; height: auto; aspect-ratio: 1; }
+.mover-cuerpo { display: flex; flex-direction: column; gap: 10px; padding-bottom: 80px; }
+.mover-pantalla .mover-titulo { margin: 6px 0 0; font-size: 14px; }
+.mover-pantalla .catalogo-pie { justify-content: flex-end; }
+.mover-pantalla .catalogo-pie .boton-principal { min-height: 40px; height: 40px; padding: 0 16px; }
+/* Mover: al marcar un artículo, sus − + de unidades (y rotas) en la misma fila */
+.cx-mover-elegir { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.cx-mover-rotas { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--secundario); }
+.cx-mover-elegir .contador-boton, .cx-mover-elegir .contador-valor { height: 30px; min-height: 30px; }
+.cx-mover-elegir .contador-boton { width: 28px; }
+.cx-mover-elegir .contador-valor { width: 2.4em; }

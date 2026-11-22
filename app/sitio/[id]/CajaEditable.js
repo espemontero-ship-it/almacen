@@ -313,6 +313,43 @@ function Linea({ c, idioma, version, actualizar, onQuitada, soloVer = false, rev
     </>
   );
 
+  if (mover) {
+    const foto = c.foto_url
+      ? <span className="esc-foto esc-foto-40"><img src={c.foto_url} alt={c.nombre} loading="lazy" /></span>
+      : <span className="esc-foto esc-foto-vacia esc-foto-40" aria-hidden="true" />;
+    const eleccion = mover.elegidos.get(c.id);
+    const cuantos = eleccion ? (
+      <span className="cx-mover-elegir">
+        <Contador etiqueta={idioma === 'en' ? 'Units' : 'Unidades'} valor={eleccion.cantidad} min={1} max={c.cantidad} onCambio={n => mover.poner(c.id, 'cantidad', n)} />
+        {c.rotos > 0 && (
+          <span className="cx-mover-rotas">
+            {idioma === 'en' ? 'broken' : 'rotas'}
+            <Contador etiqueta={idioma === 'en' ? 'Broken' : 'Rotas'} valor={Math.min(eleccion.rotos, eleccion.cantidad)} min={0} max={Math.min(c.rotos, eleccion.cantidad)} onCambio={n => mover.poner(c.id, 'rotos', n)} />
+          </span>
+        )}
+      </span>
+    ) : <span className="cx-mover-cuantos">×{c.cantidad}{c.rotos > 0 ? (idioma === 'en' ? ` · ${c.rotos} broken` : ` · ${c.rotos} rotas`) : ''}</span>;
+    if (version === 'fila') {
+      return (
+        <tr className="cx-mover-fila" onClick={tocar}>
+          <td className="esc-c-foto">{casillaMover}{foto}</td>
+          <td colSpan={5}><span className="cx-mover-linea"><span><span className="esc-nombre">{c.nombre}</span>{talla && <span className="esc-sub"> · {talla}</span>}</span>{cuantos}</span></td>
+        </tr>
+      );
+    }
+    return (
+      <li>
+        <div className="esc-tarjeta cx-tarjeta cx-mover-tarjeta" onClick={tocar}>
+          <span className="cx-mover-esquina">{casillaMover}</span>
+          <span className="cx-foto"><Foto url={c.foto_url} nombre={c.nombre} /></span>
+          <span className="esc-nombre">{c.nombre}</span>
+          {talla && <span className="esc-gris">{talla}</span>}
+          {cuantos}
+        </div>
+      </li>
+    );
+  }
+
   if (version === 'fila') {
     // Igual que una fila de la Lista del inicio (Escritorio.js), con − + en Total y Rotas, Comentario y ✕.
     return (
@@ -739,7 +776,7 @@ function MoverBarra({ sitioId, idioma, lineas, alCancelar, alMover }) {
         accion: 'moverArticulos',
         desdeSitioId: sitioId,
         haciaSitioId: destino.id,
-        lineas: lineas.map(l => ({ contenidoId: l.id, cantidad: valor(l, 'cantidad'), rotos: Math.min(valor(l, 'rotos'), valor(l, 'cantidad')) })),
+        lineas: lineas.map(l => ({ contenidoId: l.id, cantidad: l.mover.cantidad, rotos: Math.min(l.mover.rotos, l.mover.cantidad) })),
       });
       alMover(d);
     } catch (err) {
@@ -757,26 +794,18 @@ function MoverBarra({ sitioId, idioma, lineas, alCancelar, alMover }) {
         <button type="button" className="boton-secundario" onClick={alCancelar}>{en ? 'Cancel' : 'Cancelar'}</button>
         <button type="button" className="boton-principal" disabled={!n} onClick={() => setAbierto(true)}>{en ? 'Choose box' : 'Elegir caja'}</button>
       </div>
-      {abierto && (
-        <div className="dialogo-fondo" role="dialog" aria-modal="true">
-          <div className="dialogo mover-dialogo">
-            <p className="mover-titulo">{en ? 'How many of each' : 'Cuántos de cada uno'}</p>
-            <ul className="mover-lineas">
-              {lineas.map(l => (
-                <li key={l.id}>
-                  <span className="mover-nombre">{l.nombre}{l.talla ? ' · ' + l.talla : ''}</span>
-                  <Contador etiqueta={en ? 'Units' : 'Unidades'} valor={valor(l, 'cantidad')} min={1} max={l.cantidad} onCambio={v => poner(l, 'cantidad', v)} />
-                  {l.rotos > 0 && (
-                    <span className="mover-rotas">
-                      {en ? 'broken' : 'rotas'}
-                      <Contador etiqueta={en ? 'Broken' : 'Rotas'} valor={Math.min(valor(l, 'rotos'), valor(l, 'cantidad'))} min={0} max={Math.min(l.rotos, valor(l, 'cantidad'))} onCambio={v => poner(l, 'rotos', v)} />
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
+      {abierto && typeof document !== 'undefined' && createPortal((
+        <div className="catalogo mover-pantalla" role="dialog" aria-modal="true">
+          <div className="catalogo-cabecera esc">
+            <div className="catalogo-fila">
+              <h2 className="grupo-titulo">{en ? 'Move' : 'Mover'}</h2>
+              <button type="button" className="boton-texto catalogo-cerrar" onClick={() => setAbierto(false)}>{en ? 'Back' : 'Volver'}</button>
+            </div>
+          </div>
+          <div className="catalogo-cuerpo mover-cuerpo">
+
+            <p className="mover-titulo">{en ? 'To which box' : 'A qué caja'}</p>
             <label className="mover-buscar">
-              {en ? 'To which box' : 'A qué caja'}
               <input value={destino ? nombreDestino(destino) : texto} onChange={e => { setDestino(null); setTexto(e.target.value); }} placeholder={en ? 'Box code or name' : 'Código o nombre de la caja'} autoComplete="off" />
             </label>
             {!destino && cajas.length > 0 && (
@@ -787,15 +816,14 @@ function MoverBarra({ sitioId, idioma, lineas, alCancelar, alMover }) {
               </ul>
             )}
             {error && <p className="error">{error}</p>}
-            <div className="revision-botones">
-              <button type="button" className="boton-principal" disabled={!destino || enviando} onClick={mover}>
-                {destino ? (en ? 'Move to ' : 'Mover a ') + destino.codigo : (en ? 'Move' : 'Mover')}
-              </button>
-              <button type="button" className="boton-secundario" onClick={() => setAbierto(false)}>{en ? 'Back' : 'Volver'}</button>
-            </div>
+          </div>
+          <div className="catalogo-pie">
+            <button type="button" className="boton-principal" disabled={!destino || enviando} onClick={mover}>
+              {destino ? (en ? 'Move to ' : 'Mover a ') + destino.codigo : (en ? 'Choose the box' : 'Elige la caja')}
+            </button>
           </div>
         </div>
-      )}
+      ), document.body)}
     </>
   );
 }
@@ -962,10 +990,20 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
   const alternarMover = id => setElegidos(m => {
     const n = new Map(m);
     if (n.has(id)) n.delete(id);
-    else n.set(id, true);
+    else {
+      const l = lineas.find(x => x.id === id);
+      n.set(id, { cantidad: l ? l.cantidad : 1, rotos: l ? l.rotos : 0 });
+    }
     return n;
   });
-  const mover = moviendo ? { elegidos, alternar: alternarMover } : null;
+  const ponerMover = (id, campo, v) => setElegidos(m => {
+    const n = new Map(m);
+    const e = { ...(n.get(id) || {}), [campo]: v };
+    if (e.rotos > e.cantidad) e.rotos = e.cantidad;
+    n.set(id, e);
+    return n;
+  });
+  const mover = moviendo ? { elegidos, alternar: alternarMover, poner: ponerMover } : null;
   const comunes = { idioma, actualizar, onQuitada: quitada, soloVer, revision, mover };
 
   return (
@@ -974,7 +1012,7 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
         <span className={'cab-linea cab-izq' + (revisando ? ' cab-inv' : '')}>{titulo}<span className="cab-gris">{resumenVisto}</span></span>
         {!soloVer && <AnadirArticulo sitioId={sitioId} etiquetas={etiquetas} idioma={idioma} onHecho={() => router.refresh()} nombreCaja={codigo} />}
         {!soloVer && lineas.length > 0 && (
-          <button type="button" className={moviendo ? 'boton-secundario cx-mover-activo' : 'boton-secundario'} onClick={() => { setMoviendo(!moviendo); setElegidos(new Map()); setAvisoMover(''); }}>
+          <button type="button" className="boton-secundario" onClick={() => { setMoviendo(!moviendo); setElegidos(new Map()); setAvisoMover(''); }}>
             {en ? 'Move' : 'Mover'}
           </button>
         )}
@@ -1007,9 +1045,9 @@ export default function CajaEditable({ sitioId, contenido, etiquetas, idioma, so
         <MoverBarra
           sitioId={sitioId}
           idioma={idioma}
-          lineas={lineas.filter(l => elegidos.has(l.id))}
+          lineas={lineas.filter(l => elegidos.has(l.id)).map(l => ({ ...l, mover: elegidos.get(l.id) }))}
           alCancelar={() => { setMoviendo(false); setElegidos(new Map()); }}
-          alMover={d => { setMoviendo(false); setElegidos(new Map()); setAvisoMover((en ? 'Moved to ' : 'Movido a ') + d.hacia.codigo + '.'); router.refresh(); }}
+          alMover={d => { setMoviendo(false); setElegidos(new Map()); router.push('/sitio/' + d.hacia.id); }}
         />
       )}
       {[{ grupo: pendientes, titulo: null }, ...(revisados.length ? [{ grupo: revisados, titulo: r.revisadosTitulo(revisados.length), esRevisados: true }] : [])].map(({ grupo, titulo, esRevisados }) => {
