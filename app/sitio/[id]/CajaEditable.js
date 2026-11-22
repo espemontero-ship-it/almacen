@@ -744,19 +744,21 @@ function MoverBarra({ sitioId, idioma, lineas, alCancelar, alMover }) {
   const [error, setError] = useState('');
   const [enviando, setEnviando] = useState(false);
 
+  // Todas las cajas se cargan una vez; se filtran desde la primera letra (código que empieza así o nombre que lo lleva).
+  const [todasCajas, setTodasCajas] = useState(null);
   useEffect(() => {
-    const q = texto.trim();
-    if (q.length < 1) { setCajas([]); return undefined; }
     let vivo = true;
-    const t = setTimeout(async () => {
-      try {
-        const r = await fetch('/api/sugerencias?q=' + encodeURIComponent(q));
-        const d = r.ok ? await r.json() : { lista: [] };
-        if (vivo) setCajas((d.lista || []).filter(z => z.tipo === 'caja' && z.id !== sitioId).slice(0, 8));
-      } catch { if (vivo) setCajas([]); }
-    }, 200);
-    return () => { vivo = false; clearTimeout(t); };
-  }, [texto, sitioId]);
+    fetch('/api/lista-cajas').then(r => (r.ok ? r.json() : { cajas: [] })).then(d => { if (vivo) setTodasCajas(d.cajas || []); }).catch(() => { if (vivo) setTodasCajas([]); });
+    return () => { vivo = false; };
+  }, []);
+  useEffect(() => {
+    const q = normalizarTexto(texto.trim());
+    if (!q || !todasCajas) { setCajas([]); return; }
+    const sinEsta = todasCajas.filter(c => c.id !== sitioId);
+    const porCodigo = sinEsta.filter(c => normalizarTexto(c.codigo || '').startsWith(q));
+    const porNombre = sinEsta.filter(c => !porCodigo.includes(c) && normalizarTexto([c.codigo, c.nombre].filter(Boolean).join(' ')).includes(q));
+    setCajas([...porCodigo, ...porNombre].slice(0, 30));
+  }, [texto, sitioId, todasCajas]);
 
   const valor = (l, campo) => {
     const v = cuantos[l.id]?.[campo];
