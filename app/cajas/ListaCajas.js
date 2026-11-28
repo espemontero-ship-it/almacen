@@ -22,11 +22,11 @@ const CLAVES = {
 const T = {
   es: {
     tipo: 'Tipo de caja', revision: 'Revisión', todas: 'Todas', nuncaRevisadas: 'Nunca revisadas', sinRevisarDesde: 'Sin revisar desde…', nCajas: n => `${n} ${n === 1 ? 'caja' : 'cajas'}`,
-    caja: 'Caja', articulos: 'Artículos', unidades: 'Unidades', revisada: 'Revisada', llenado: 'Llenado', revisadaEl: d => `Revisada el ${d}`,
+    caja: 'Caja', articulos: 'Artículos', unidades: 'Unidades', articulosCorto: 'Art.', unidadesCorto: 'Ud.', revisada: 'Revisada', llenado: 'Llenado', revisadaEl: d => `Revisada el ${d}`,
   },
   en: {
     tipo: 'Box type', revision: 'Check', todas: 'All', nuncaRevisadas: 'Never checked', sinRevisarDesde: 'Not checked since…', nCajas: n => `${n} ${n === 1 ? 'box' : 'boxes'}`,
-    caja: 'Box', articulos: 'Items', unidades: 'Units', revisada: 'Checked', llenado: 'Fill', revisadaEl: d => `Checked on ${d}`,
+    caja: 'Box', articulos: 'Items', unidades: 'Units', articulosCorto: 'Items', unidadesCorto: 'Units', revisada: 'Checked', llenado: 'Fill', revisadaEl: d => `Checked on ${d}`,
   },
 };
 
@@ -86,8 +86,8 @@ export default function ListaCajas({ cajas, idioma, puedeEditar }) {
       <ul className={puedeEditar ? 'lista-cajas cajas-tabla cajas-tabla-edicion' : 'lista-cajas cajas-tabla'}>
         <li className="cajas-cab">
           <span>{titulo('caja', x.caja)}</span>
-          <span className="cajas-num">{titulo('articulos', x.articulos)}</span>
-          <span className="cajas-num">{titulo('unidades', x.unidades)}</span>
+          <span className="cajas-num">{titulo('articulos', <><span className="solo-escritorio-linea">{x.articulos}</span><span className="solo-movil-linea">{x.articulosCorto}</span></>)}</span>
+          <span className="cajas-num">{titulo('unidades', <><span className="solo-escritorio-linea">{x.unidades}</span><span className="solo-movil-linea">{x.unidadesCorto}</span></>)}</span>
           <span className="cajas-col-revisada">{titulo('revisada', x.revisada)}</span>
           <span>{titulo('llenado', x.llenado)}</span>
           {puedeEditar && <span />}

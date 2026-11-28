@@ -282,7 +282,6 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - **Listas de recogida para eventos**: plan aprobado el 2026-11-15, por partes. Hecha la parte 1 (llenado de la caja). Faltan: 2 eventos y lista con zonas, 3 añadir muchas cosas a la vez, 4 cargar (resta de las cajas), 5 volver. Cada parte se pregunta antes de hacerla.
 - **Desarrollos posteriores**: permisos finos.
 - **Datos definitivos**: cargarlos cuando termine la reorganización del almacén. La carga une la ropa por tallas y reutiliza los nombres ya revisados.
-- **9 artículos sin traducir**: no se sabe qué son; tienen el nombre original en los dos idiomas.
 - **Revisión de pantallas**: terminada el 2026-11-14 (inicio, búsqueda, caja, historial, Crear caja, Personas, Entrar, Recuperar y ficha del artículo).
 - **Sinónimos en inglés**: hecho el 2026-11-18 (ver el registro de decisiones).
 
@@ -429,3 +428,7 @@ Elegida entre varias versiones para el ordenador. Es la identidad visual del sit
 - Pruebas: 103 (nueva: deshacer un movimiento).
 - Caja en el móvil con los tamaños de la pantalla Inventario (pedido por ella): letra 13, filas de unos 36, botones de arriba de 30, − + / ✕ / foto de 28.
 - Cajas en el móvil (decidido con ella): mismos tamaños que Inventario (filas de 35, letra 13, llenado y ✕ de 28); "171 cajas" a la derecha del título; filtros en una línea: "Tipo [▾]" y "Revisión [▾]" (Todas · Nunca revisadas · Sin revisar desde…, que muestra la fecha); quitada la casilla "Sin revisar" (ahora es "Nunca revisadas"), también en el ordenador; columna "Revisada" con la fecha también en el móvil, ordenable. "Artículos" y "Unidades" salen cortados en el móvil: pendiente de que ella diga si "Art." y "Ud.".
+- Cajas en el móvil (decidido por ella): los títulos "Art." y "Ud." en lugar de "Artículos" y "Unidades", que salían cortados; en el ordenador siguen enteros.
+- Los 9 artículos sin traducir: quitados de lo pendiente por decisión suya; no se vuelven a sacar.
+- Guía de diseño (pedido por ella): una sola guía, sacada midiendo la web tal como está hoy; está en guia-diseno-propuesta.md para que la lea, y no entra en este documento hasta que diga.
+- Subido: "Art." y "Ud." en Cajas en el móvil.

@@ -2081,3 +2081,10 @@ html body .inv-caja-botones .inv-aspa { width: 28px; height: 28px; }
   html body .contenido:has(.cajas-tabla) { position: relative; }
   html body .esc.esc.cajas-filtros .cajas-contador { position: absolute; right: 16px; top: 18px; margin: 0; }
 }
+
+/* Cajas: en el móvil, los títulos «Art.» y «Ud.» (elegido por ella); en el ordenador, «Artículos» y «Unidades» */
+.solo-movil-linea { display: none; }
+@media (max-width: 899px) {
+  html body .cajas-tabla .cajas-cab .solo-escritorio-linea { display: none; }
+  html body .cajas-tabla .cajas-cab .solo-movil-linea { display: inline; }
+}
