@@ -23,16 +23,18 @@ describe('pantalla Cajas', () => {
     expect(container.querySelector('.cajas-contador').textContent).toBe('4 cajas');
   });
 
-  it('162. filtros: tipo de caja, sin revisar desde un día y sin revisar nunca; se combinan', () => {
+  it('162. filtros: tipo de caja y Revisión (Todas · Nunca revisadas · Sin revisar desde… con su fecha); se combinan', () => {
     const { container } = render(<ListaCajas cajas={CAJAS} idioma="es" puedeEditar={false} />);
-    fireEvent.change(container.querySelector('.cajas-filtros select'), { target: { value: 'P' } });
+    const [selTipo, selRevision] = container.querySelectorAll('.cajas-filtros select');
+    fireEvent.change(selTipo, { target: { value: 'P' } });
     expect(nombres(container)).toEqual(['P1', 'P2']);
+    expect(container.querySelector('.cajas-fecha')).toBe(null);
+    fireEvent.change(selRevision, { target: { value: 'desde' } });
     fireEvent.change(container.querySelector('.cajas-fecha'), { target: { value: '2026-11-12' } });
     expect(nombres(container)).toEqual(['P1', 'P2']);
-    fireEvent.change(container.querySelector('.cajas-filtros select'), { target: { value: '' } });
+    fireEvent.change(selTipo, { target: { value: '' } });
     expect(nombres(container)).toEqual(['P1', 'P2', 'Espe House']);
-    fireEvent.change(container.querySelector('.cajas-fecha'), { target: { value: '' } });
-    fireEvent.click(container.querySelector('.cajas-tick input'));
+    fireEvent.change(selRevision, { target: { value: 'nunca' } });
     expect(nombres(container)).toEqual(['P2', 'Espe House']);
     fireEvent.change(container.querySelector('.cajas-filtros select'), { target: { value: 'otros' } });
     expect(nombres(container)).toEqual(['Espe House']);

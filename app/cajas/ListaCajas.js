@@ -21,11 +21,11 @@ const CLAVES = {
 
 const T = {
   es: {
-    tipo: 'Tipo de caja', sinRevisarDesde: 'Sin revisar desde', sinRevisar: 'Sin revisar', nCajas: n => `${n} ${n === 1 ? 'caja' : 'cajas'}`,
+    tipo: 'Tipo de caja', revision: 'Revisión', todas: 'Todas', nuncaRevisadas: 'Nunca revisadas', sinRevisarDesde: 'Sin revisar desde…', nCajas: n => `${n} ${n === 1 ? 'caja' : 'cajas'}`,
     caja: 'Caja', articulos: 'Artículos', unidades: 'Unidades', revisada: 'Revisada', llenado: 'Llenado', revisadaEl: d => `Revisada el ${d}`,
   },
   en: {
-    tipo: 'Box type', sinRevisarDesde: 'Not checked since', sinRevisar: 'Not checked', nCajas: n => `${n} ${n === 1 ? 'box' : 'boxes'}`,
+    tipo: 'Box type', revision: 'Check', todas: 'All', nuncaRevisadas: 'Never checked', sinRevisarDesde: 'Not checked since…', nCajas: n => `${n} ${n === 1 ? 'box' : 'boxes'}`,
     caja: 'Box', articulos: 'Items', unidades: 'Units', revisada: 'Checked', llenado: 'Fill', revisadaEl: d => `Checked on ${d}`,
   },
 };
@@ -37,7 +37,9 @@ export default function ListaCajas({ cajas, idioma, puedeEditar }) {
   const x = T[idioma === 'en' ? 'en' : 'es'];
   const [tipo, setTipo] = useState('');
   const [desde, setDesde] = useState('');
-  const [nunca, setNunca] = useState(false);
+  // Revisión (elegido por ella): un desplegable con Todas · Nunca revisadas · Sin revisar desde… (con su fecha).
+  const [revision, setRevision] = useState('');
+  const nunca = revision === 'nunca';
 
   const conPosicion = useMemo(() => cajas.map((c, i) => ({ ...c, posicion: i })), [cajas]);
   const tipos = useMemo(() => {
@@ -46,14 +48,14 @@ export default function ListaCajas({ cajas, idioma, puedeEditar }) {
   }, [cajas]);
 
   const filtradas = useMemo(() => {
-    const limite = desde ? new Date(`${desde}T00:00:00`) : null;
+    const limite = revision === 'desde' && desde ? new Date(`${desde}T00:00:00`) : null;
     return conPosicion.filter(c => {
       if (tipo && (c.letra || 'otros') !== tipo) return false;
       if (nunca && c.revisada) return false;
       if (limite && c.revisada && new Date(c.revisada) >= limite) return false;
       return true;
     });
-  }, [conPosicion, tipo, desde, nunca]);
+  }, [conPosicion, tipo, desde, nunca, revision]);
   const { ordenados: visibles, titulo } = useOrden(filtradas, CLAVES);
 
   const dia = f => new Intl.DateTimeFormat(idioma === 'en' ? 'en-GB' : 'es-ES', { timeZone: 'Europe/Madrid', day: 'numeric', month: 'short' }).format(new Date(f));
@@ -62,20 +64,23 @@ export default function ListaCajas({ cajas, idioma, puedeEditar }) {
     <>
       <div className="esc esc-filtros cajas-filtros">
         <label>
-          {x.tipo}
+          <span className="solo-escritorio">{x.tipo}</span><span className="solo-movil">{idioma === 'en' ? 'Type' : 'Tipo'}</span>
           <select value={tipo} onChange={e => setTipo(e.target.value)}>
             <option value="">{t.todos}</option>
             {tipos.map(l => <option key={l} value={l}>{t.tipos[l] || l}</option>)}
           </select>
         </label>
         <label>
-          {x.sinRevisarDesde}
-          <input type="date" value={desde} onChange={e => setDesde(e.target.value)} className="cajas-fecha" />
+          {x.revision}
+          <select value={revision} onChange={e => setRevision(e.target.value)}>
+            <option value="">{x.todas}</option>
+            <option value="nunca">{x.nuncaRevisadas}</option>
+            <option value="desde">{x.sinRevisarDesde}</option>
+          </select>
         </label>
-        <label className="cajas-tick">
-          <input type="checkbox" checked={nunca} onChange={e => setNunca(e.target.checked)} />
-          {x.sinRevisar}
-        </label>
+        {revision === 'desde' && (
+          <input type="date" value={desde} onChange={e => setDesde(e.target.value)} className="cajas-fecha" aria-label={x.sinRevisarDesde} />
+        )}
         <span className="esc-gris cajas-contador">{x.nCajas(visibles.length)}</span>
       </div>
       <ul className={puedeEditar ? 'lista-cajas cajas-tabla cajas-tabla-edicion' : 'lista-cajas cajas-tabla'}>

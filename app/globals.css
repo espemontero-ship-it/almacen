@@ -1998,3 +1998,86 @@ html body .inv-caja-botones .inv-aspa { width: 28px; height: 28px; }
 /* Mover: aviso "Movido de C1: 3 artículos · Deshacer" en la caja de destino */
 .cx-movido { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 6px; font-size: 13px; }
 .cx-movido .boton-secundario { min-height: 28px; height: 28px; padding: 0 10px; font-size: 13px; }
+/* Caja en el móvil con los tamaños de la pantalla Inventario (pedido por ella): letra 13, filas de unos 35,
+   botones de 30 arriba y de 28 en las filas, foto de 28. */
+@media (max-width: 899px) {
+  html body .pagina-caja .cab-op2 .boton-secundario { height: 30px; min-height: 30px; padding: 0 8px; font-size: 13px; }
+  html body .pagina-caja .cab-op2 .llenado-selector select, html body .pagina-caja .cab-op2 .llenado select { height: 30px; min-height: 30px; font-size: 13px; }
+  html body .pagina-caja .cab-op2 .cx-vistas-movil .esc-vistas { height: 30px; }
+  html body .pagina-caja .cx-info-movil { font-size: 13px; }
+  html body .esc.esc .cx-tabla-caja th { font-size: 13px; padding: 2px 4px 4px 0; }
+  html body .esc.esc .cx-tabla-caja td { font-size: 13px; padding: 3px 4px 3px 0; }
+  html body .esc.esc .cx-tabla-caja td:nth-child(2) { padding-left: 4px; }
+  html body .esc.esc .cx-tabla-caja .esc-nombre { font-size: 13px; }
+  html body .esc.esc .cx-tabla-caja .esc-foto-40 { width: 28px; height: 28px; }
+  html body .esc.esc .cx-tabla-caja .num-boton, html body .esc.esc .cx-tabla-caja .num-valor, html body .esc.esc .cx-tabla-caja .num-casilla { height: 28px; min-height: 28px; font-size: 13px; }
+  html body .esc.esc .cx-tabla-caja .inv-aspa { width: 28px; height: 28px; font-size: 13px; }
+}
+@media (max-width: 899px) { html body .esc.esc .cx-tabla-caja td { padding-top: 2px; padding-bottom: 2px; } }
+/* Cajas (listado) en el móvil con los tamaños de Inventario (pedido por ella): título 20, letra 13,
+   filas de unos 35, desplegables y ✕ de 28, filtros de 30. */
+@media (max-width: 899px) {
+  html body .contenido:has(.cajas-tabla) .sitio-titulo { font-size: 20px; margin: 8px 0 4px; }
+  html body .esc.esc.cajas-filtros { gap: 6px 8px; margin-bottom: 4px; }
+  html body .esc.esc.cajas-filtros label { font-size: 13px; gap: 2px; }
+  html body .esc.esc.cajas-filtros select, html body .esc.esc.cajas-filtros input[type="date"] { height: 30px; min-height: 30px; font-size: 13px; padding: 0 6px; }
+  html body .esc.esc.cajas-filtros .cajas-tick { min-height: 30px; font-size: 13px; }
+  html body .esc.esc.cajas-filtros .cajas-tick input { width: 18px; height: 18px; }
+  html body .esc.esc.cajas-filtros .cajas-contador { font-size: 13px; }
+  html body .cajas-tabla .cajas-cab, html body .cajas-tabla .cajas-cab .orden-titulo { font-size: 13px; }
+  html body .cajas-tabla .lista-cajas-fila { min-height: 35px; padding: 3px 0; font-size: 13px; }
+  html body .cajas-tabla .lista-cajas-nombre, html body .cajas-tabla .cajas-num { font-size: 13px; }
+  html body .cajas-tabla .cajas-revisada-movil { font-size: 11px; }
+  html body .cajas-tabla .llenado select, html body .cajas-tabla .llenado-selector select { height: 28px; min-height: 28px; font-size: 13px; padding: 0 4px; }
+  html body .cajas-tabla .inv-aspa { width: 28px; height: 28px; font-size: 13px; }
+}
+@media (max-width: 899px) {
+  html body .cajas-tabla .esc.llenado .esc-filtros.llenado-selector select { height: 28px; min-height: 28px; font-size: 13px; padding: 0 4px; }
+}
+/* Cajas en el móvil (pedido por ella): la fecha de revisión como columna, que se ordena tocando el título;
+   ya no sale debajo del nombre. Columnas: Caja · Artículos · Unidades · Revisada · Llenado · ✕ */
+@media (max-width: 899px) {
+  html body .cajas-tabla .cajas-col-revisada { display: block; font-size: 13px; color: var(--texto); white-space: nowrap; }
+  html body .cajas-tabla .cajas-cab .cajas-col-revisada { color: inherit; }
+  html body .cajas-tabla .cajas-revisada-movil { display: none; }
+  html body .cajas-tabla > li { grid-template-columns: minmax(0, 1fr) 34px 34px 46px 64px; gap: 6px; }
+  html body .cajas-tabla.cajas-tabla-edicion > li { grid-template-columns: minmax(0, 1fr) 34px 34px 46px 64px 28px; gap: 6px; }
+  html body .cajas-tabla .cajas-cab { font-size: 11px; }
+  html body .cajas-tabla .cajas-cab .orden-titulo { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+}
+/* Cajas en el móvil (elegido por ella): filtros con el rótulo al lado, en dos líneas:
+   "Tipo [Todos ▾] · Sin revisar desde [fecha]" y "☐ Sin revisar · 171 cajas". */
+@media (max-width: 899px) {
+  html body .esc.esc.cajas-filtros { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+  html body .esc.esc.cajas-filtros label { flex-direction: row; align-items: center; gap: 4px; font-size: 13px; white-space: nowrap; }
+  html body .esc.esc.cajas-filtros select { width: auto; max-width: 84px; }
+  html body .esc.esc.cajas-filtros input[type="date"] { width: 108px; }
+  html body .esc.esc.cajas-filtros .cajas-tick { flex-basis: auto; }
+  html body .esc.esc.cajas-filtros .cajas-contador { display: inline; font-size: 13px; }
+}
+@media (max-width: 899px) {
+  /* Línea 1: Tipo y Sin revisar desde; línea 2: Sin revisar y el recuento */
+  html body .esc.esc.cajas-filtros { gap: 6px 6px; }
+  html body .esc.esc.cajas-filtros label { font-size: 12px; gap: 4px; }
+  html body .esc.esc.cajas-filtros select { width: 72px; max-width: 72px; padding: 0 4px; }
+  html body .esc.esc.cajas-filtros input[type="date"] { width: 104px; padding: 0 2px; font-size: 12px; }
+  html body .esc.esc.cajas-filtros::before { content: ''; order: 2; flex-basis: 100%; height: 0; }
+  html body .esc.esc.cajas-filtros .cajas-tick { order: 3; }
+  html body .esc.esc.cajas-filtros .cajas-contador { order: 4; margin-left: auto; font-size: 13px; }
+}
+@media (max-width: 899px) { html body .esc.esc.cajas-filtros .cajas-contador { display: inline-block; width: auto; flex: none; } }
+/* Cajas en el móvil: Tipo y Revisión (desplegables) en una línea, con el recuento; la fecha sale solo con "Sin revisar desde…" */
+@media (max-width: 899px) {
+  html body .esc.esc.cajas-filtros::before { display: none; }
+  html body .esc.esc.cajas-filtros select { width: auto; max-width: 110px; }
+  html body .esc.esc.cajas-filtros .cajas-fecha { height: 30px; min-height: 30px; width: 110px; font-size: 12px; padding: 0 2px; }
+}
+@media (max-width: 899px) {
+  html body .esc.esc.cajas-filtros label:first-child select { max-width: 80px; }
+  html body .esc.esc.cajas-filtros label:nth-child(2) select { max-width: 132px; }
+}
+/* Cajas en el móvil: el recuento ("171 cajas") a la derecha del título, en su misma línea, para no ocupar una fila */
+@media (max-width: 899px) {
+  html body .contenido:has(.cajas-tabla) { position: relative; }
+  html body .esc.esc.cajas-filtros .cajas-contador { position: absolute; right: 16px; top: 18px; margin: 0; }
+}
